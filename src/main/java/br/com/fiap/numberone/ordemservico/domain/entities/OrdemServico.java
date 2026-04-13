@@ -2,6 +2,7 @@ package br.com.fiap.numberone.ordemservico.domain.entities;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
+import br.com.fiap.numberone.veiculo.domain.entities.entities.Veiculo;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,6 +27,10 @@ public class OrdemServico {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idCliente")
     private Cliente cliente;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idVeiculo")
+    private Veiculo veiculo;
 
     @Enumerated(EnumType.STRING)
     private StatusOrdemServico status;
