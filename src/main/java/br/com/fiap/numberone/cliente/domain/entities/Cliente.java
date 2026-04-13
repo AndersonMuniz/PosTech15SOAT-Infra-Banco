@@ -17,6 +17,21 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String nome;
+
+    @Column
+    private String documento;
+
+    @Column
+    private String telefone;
+
+    @Column
+    private String endereco;
+
+    @Column
+    private Boolean ativo;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
