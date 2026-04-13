@@ -1,6 +1,5 @@
 package br.com.fiap.numberone.shared.api.exception;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -35,8 +34,8 @@ public class GlobalExceptionHandler {
     }
 
     // Entidade não encontrada
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(EntityNotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
         log.warn("Recurso não encontrado: {}", ex.getMessage());
 
         ErrorResponse response = new ErrorResponse(

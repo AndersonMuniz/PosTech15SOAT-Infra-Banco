@@ -4,6 +4,10 @@ import br.com.fiap.numberone.cliente.domain.entities.Cliente;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
 import br.com.fiap.numberone.veiculo.domain.entities.entities.Veiculo;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -12,6 +16,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrdemServico {
 
     @Id
