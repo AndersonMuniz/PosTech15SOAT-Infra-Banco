@@ -17,19 +17,18 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false, length = 90)
     private String nome;
 
-    @Column
+    @Column(nullable = false, length = 50)
     private String documento;
 
-    @Column
+    @Column(nullable = false, length = 15)
     private String telefone;
 
-    @Column
+    @Column(nullable = false, length = 90)
     private String endereco;
 
-    @Column
     private Boolean ativo;
 
     @CreatedDate
