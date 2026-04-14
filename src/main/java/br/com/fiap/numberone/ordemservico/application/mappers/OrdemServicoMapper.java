@@ -14,9 +14,9 @@ public interface OrdemServicoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cliente", source = "cliente")
     @Mapping(target = "veiculo", source = "veiculo")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     OrdemServico toEntity(CreateOrdemServicoRequest dto, Cliente cliente, Veiculo veiculo);
 
-    @Mapping(source = "cliente.id", target = "idCliente")
-    @Mapping(source = "veiculo.id", target = "idVeiculo")
     OrdemServicoResponse toResponse(OrdemServico entity);
 }
