@@ -30,7 +30,7 @@ public class OrdemServicoService {
 
     public OrdemServicoResponse getOrdemServico(Long id) {
         return ordemServicoRepository.findById(id)
-                .map(OrdemServicoResponse::from)
+                .map((ordemServicoMapper::toResponse))
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
     }
 
@@ -43,7 +43,7 @@ public class OrdemServicoService {
         OrdemServico entity = ordemServicoMapper.toEntity(createOrdemServicoRequest, cliente, veiculo);
 
         OrdemServico saved = ordemServicoRepository.save(entity);
-        return OrdemServicoResponse.from(saved);
+        return ordemServicoMapper.toResponse(saved);
     }
 
 }
