@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.veiculo.domain.entities.entities;
+package br.com.fiap.numberone.veiculo.domain.entities;
 
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;

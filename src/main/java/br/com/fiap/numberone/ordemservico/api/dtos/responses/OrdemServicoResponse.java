@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.ordemservico.api.dto.responses;
+package br.com.fiap.numberone.ordemservico.api.dtos.responses;
 
 import br.com.fiap.numberone.ordemservico.domain.entities.OrdemServico;
 import jakarta.validation.constraints.NotNull;

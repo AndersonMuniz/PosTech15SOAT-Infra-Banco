@@ -2,7 +2,7 @@ package br.com.fiap.numberone.ordemservico.domain.entities;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
-import br.com.fiap.numberone.veiculo.domain.entities.entities.Veiculo;
+import br.com.fiap.numberone.veiculo.domain.entities.Veiculo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

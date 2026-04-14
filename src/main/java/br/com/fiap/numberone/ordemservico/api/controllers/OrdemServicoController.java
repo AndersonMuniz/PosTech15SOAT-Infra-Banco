@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.ordemservico.api.controllers;
 
-import br.com.fiap.numberone.ordemservico.api.dto.requests.CreateOrdemServicoRequest;
-import br.com.fiap.numberone.ordemservico.api.dto.responses.OrdemServicoResponse;
+import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateOrdemServicoRequest;
+import br.com.fiap.numberone.ordemservico.api.dtos.responses.OrdemServicoResponse;
 import br.com.fiap.numberone.ordemservico.application.services.OrdemServicoService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +26,8 @@ public class OrdemServicoController {
     }
 
     @PostMapping
-    public ResponseEntity<OrdemServicoResponse> createNewOrdemServico(@Valid @RequestBody CreateOrdemServicoRequest createOrdemServicoRequest){
-        OrdemServicoResponse ordemServicoResponse = this.ordemServicoService.createNewOrdemServico(createOrdemServicoRequest);
+    public ResponseEntity<OrdemServicoResponse> createOrdemServico(@Valid @RequestBody CreateOrdemServicoRequest createOrdemServicoRequest){
+        OrdemServicoResponse ordemServicoResponse = this.ordemServicoService.createOrdemServico(createOrdemServicoRequest);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
