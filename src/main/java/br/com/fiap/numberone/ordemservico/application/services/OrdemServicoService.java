@@ -28,9 +28,10 @@ public class OrdemServicoService {
         this.veiculoRepository = veiculoRepository;
     }
 
-
     public OrdemServicoResponse getOrdemServico(Long id) {
-        return ordemServicoRepository.findById(id).map(OrdemServicoResponse::from).orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
+        return ordemServicoRepository.findById(id)
+                .map(OrdemServicoResponse::from)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
     }
 
     public OrdemServicoResponse createOrdemServico(CreateOrdemServicoRequest createOrdemServicoRequest) {
