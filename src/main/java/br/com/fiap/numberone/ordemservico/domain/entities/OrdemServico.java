@@ -33,11 +33,11 @@ public class OrdemServico {
     private String observacao;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idCliente")
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idVeiculo")
+    @JoinColumn(name = "id_veiculo")
     private Veiculo veiculo;
 
     @Enumerated(EnumType.STRING)
