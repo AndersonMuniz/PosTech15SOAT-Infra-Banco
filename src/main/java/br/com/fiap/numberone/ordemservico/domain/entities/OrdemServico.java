@@ -1,13 +1,11 @@
 package br.com.fiap.numberone.ordemservico.domain.entities;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
+import br.com.fiap.numberone.ordemservico.api.exceptions.StatusOrdemServicoInvalidoException;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
 import br.com.fiap.numberone.veiculo.domain.entities.Veiculo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,6 +28,8 @@ public class OrdemServico {
 
     private String descricaoDiagnostico;
 
+    private String descricaoDiagnosticoFinal;
+
     private String observacao;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -41,7 +41,7 @@ public class OrdemServico {
     private Veiculo veiculo;
 
     @Enumerated(EnumType.STRING)
-    private StatusOrdemServico status;
+    private StatusOrdemServico status = StatusOrdemServico.RECEBIDA;
 
     private LocalDateTime dataHoraEntrada;
 
@@ -55,4 +55,19 @@ public class OrdemServico {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void aplicarDiagnosticoFinal(String descricao, String observacao) {
+        if (this.getStatus() != StatusOrdemServico.RECEBIDA) {
+            throw new StatusOrdemServicoInvalidoException(
+                    "Nao e possivel adicionar diagnostico final em uma ordem de servico com status: " + this.status
+            );
+        }
+
+        this.descricaoDiagnosticoFinal = descricao;
+        this.status = StatusOrdemServico.EM_DIAGNOSTICO;
+
+        if (observacao != null && !observacao.isBlank()) {
+            this.observacao = observacao;
+        }
+    }
 }

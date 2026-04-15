@@ -2,7 +2,8 @@ package br.com.fiap.numberone.ordemservico.application.services;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
 import br.com.fiap.numberone.cliente.infrastructure.repositories.ClienteRepository;
-import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateOrdemServicoRequest;
+import br.com.fiap.numberone.ordemservico.api.dtos.requests.CriarOrdemServicoRequest;
+import br.com.fiap.numberone.ordemservico.api.dtos.requests.DiagnosticoFinalRequest;
 import br.com.fiap.numberone.ordemservico.api.dtos.responses.OrdemServicoResponse;
 import br.com.fiap.numberone.ordemservico.application.mappers.OrdemServicoMapper;
 import br.com.fiap.numberone.ordemservico.domain.entities.OrdemServico;
@@ -11,6 +12,9 @@ import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import br.com.fiap.numberone.veiculo.domain.entities.Veiculo;
 import br.com.fiap.numberone.veiculo.infrastructure.repositories.VeiculoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class OrdemServicoService {
@@ -28,21 +32,46 @@ public class OrdemServicoService {
         this.veiculoRepository = veiculoRepository;
     }
 
-    public OrdemServicoResponse getOrdemServico(Long id) {
+    @Transactional(readOnly = true)
+    public List<OrdemServicoResponse> buscarOrdensServico() {
+        return ordemServicoRepository.findAll()
+                .stream()
+                .map((ordemServicoMapper::toResponse))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public OrdemServicoResponse buscarOrdemServico(Long id) {
         return ordemServicoRepository.findById(id)
                 .map((ordemServicoMapper::toResponse))
                 .orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
     }
 
-    public OrdemServicoResponse createOrdemServico(CreateOrdemServicoRequest createOrdemServicoRequest) {
-        Cliente cliente = clienteRepository.findById(createOrdemServicoRequest.idCliente())
+    @Transactional
+    public OrdemServicoResponse criarOrdemServico(CriarOrdemServicoRequest criarOrdemServicoRequest) {
+        Cliente cliente = clienteRepository.findById(criarOrdemServicoRequest.idCliente())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
-        Veiculo veiculo = veiculoRepository.findById(createOrdemServicoRequest.idVeiculo())
+        Veiculo veiculo = veiculoRepository.findById(criarOrdemServicoRequest.idVeiculo())
                 .orElseThrow(() -> new ResourceNotFoundException("Veiculo nao encontrado"));
 
-        OrdemServico entity = ordemServicoMapper.toEntity(createOrdemServicoRequest, cliente, veiculo);
+        OrdemServico entity = ordemServicoMapper.toEntity(criarOrdemServicoRequest, cliente, veiculo);
 
         OrdemServico saved = ordemServicoRepository.save(entity);
+
+        //TODO: Verificar como notificar cliente
+
+        return ordemServicoMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public OrdemServicoResponse adicionarDiagnosticoFinal(Long id, DiagnosticoFinalRequest diagnosticoFinalRequest) {
+        OrdemServico entity = ordemServicoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem de serviço nao encontrada"));
+
+        entity.aplicarDiagnosticoFinal(diagnosticoFinalRequest.descricaoDiagnosticoFinal(), diagnosticoFinalRequest.observacao());
+
+        OrdemServico saved = ordemServicoRepository.save(entity);
+
         return ordemServicoMapper.toResponse(saved);
     }
 
