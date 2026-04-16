@@ -2,6 +2,7 @@ package br.com.fiap.numberone.estoque.application.services;
 
 import br.com.fiap.numberone.estoque.application.gateways.ServicoGateway;
 import br.com.fiap.numberone.estoque.domain.entities.Servico;
+import br.com.fiap.numberone.estoque.domain.exceptions.ServicoNotFountException;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,21 +17,33 @@ public class ServicoService {
 
 
     public Servico create(Servico servico) {
-        return servicoGateway.create(servico);
+        return servicoGateway.save(servico);
     }
 
-    public List<Servico> listar() {
+    public Servico update(UUID id, Servico servico) {
+        Servico currentServico = servicoGateway.findById(id)
+                .orElseThrow(() -> new ServicoNotFountException("Serviço não encontrado"));
+
+        currentServico.updateFrom(servico);
+
+        return servicoGateway.save(currentServico);
+    }
+
+    public List<Servico> findAll() {
         return servicoGateway.findAll();
     }
 
-    public Servico buscar(UUID id) {
+    public Servico findById(UUID id) {
         return servicoGateway.findById(id)
-                .orElseThrow(() -> new RuntimeException("Não encontrado"));
+                .orElseThrow(() -> new ServicoNotFountException("Serviço não encontrado"));
     }
 
-    public void inativar(UUID id) {
-        Servico s = buscar(id);
-        //s.inativar();
-        //servicoGateway.save(s);
+    public void inactivate(UUID id) {
+        Servico servico = servicoGateway.findById(id)
+                .orElseThrow(() -> new ServicoNotFountException("Serviço não encontrado"));
+
+        servico.inactivate();
+
+        servicoGateway.save(servico);
     }
 }
