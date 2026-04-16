@@ -1,5 +1,7 @@
 package br.com.fiap.numberone.estoque.domain.entities;
 
+import br.com.fiap.numberone.estoque.domain.exceptions.ServicoNegocioException;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -90,5 +92,24 @@ public class Servico {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void updateFrom(Servico newData) {
+        if (newData.codigo != null) this.codigo = newData.codigo;
+        if (newData.descricao != null) this.descricao = newData.descricao;
+        if (newData.valorBase != null) this.valorBase = newData.valorBase;
+        if (newData.tempoEstimadoMinuto != null) this.tempoEstimadoMinuto = newData.tempoEstimadoMinuto;
+        if (newData.ativo != null) this.ativo = newData.ativo;
+
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void inactivate() {
+        if (Boolean.FALSE.equals(this.ativo)) {
+            throw new ServicoNegocioException("Serviço já está inativo");
+        }
+
+        this.ativo = false;
+        this.updatedAt = LocalDateTime.now();
     }
 }

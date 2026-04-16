@@ -23,11 +23,12 @@ public class ServicoGatewayImpl implements ServicoGateway {
     }
 
     @Override
-    public Servico create(Servico servico) {
+    public Servico save(Servico servico) {
         ServicoEntity entity = mapper.toEntity(servico);
         ServicoEntity savedEntity = repository.save(entity);
         return mapper.toDomain(savedEntity);
     }
+
 
     @Override
     public Optional<Servico> findById(UUID id) {
