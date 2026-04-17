@@ -1,10 +1,12 @@
 package br.com.fiap.numberone.estoque.infrastructure.config;
 
+import br.com.fiap.numberone.estoque.application.gateways.LoggerGateway;
 import br.com.fiap.numberone.estoque.application.gateways.ServicoGateway;
 import br.com.fiap.numberone.estoque.application.services.ServicoService;
-import br.com.fiap.numberone.estoque.infrastructure.persistence.adapter.ServicoGatewayImpl;
+import br.com.fiap.numberone.estoque.infrastructure.persistence.gateways.ServicoGatewayImpl;
 import br.com.fiap.numberone.estoque.infrastructure.persistence.mappers.ServicoMapper;
 import br.com.fiap.numberone.estoque.infrastructure.persistence.repositories.ServicoRepository;
+import br.com.fiap.numberone.shared.infrastructure.logging.Slf4jLoggerGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,12 +25,17 @@ public class EstoqueBeansConfig {
         return new ServicoGatewayImpl(repository, mapper);
     }
 
+    @Bean
+    public LoggerGateway loggerGateway() {
+        return new Slf4jLoggerGateway();
+    }
+
     /**
      * Cria a service de Servico como bean gerenciado pelo Spring.
      */
     @Bean
-    public ServicoService servicoService(ServicoGateway servicoGateway) {
-        return new ServicoService(servicoGateway);
+    public ServicoService servicoService(ServicoGateway servicoGateway, LoggerGateway loggerGateway) {
+        return new ServicoService(servicoGateway,loggerGateway);
     }
 }
 

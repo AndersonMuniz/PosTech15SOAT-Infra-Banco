@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.estoque.infrastructure.persistence.adapter;
+package br.com.fiap.numberone.estoque.infrastructure.persistence.gateways;
 
 import br.com.fiap.numberone.estoque.application.gateways.ServicoGateway;
 import br.com.fiap.numberone.estoque.domain.entities.Servico;
