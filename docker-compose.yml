@@ -9,7 +9,25 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: numberone-app
+    depends_on:
+      - postgres
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/numberone
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      JWT_SECRET: change-this-local-jwt-secret-with-32-chars
+      BOOTSTRAP_ADMIN_USERNAME: admin
+      BOOTSTRAP_ADMIN_PASSWORD: admin123456
+      BOOTSTRAP_ADMIN_ROLE: ADMIN
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres_data:

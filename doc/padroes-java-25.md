@@ -51,7 +51,7 @@ Quando uma feature crescer, separar internamente em subpastas como `api`, `appli
 - Nao usar `record` para entidades JPA.
 - Usar `switch` expression quando melhorar legibilidade.
 - Usar pattern matching com `instanceof` quando evitar cast manual.
-- Usar `var` apenas quando o tipo for obvio na mesma linha.
+- Preferir tipagem explicita em variaveis locais para manter a leitura clara.
 - Preferir `List.of`, `Set.of` e `Map.of` para colecoes fixas e imutaveis.
 - Considerar `sealed` classes apenas quando o dominio tiver hierarquia fechada e isso trouxer valor real.
 

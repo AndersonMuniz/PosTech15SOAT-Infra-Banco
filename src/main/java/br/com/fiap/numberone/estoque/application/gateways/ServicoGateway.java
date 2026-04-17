@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ServicoGateway {
-    Servico create(Servico servico);
+    Servico save(Servico servico);
     Optional<Servico> findById(UUID id);
     List<Servico> findAll();
 }
