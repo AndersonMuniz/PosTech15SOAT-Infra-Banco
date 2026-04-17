@@ -15,7 +15,6 @@ Minha ideia foi seguir uma linha simples:
 
 Mantive sem mudanca estrutural:
 
-- `cliente`
 - `ordemServico`
 - `ordemServicoServico`
 - `ordemServicoServicoItens`
@@ -24,6 +23,7 @@ Mantive sem mudanca estrutural:
 
 Ajustei:
 
+- `cliente`
 - `veiculo`
 - `servico`
 - `item`
@@ -40,6 +40,7 @@ Adicionei:
 - `id`
 - `nome`
 - `documento`
+- `tipoDocumento`
 - `telefone`
 - `email`
 - `endereco`
@@ -49,13 +50,20 @@ Adicionei:
 
 ### Decisao
 
-Mantive a tabela como estava.
+Adicionei:
+
+- `tipoDocumento`
+
+### Valores definidos para `tipoDocumento`
+
+- `CPF`
+- `CNPJ`
 
 ### Motivo
 
 - a estrutura ja atende bem o MVP
-- CPF e CNPJ podem ser tratados por validacao no codigo
-- nao vi necessidade de adicionar novos campos agora
+- o campo ajuda a deixar explicito se o documento do cliente e CPF ou CNPJ
+- melhora a validacao e evita regra implicita so no codigo
 
 ## 2. Tabela `veiculo`
 
@@ -316,4 +324,3 @@ Minha decisao foi seguir uma abordagem de menor impacto:
 - evitar complexidade desnecessaria na fase atual
 
 Com isso, a modelagem continua simples, mas fica mais adequada aos requisitos do desafio.
-

@@ -1,11 +1,11 @@
 services:
   postgres:
-    image: postgres:17-alpine
-    container_name: numberone-postgres
+    image: postgres:latest
+    container_name: numberone-db
     environment:
       POSTGRES_DB: numberone
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
     ports:
       - "5432:5432"
     volumes:
@@ -20,8 +20,8 @@ services:
       - postgres
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/numberone
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
       JWT_SECRET: change-this-local-jwt-secret-with-32-chars
       BOOTSTRAP_ADMIN_USERNAME: admin
       BOOTSTRAP_ADMIN_PASSWORD: admin123456
