@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.ordemservico.application.mappers;
 
-import br.com.fiap.numberone.cliente.domain.entities.Cliente;
+import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
 import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateOrdemServicoRequest;
 import br.com.fiap.numberone.ordemservico.api.dtos.responses.OrdemServicoResponse;
 import br.com.fiap.numberone.ordemservico.domain.entities.OrdemServico;
@@ -16,7 +16,7 @@ public interface OrdemServicoMapper {
     @Mapping(target = "veiculo", source = "veiculo")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    OrdemServico toEntity(CreateOrdemServicoRequest dto, Cliente cliente, Veiculo veiculo);
+    OrdemServico toEntity(CreateOrdemServicoRequest dto, ClienteEntity cliente, Veiculo veiculo);
 
     OrdemServicoResponse toResponse(OrdemServico entity);
 }

@@ -1,6 +1,7 @@
 package br.com.fiap.numberone.ordemservico.application.services;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
+import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
 import br.com.fiap.numberone.cliente.infrastructure.repositories.ClienteRepository;
 import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateOrdemServicoRequest;
 import br.com.fiap.numberone.ordemservico.api.dtos.responses.OrdemServicoResponse;
@@ -35,7 +36,7 @@ public class OrdemServicoService {
     }
 
     public OrdemServicoResponse createOrdemServico(CreateOrdemServicoRequest createOrdemServicoRequest) {
-        Cliente cliente = clienteRepository.findById(createOrdemServicoRequest.idCliente())
+        ClienteEntity cliente = clienteRepository.findById(createOrdemServicoRequest.idCliente())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
         Veiculo veiculo = veiculoRepository.findById(createOrdemServicoRequest.idVeiculo())
                 .orElseThrow(() -> new ResourceNotFoundException("Veiculo nao encontrado"));
