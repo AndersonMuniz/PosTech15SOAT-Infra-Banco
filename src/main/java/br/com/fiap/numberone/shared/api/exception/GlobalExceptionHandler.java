@@ -1,6 +1,7 @@
 package br.com.fiap.numberone.shared.api.exception;
 
 import br.com.fiap.numberone.estoque.domain.exceptions.ServicoNotFountException;
+import br.com.fiap.numberone.cliente.domain.exceptions.DocumentoException;
 import br.com.fiap.numberone.shared.security.domain.exceptions.InvalidCredentialsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        ErrorResponse response = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                List.of()
+        );
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(DocumentoException.class)
+    public ResponseEntity<ErrorResponse> handleDocumentoException(DocumentoException ex) {
         ErrorResponse response = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
