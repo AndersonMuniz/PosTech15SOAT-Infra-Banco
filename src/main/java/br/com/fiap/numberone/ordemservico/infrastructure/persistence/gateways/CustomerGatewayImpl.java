@@ -3,7 +3,7 @@ package br.com.fiap.numberone.ordemservico.infrastructure.persistence.gateways;
 import br.com.fiap.numberone.cliente.infrastructure.repositories.ClienteRepository;
 import br.com.fiap.numberone.ordemservico.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.ordemservico.domain.valueobjects.Customer;
-import br.com.fiap.numberone.ordemservico.infrastructure.persistence.mappers.CustomerSummaryMapper;
+import br.com.fiap.numberone.ordemservico.infrastructure.persistence.mappers.CustomerMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -13,9 +13,9 @@ import java.util.UUID;
 public class CustomerGatewayImpl implements CustomerGateway {
 
     private final ClienteRepository repository;
-    private final CustomerSummaryMapper mapper;
+    private final CustomerMapper mapper;
 
-    public CustomerGatewayImpl(ClienteRepository customerRepository, CustomerSummaryMapper mapper) {
+    public CustomerGatewayImpl(ClienteRepository customerRepository, CustomerMapper mapper) {
         this.repository = customerRepository;
         this.mapper = mapper;
     }
