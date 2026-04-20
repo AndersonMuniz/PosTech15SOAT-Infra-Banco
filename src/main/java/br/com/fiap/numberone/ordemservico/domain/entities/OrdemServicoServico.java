@@ -6,5 +6,7 @@ import java.util.UUID;
 public class OrdemServicoServico {
 
     private UUID id;
+    private OrdemServico ordemServico;
+    private Servico
 
 }
