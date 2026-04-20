@@ -1,6 +1,7 @@
 package br.com.fiap.numberone.ordemservico.domain.entities;
 
 import br.com.fiap.numberone.ordemservico.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.ordemservico.domain.exceptions.CustomerNotActiveException;
 import br.com.fiap.numberone.ordemservico.domain.valueobjects.Customer;
 import br.com.fiap.numberone.ordemservico.domain.valueobjects.Vehicle;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,9 @@ public class ServiceOrder {
     private LocalDateTime updatedAt;
 
     public void attachCustomer(Customer customer) {
+        if(!customer.getActive()){
+            throw new CustomerNotActiveException("Customer is not active to be attached");
+        }
         this.customer = customer;
     }
 

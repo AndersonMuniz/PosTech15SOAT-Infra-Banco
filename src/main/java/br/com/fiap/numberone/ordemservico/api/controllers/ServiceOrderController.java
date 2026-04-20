@@ -2,12 +2,13 @@ package br.com.fiap.numberone.ordemservico.api.controllers;
 
 import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateServiceOrderRequest;
 import br.com.fiap.numberone.ordemservico.api.dtos.requests.FinalDiagnosisRequest;
-import br.com.fiap.numberone.ordemservico.api.dtos.requests.LinkServicesRequest;
+import br.com.fiap.numberone.ordemservico.api.dtos.requests.CreateOrderAutoserviceRequest;
 import br.com.fiap.numberone.ordemservico.api.dtos.responses.ServiceOrderResponse;
+import br.com.fiap.numberone.ordemservico.api.mappers.OrderAutoserviceApiMapper;
 import br.com.fiap.numberone.ordemservico.api.mappers.ServiceOrderApiMapper;
-import br.com.fiap.numberone.ordemservico.application.services.ServiceOrderItemService;
-import br.com.fiap.numberone.ordemservico.application.services.ServiceOrderService;
+import br.com.fiap.numberone.ordemservico.application.services.ServiceOrderAutoService;
 import br.com.fiap.numberone.ordemservico.domain.entities.ServiceOrder;
+import br.com.fiap.numberone.ordemservico.domain.entities.ServiceOrderAutoservice;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,30 +22,33 @@ import java.util.UUID;
 @RequestMapping("/api/service-orders")
 public class ServiceOrderController {
 
-    private final ServiceOrderApiMapper mapper;
-    private final ServiceOrderService serviceOrderService;
-    private final ServiceOrderItemService serviceOrderItemService;
+    private final ServiceOrderApiMapper orderApiMapper;
+    private final OrderAutoserviceApiMapper serviceOrderAutoserviceApiMapper;
+    private final br.com.fiap.numberone.ordemservico.application.services.ServiceOrderService serviceOrderService;
+    private final ServiceOrderAutoService serviceOrderAutoService;
+    private final OrderAutoserviceApiMapper orderAutoserviceApiMapper;
 
     public ServiceOrderController(
-            ServiceOrderApiMapper mapper,
-            ServiceOrderService serviceOrderService,
-            ServiceOrderItemService serviceOrderItemService
-    ) {
-        this.mapper = mapper;
+            ServiceOrderApiMapper orderApiMapper,
+            br.com.fiap.numberone.ordemservico.application.services.ServiceOrderService serviceOrderService,
+            ServiceOrderAutoService serviceOrderAutoService,
+            OrderAutoserviceApiMapper orderAutoserviceApiMapper) {
+        this.orderApiMapper = orderApiMapper;
         this.serviceOrderService = serviceOrderService;
-        this.serviceOrderItemService = serviceOrderItemService;
+        this.serviceOrderAutoService = serviceOrderAutoService;
+        this.orderAutoserviceApiMapper = orderAutoserviceApiMapper;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceOrderResponse> getServiceOrder(@PathVariable UUID id) {
-        return ResponseEntity.ok(mapper.toResponse(serviceOrderService.getServiceOrder(id)));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderService.getServiceOrder(id)));
     }
 
     @GetMapping
     public ResponseEntity<List<ServiceOrderResponse>> getServiceOrders() {
         return ResponseEntity.ok(serviceOrderService.getServiceOrders()
                 .stream()
-                .map(mapper::toResponse)
+                .map(orderApiMapper::toResponse)
                 .toList());
     }
 
@@ -52,13 +56,13 @@ public class ServiceOrderController {
     public ResponseEntity<ServiceOrderResponse> createServiceOrder(
             @Valid @RequestBody CreateServiceOrderRequest createServiceOrderRequest
     ) {
-        ServiceOrder serviceOrder = serviceOrderService.createServiceOrder(mapper.toDomain(createServiceOrderRequest));
+        ServiceOrder serviceOrder = serviceOrderService.createServiceOrder(orderApiMapper.toDomain(createServiceOrderRequest));
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(serviceOrder.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(mapper.toResponse(serviceOrder));
+        return ResponseEntity.created(location).body(orderApiMapper.toResponse(serviceOrder));
     }
 
     @PatchMapping("/{id}")
@@ -66,16 +70,16 @@ public class ServiceOrderController {
             @PathVariable UUID id,
             @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
     ) {
-        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, mapper.toDomain(finalDiagnosisRequest));
-        return ResponseEntity.ok(mapper.toResponse(serviceOrder));
+        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, orderApiMapper.toDomain(finalDiagnosisRequest));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PostMapping("/{id}/services")
-    public ResponseEntity<ServiceOrderResponse> addServices(
-            @PathVariable UUID id,
-            @Valid @RequestBody LinkServicesRequest linkServicesRequest
-    ) {
-        ServiceOrderResponse serviceOrderResponse = serviceOrderItemService.addServices(id, linkServicesRequest);
-        return ResponseEntity.ok(serviceOrderResponse);
-    }
+//    @PostMapping("/{id}/services")
+//    public ResponseEntity<ServiceOrderResponse> addService(
+//            @PathVariable UUID id,
+//            @Valid @RequestBody CreateOrderAutoserviceRequest createOrderAutoserviceRequest
+//    ) {
+//        ServiceOrderAutoservice serviceOrder = serviceOrderAutoService.createServiceOrderService(id, orderAutoserviceApiMapper.toDomain(createOrderAutoserviceRequest));
+//        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+//    }
 }

@@ -5,7 +5,7 @@ import br.com.fiap.numberone.ordemservico.domain.valueobjects.AutomotiveService;
 import java.util.UUID;
 
 
-public class ServiceOrderItem {
+public class ServiceOrderAutoservice {
 
     private UUID id;
     private ServiceOrder serviceOrder;
