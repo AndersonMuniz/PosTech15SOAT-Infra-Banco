@@ -1,58 +1,58 @@
 package br.com.fiap.numberone.ordemservico.domain.entities;
 
-import br.com.fiap.numberone.ordemservico.domain.exceptions.StatusOrdemServicoInvalidoException;
+import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
-import br.com.fiap.numberone.ordemservico.domain.valueobjects.Cliente;
-import br.com.fiap.numberone.ordemservico.domain.valueobjects.Veiculo;
+import br.com.fiap.numberone.veiculo.domain.entities.VeiculoEntity;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrdemServico {
 
-    private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String descricaoInicial;
+
     private String descricaoDiagnostico;
-    private String descricaoDiagnosticoFinal;
+
     private String observacao;
-    private Cliente cliente;
-    private Veiculo veiculo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_cliente")
+    private ClienteEntity cliente;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_veiculo")
+    private VeiculoEntity veiculo;
+
+    @Enumerated(EnumType.STRING)
     private StatusOrdemServico status;
+
     private LocalDateTime dataHoraEntrada;
+
     private LocalDateTime dataHoraPrevista;
+
     private LocalDateTime dataHoraEntrega;
+
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    public void aplicarDiagnosticoFinal(String descricao, String observacao) {
-        if (this.status != StatusOrdemServico.RECEBIDA) {
-            throw new StatusOrdemServicoInvalidoException(
-                    "Não é possível adicionar diagnostico final em uma ordem de servico com status: " + this.status
-            );
-        }
-
-        this.descricaoDiagnosticoFinal = descricao;
-        this.status = StatusOrdemServico.EM_DIAGNOSTICO;
-
-        if (observacao != null && !observacao.isBlank()) {
-            this.observacao = observacao;
-        }
-    }
-
-    public void vincularCliente(Cliente cliente) {
-        if(!cliente.getAtivo()){
-            throw new StatusOrdemServicoInvalidoException(
-                    "Não é possível vincular cliente inativo"
-            );
-        }
-
-        this.cliente = cliente;
-    }
-
-    public void vincularVeiculo(Veiculo veiculo) {
-        this.veiculo = veiculo;
-    }
 }
