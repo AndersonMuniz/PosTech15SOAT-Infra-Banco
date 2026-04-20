@@ -93,67 +93,121 @@ Tambem defini `placa` como unica.
 - a modelagem anterior nao fechava completamente esse requisito
 - foi a menor mudanca possivel para adequar a tabela
 
-## 3. Tabela `servico`
+## 3. Tabela `servicoAutomotivo`
 
 ### Estrutura final
 
 - `id`
 - `codigo`
+- `nome`
 - `descricao`
+- `tipoServico`
 - `valorBase`
-- `tempoEstimadoMinuto`
+- `tempoEstimadoMinutos`
 - `ativo`
 - `createdAt`
 - `updatedAt`
 
 ### Decisao
 
-Renomeei:
+Adicionei novos atributos para tornar o servico mais descritivo e aderente ao contexto de oficina mecanica automotiva.
 
-- `tempoEstimado` para `tempoEstimadoMinuto`
+### Valores definidos para `tipoServico`
+
+- `MANUTENCAO_PREVENTIVA`
+- `MANUTENCAO_CORRETIVA`
+- `REVISAO`
+- `DIAGNOSTICO`
+- `INSTALACAO`
+- `ALINHAMENTO_BALANCEAMENTO`
+- `OUTROS`
 
 ### Motivo
 
-- deixar a unidade de medida explicita
-- evitar ambiguidade nos calculos de prazo e tempo de execucao
+- alterei o nome da tabela de `servico` para `servicoAutomotivo` para deixar explicito o contexto de negocio
+- `nome` melhora listagem, busca e identificacao do servico
+- `tipoServico` permite classificacao e filtros mais claros
+- `tempoEstimadoMinutos` faz mais sentido do que um campo generico de tempo, porque:
+    - evita ambiguidades
+    - facilita ordenacao, comparacao e calculo
+    - permite representar qualquer duracao em uma unidade simples
+- `ativo` permite inativacao sem exclusao fisica
+- `createdAt` e `updatedAt` ajudam em rastreabilidade e auditoria
 
-## 4. Tabela `item`
+
+## 4. Tabela `itemEstoque`
 
 ### Estrutura final
 
 - `id`
+- `codigo`
 - `nome`
 - `descricao`
-- `valorBase`
 - `tipoItem`
 - `unidadeMedida`
+- `custoUnitario`
+- `precoVenda`
 - `quantidadeEstoque`
+- `estoqueMinimo`
+- `marca`
+- `veiculoAplicavel`
+- `ativo`
+- `createdAt`
+- `updatedAt`
 
 ### Decisao
 
-Adicionei:
+Refatorei a estrutura para deixar o cadastro de itens mais aderente ao contexto de estoque da mecanica.
 
-- `quantidadeEstoque`
+### Valores definidos para `tipoItem`
+
+- `PECA`
+- `INSUMO`
+- `LUBRIFICANTE`
+- `ACESSORIO`
+
+### Valores definidos para `unidadeMedida`
+
+- `UNIDADE`
+- `LITRO`
+- `MILILITRO`
+- `QUILO`
+- `GRAMA`
+- `CAIXA`
 
 ### Motivo
 
-- o desafio exige controle de estoque
-- essa foi a menor mudanca possivel para registrar saldo atual
+- alterei o nome da tabela de `item` para `itemEstoque` para deixar explicito que a entidade representa itens controlados em estoque
+- substitui `valorBase` por:
+    - `custoUnitario`
+    - `precoVenda`
+- essa separacao evita ambiguidade entre custo e valor cobrado do cliente
+- `codigo` melhora identificacao e busca
+- `estoqueMinimo` permite futuro controle de reposicao (criar alertas caso quantidadeEstoque esteja menor ou igual que estoqueMinimo)
+- `marca` faz sentido no contexto de pecas, insumos e lubrificantes
+- `veiculoAplicavel` substitui um campo generico de aplicacao e deixa mais claro o uso no contexto automotivo
+- `ativo` permite inativacao sem exclusao fisica
+- `createdAt` e `updatedAt` ajudam no controle e auditoria
+
 
 ## 5. Tabela `movimentacaoEstoque`
 
 ### Estrutura final
 
 - `id`
-- `idItem`
+- `idItemEstoque`
 - `tipoMovimentacao`
-- `quantidade`
-- `motivo`
+- `origemMovimentacao`
+- `referenciaOrigemId`
+- `quantidadeAntes`
+- `quantidadeDepois`
+- `observacao`
+- `usuarioResponsavelId`
 - `createdAt`
 
 ### Decisao
 
-Criei a tabela `movimentacaoEstoque`.
+Ajustei a estrutura para melhorar rastreabilidade, historico e auditoria das movimentacoes de estoque.
 
 ### Valores definidos para `tipoMovimentacao`
 
@@ -161,11 +215,30 @@ Criei a tabela `movimentacaoEstoque`.
 - `BAIXA`
 - `AJUSTE`
 
+### Valores definidos para `origemMovimentacao`
+
+- `COMPRA`
+- `ORDEM_SERVICO`
+- `AJUSTE_MANUAL`
+- `DEVOLUCAO`
+- `PERDA`
+- `INVENTARIO`
+
 ### Motivo
 
-- `quantidadeEstoque` em `item` resolve o saldo atual
+- mantive o nome `movimentacaoEstoque` porque ele ja representa bem o historico das alteracoes de saldo
+- substitui `quantidade` por:
+    - `quantidadeAntes`
+    - `quantidadeDepois`
+- isso melhora auditoria e investigacao de divergencias
+- `origemMovimentacao` estrutura a origem real da alteracao
+- `referenciaOrigemId` permite rastrear a entidade responsavel pela movimentacao, como uma ordem de servico
+- `observacao` permite guardar detalhes livres sem poluir os enums
+- `usuarioResponsavelId` permite saber quem realizou a movimentacao
+- `createdAt` registra quando a movimentacao aconteceu
+- `quantidadeEstoque` em `itemEstoque` resolve o saldo atual
 - `movimentacaoEstoque` resolve o historico
-- assim fica possivel saber entrada, baixa e ajuste sem complicar demais o modelo
+- assim fica possivel manter simplicidade sem perder rastreabilidade
 
 ## 6. Tabela `ordemServico`
 

@@ -1,6 +1,7 @@
 package br.com.fiap.numberone.ordemservico.domain.entities;
 
 import br.com.fiap.numberone.cliente.domain.entities.Cliente;
+import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
 import br.com.fiap.numberone.ordemservico.domain.enums.StatusOrdemServico;
 import br.com.fiap.numberone.veiculo.domain.entities.Veiculo;
 import jakarta.persistence.*;
@@ -34,7 +35,7 @@ public class OrdemServico {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
-    private Cliente cliente;
+    private ClienteEntity cliente;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_veiculo")

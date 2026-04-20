@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.shared.infrastructure.logging;
 
-import br.com.fiap.numberone.estoque.application.gateways.LoggerGateway;
+import br.com.fiap.numberone.inventory.application.gateways.LoggerGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
