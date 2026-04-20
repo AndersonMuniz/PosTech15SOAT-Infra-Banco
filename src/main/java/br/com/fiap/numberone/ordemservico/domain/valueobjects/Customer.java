@@ -1,0 +1,24 @@
+package br.com.fiap.numberone.ordemservico.domain.valueobjects;
+
+import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Customer {
+
+    private UUID id;
+    private String name;
+    private TipoDocumento documentType;
+    private String document;
+    private String phone;
+    private String address;
+    private Boolean active;
+}

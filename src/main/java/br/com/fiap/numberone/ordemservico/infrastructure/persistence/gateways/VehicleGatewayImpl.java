@@ -1,8 +1,8 @@
 package br.com.fiap.numberone.ordemservico.infrastructure.persistence.gateways;
 
-import br.com.fiap.numberone.ordemservico.application.gateways.VeiculoGateway;
-import br.com.fiap.numberone.ordemservico.domain.valueobjects.Veiculo;
-import br.com.fiap.numberone.ordemservico.infrastructure.persistence.mappers.VeiculoResumoMapper;
+import br.com.fiap.numberone.ordemservico.application.gateways.VehicleGateway;
+import br.com.fiap.numberone.ordemservico.domain.valueobjects.Vehicle;
+import br.com.fiap.numberone.ordemservico.infrastructure.persistence.mappers.VehicleSummaryMapper;
 import br.com.fiap.numberone.veiculo.infrastructure.repositories.VeiculoRepository;
 import org.springframework.stereotype.Component;
 
@@ -10,19 +10,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class VeiculoGatewayImpl implements VeiculoGateway {
+public class VehicleGatewayImpl implements VehicleGateway {
 
     private final VeiculoRepository repository;
-    private final VeiculoResumoMapper mapper;
+    private final VehicleSummaryMapper mapper;
 
-    public VeiculoGatewayImpl(VeiculoRepository repository, VeiculoResumoMapper mapper) {
+    public VehicleGatewayImpl(VeiculoRepository repository, VehicleSummaryMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
 
-
     @Override
-    public Optional<Veiculo> findById(UUID id) {
+    public Optional<Vehicle> findById(UUID id) {
         return repository.findById(id)
                 .map(mapper::toDomain);
     }

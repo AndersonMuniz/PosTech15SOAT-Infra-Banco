@@ -1,13 +1,13 @@
 package br.com.fiap.numberone.ordemservico.infrastructure.persistence.mappers;
 
 import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
-import br.com.fiap.numberone.ordemservico.domain.valueobjects.Cliente;
+import br.com.fiap.numberone.ordemservico.domain.valueobjects.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface ClienteResumoMapper {
-    ClienteEntity toEntity(Cliente cliente);
+public interface CustomerSummaryMapper {
+    ClienteEntity toEntity(Customer customer);
 
-    Cliente toDomain(ClienteEntity entity);
+    Customer toDomain(ClienteEntity entity);
 }
