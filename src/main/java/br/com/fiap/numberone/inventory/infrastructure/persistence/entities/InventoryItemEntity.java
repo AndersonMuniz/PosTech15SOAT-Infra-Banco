@@ -1,0 +1,88 @@
+package br.com.fiap.numberone.inventory.infrastructure.persistence.entities;
+
+import br.com.fiap.numberone.inventory.domain.enums.ItemType;
+import br.com.fiap.numberone.inventory.domain.enums.UnitOfMeasure;
+import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "item_estoque")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class InventoryItemEntity {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @Column(name = "codigo", length = 100)
+    private String code;
+
+    @Column(name = "nome", nullable = false, length = 150)
+    private String name;
+
+    @Column(name = "descricao", length = 255)
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_item", length = 50)
+    private ItemType itemType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "unidade_medida", length = 50)
+    private UnitOfMeasure unitOfMeasure;
+
+    @Column(name = "custo_unitario", precision = 10, scale = 2)
+    private BigDecimal costPerUnit;
+
+    @Column(name = "preco_venda", precision = 10, scale = 2)
+    private BigDecimal salePrice;
+
+    @Column(name = "quantidade_estoque")
+    private Integer stockQuantity;
+
+    @Column(name = "estoque_minimo")
+    private Integer minimumStock;
+
+    @Column(name = "marca", length = 100)
+    private String brand;
+
+    @Column(name = "veiculo_aplicavel", length = 255)
+    private String applicableVehicle;
+
+    @Column(name = "ativo")
+    private Boolean active;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+
+        this.createdAt = now;
+        this.updatedAt = now;
+
+        if (this.active == null) {
+            this.active = true;
+        }
+
+        if (this.applicableVehicle == null) {
+            this.applicableVehicle = "UNIVERSAL";
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+}
