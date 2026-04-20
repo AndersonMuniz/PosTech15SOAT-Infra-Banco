@@ -1,5 +1,6 @@
 package br.com.fiap.numberone.ordemservico.api.exceptions;
 
+import br.com.fiap.numberone.ordemservico.domain.exceptions.StatusOrdemServicoInvalidoException;
 import br.com.fiap.numberone.shared.api.exception.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

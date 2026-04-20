@@ -1,84 +1,57 @@
 package br.com.fiap.numberone.ordemservico.application.services;
 
-import br.com.fiap.numberone.cliente.domain.entities.Cliente;
-import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
-import br.com.fiap.numberone.cliente.infrastructure.repositories.ClienteRepository;
-import br.com.fiap.numberone.ordemservico.api.dtos.requests.CriarOrdemServicoRequest;
-import br.com.fiap.numberone.ordemservico.api.dtos.requests.DiagnosticoFinalRequest;
-import br.com.fiap.numberone.ordemservico.api.dtos.responses.OrdemServicoResponse;
-import br.com.fiap.numberone.ordemservico.application.mappers.OrdemServicoMapper;
+import br.com.fiap.numberone.ordemservico.application.gateways.ClienteGateway;
+import br.com.fiap.numberone.ordemservico.application.gateways.OrdemServicoGateway;
+import br.com.fiap.numberone.ordemservico.application.gateways.VeiculoGateway;
+import br.com.fiap.numberone.ordemservico.domain.entities.Diagnostico;
 import br.com.fiap.numberone.ordemservico.domain.entities.OrdemServico;
-import br.com.fiap.numberone.ordemservico.infrastructure.repositories.OrdemServicoRepository;
+import br.com.fiap.numberone.ordemservico.domain.valueobjects.Cliente;
+import br.com.fiap.numberone.ordemservico.domain.valueobjects.Veiculo;
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
-import br.com.fiap.numberone.veiculo.domain.entities.Veiculo;
-import br.com.fiap.numberone.veiculo.infrastructure.repositories.VeiculoRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
+import java.util.UUID;
 
-@Service
 public class OrdemServicoService {
 
-    private final OrdemServicoMapper ordemServicoMapper;
+    private final OrdemServicoGateway ordemServicoGateway;
+    private final ClienteGateway clienteGateway;
+    private final VeiculoGateway veiculoGateway;
 
-    private final OrdemServicoRepository ordemServicoRepository;
-    private final ClienteRepository clienteRepository;
-    private final VeiculoRepository veiculoRepository;
-
-    public OrdemServicoService(OrdemServicoMapper ordemServicoMapper, OrdemServicoRepository ordemServicoRepository, ClienteRepository clienteRepository, VeiculoRepository veiculoRepository) {
-        this.ordemServicoMapper = ordemServicoMapper;
-        this.ordemServicoRepository = ordemServicoRepository;
-        this.clienteRepository = clienteRepository;
-        this.veiculoRepository = veiculoRepository;
+    public OrdemServicoService(OrdemServicoGateway ordemServicoGateway, ClienteGateway clienteGateway, VeiculoGateway veiculoGateway) {
+        this.ordemServicoGateway = ordemServicoGateway;
+        this.clienteGateway = clienteGateway;
+        this.veiculoGateway = veiculoGateway;
     }
 
-    @Transactional(readOnly = true)
-    public List<OrdemServicoResponse> buscarOrdensServico() {
-        return ordemServicoRepository.findAll()
-                .stream()
-                .map((ordemServicoMapper::toResponse))
-                .toList();
+    public List<OrdemServico> buscarOrdensServico() {
+        return ordemServicoGateway.findAll();
     }
 
-    @Transactional(readOnly = true)
-    public OrdemServicoResponse buscarOrdemServico(Long id) {
-        return ordemServicoRepository.findById(id)
-                .map((ordemServicoMapper::toResponse))
-                .orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
+    public OrdemServico buscarOrdemServico(UUID id) {
+        return ordemServicoGateway.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
     }
 
-<<<<<<< HEAD
-    @Transactional
-    public OrdemServicoResponse criarOrdemServico(CriarOrdemServicoRequest criarOrdemServicoRequest) {
-        Cliente cliente = clienteRepository.findById(criarOrdemServicoRequest.idCliente())
-=======
-    public OrdemServicoResponse createOrdemServico(CreateOrdemServicoRequest createOrdemServicoRequest) {
-        ClienteEntity cliente = clienteRepository.findById(createOrdemServicoRequest.idCliente())
->>>>>>> e00dbb4a69bf7950652d44304205f31ab0f1bea5
+    public OrdemServico criarOrdemServico(OrdemServico ordemServico) {
+        Cliente clienteValidado = clienteGateway.findById(ordemServico.getCliente().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente nao encontrado"));
-        Veiculo veiculo = veiculoRepository.findById(criarOrdemServicoRequest.idVeiculo())
+        Veiculo veiculoValidado = veiculoGateway.findById(ordemServico.getVeiculo().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Veiculo nao encontrado"));
 
-        OrdemServico entity = ordemServicoMapper.toEntity(criarOrdemServicoRequest, cliente, veiculo);
+        ordemServico.vincularCliente(clienteValidado);
+        ordemServico.vincularVeiculo(veiculoValidado);
 
-        OrdemServico saved = ordemServicoRepository.save(entity);
-
-        //TODO: Verificar como notificar cliente
-
-        return ordemServicoMapper.toResponse(saved);
+        return ordemServicoGateway.save(ordemServico);
     }
 
-    @Transactional
-    public OrdemServicoResponse adicionarDiagnosticoFinal(Long id, DiagnosticoFinalRequest diagnosticoFinalRequest) {
-        OrdemServico entity = ordemServicoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ordem de serviço nao encontrada"));
+    public OrdemServico adicionarDiagnosticoFinal(UUID id, Diagnostico diagnostico) {
+        OrdemServico ordemServico = ordemServicoGateway.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ordem de Serviço não encontrada com id: " + id));
 
-        entity.aplicarDiagnosticoFinal(diagnosticoFinalRequest.descricaoDiagnosticoFinal(), diagnosticoFinalRequest.observacao());
+        ordemServico.aplicarDiagnosticoFinal(diagnostico.getDescricaoDiagnosticoFinal(), diagnostico.getObservacao());
 
-        OrdemServico saved = ordemServicoRepository.save(entity);
-
-        return ordemServicoMapper.toResponse(saved);
+        return ordemServicoGateway.save(ordemServico);
     }
 
 }

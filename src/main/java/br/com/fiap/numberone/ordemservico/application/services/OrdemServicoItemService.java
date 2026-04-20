@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.ordemservico.application.services;
 
-import br.com.fiap.numberone.ordemservico.application.mappers.OrdemServicoMapper;
-import br.com.fiap.numberone.ordemservico.infrastructure.repositories.OrdemServicoRepository;
+import br.com.fiap.numberone.ordemservico.api.mappers.OrdemServicoApiMapper;
+import br.com.fiap.numberone.ordemservico.infrastructure.persistence.repositories.OrdemServicoRepository;
 import org.springframework.stereotype.Service;
 
 
@@ -10,11 +10,11 @@ public class OrdemServicoItemService {
 
     private final OrdemServicoRepository ordemRepository;
 //    private final ServicoRepository servicoRepository;
-    private final OrdemServicoMapper mapper;
+    private final OrdemServicoApiMapper mapper;
 
     public OrdemServicoItemService(OrdemServicoRepository ordemRepository,
 //                                   ServicoRepository servicoRepository,
-                                   OrdemServicoMapper mapper) {
+                                   OrdemServicoApiMapper mapper) {
         this.ordemRepository = ordemRepository;
 //        this.servicoRepository = servicoRepository;
         this.mapper = mapper;

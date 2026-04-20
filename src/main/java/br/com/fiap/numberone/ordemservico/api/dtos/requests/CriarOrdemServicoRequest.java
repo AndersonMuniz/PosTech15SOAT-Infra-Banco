@@ -9,7 +9,7 @@ public record CriarOrdemServicoRequest(
         @NotBlank(message = "Descicao inicial é obrigatoria") String descricaoInicial,
         @NotBlank(message = "Descicao diagnostico é obrigatorio") String descricaoDiagnostico,
         String observacao,
-        @NotNull(message = "Cliente é obrigatorio") Long idCliente,
-        @NotNull(message = "Veiculo é obrigatorio") Long idVeiculo,
+        @NotNull(message = "Cliente é obrigatorio") Long ClienteId,
+        @NotNull(message = "Veiculo é obrigatorio") Long VeiculoId,
         @NotNull(message = "Data hora entrada é obrigatorio") LocalDateTime dataHoraEntrada
 ) { }

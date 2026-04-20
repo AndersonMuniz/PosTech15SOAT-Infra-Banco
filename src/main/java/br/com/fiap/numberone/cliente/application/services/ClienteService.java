@@ -12,6 +12,7 @@ import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ClienteService {
@@ -35,7 +36,7 @@ public class ClienteService {
         return clienteMapper.toResponse(clienteEntityMapper.toDomain(saved));
     }
 
-    public ClienteResponse update(Long id, ClienteRequest request) {
+    public ClienteResponse update(UUID id, ClienteRequest request) {
         DocumentoValidator.validar(request.tipoDocumento(), request.documento());
 
         Cliente clienteExistente = clienteRepository.findById(id)
@@ -48,7 +49,7 @@ public class ClienteService {
         return clienteMapper.toResponse(clienteEntityMapper.toDomain(saved));
     }
 
-    public ClienteResponse findById(Long id) {
+    public ClienteResponse findById(UUID id) {
         return clienteRepository.findById(id)
                 .map(clienteEntityMapper::toDomain)
                 .map(clienteMapper::toResponse)
@@ -63,7 +64,7 @@ public class ClienteService {
                 .toList();
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         ClienteEntity cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com id: " + id));
 

@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.ordemservico.api.exceptions;
+package br.com.fiap.numberone.ordemservico.domain.exceptions;
 
 public class StatusOrdemServicoInvalidoException extends RuntimeException {
     public StatusOrdemServicoInvalidoException(String message) {
