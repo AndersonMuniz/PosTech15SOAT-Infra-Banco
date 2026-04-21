@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.automotiveservice.application.gateways;
+package br.com.fiap.numberone.shared.application.gateways;
 
 public interface LoggerGateway {
     void info(String message, Object... args);
