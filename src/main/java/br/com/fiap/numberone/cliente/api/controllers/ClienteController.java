@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/clientes")
@@ -35,12 +36,12 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponse> update(@PathVariable Long id, @RequestBody @Valid ClienteRequest request) {
+    public ResponseEntity<ClienteResponse> update(@PathVariable UUID id, @RequestBody @Valid ClienteRequest request) {
         return ResponseEntity.ok(clienteService.update(id, request));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<ClienteResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(clienteService.findById(id));
     }
 
@@ -50,7 +51,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         clienteService.delete(id);
         return ResponseEntity.noContent().build();
     }
