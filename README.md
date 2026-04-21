@@ -157,7 +157,7 @@ Servicos:
 
 Esta base foi preparada para receber os modulos do time:
 
-- cliente e veiculo
+- client e vehicle
 - servico, item e estoque
 - ordem de servico e orcamento
 

@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
-import br.com.fiap.numberone.cliente.infrastructure.repositories.ClienteRepository;
+import br.com.fiap.numberone.client.infrastructure.repositories.ClientRepository;
 import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers.CustomerMapper;
@@ -12,10 +12,10 @@ import java.util.UUID;
 @Component
 public class CustomerGatewayImpl implements CustomerGateway {
 
-    private final ClienteRepository repository;
+    private final ClientRepository repository;
     private final CustomerMapper mapper;
 
-    public CustomerGatewayImpl(ClienteRepository customerRepository, CustomerMapper mapper) {
+    public CustomerGatewayImpl(ClientRepository customerRepository, CustomerMapper mapper) {
         this.repository = customerRepository;
         this.mapper = mapper;
     }

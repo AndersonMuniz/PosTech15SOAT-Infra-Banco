@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
-import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
 import java.time.LocalDateTime;

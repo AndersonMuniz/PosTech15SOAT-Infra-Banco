@@ -1,6 +1,0 @@
--- Add missing columns to cliente table
-ALTER TABLE cliente ADD COLUMN nome VARCHAR(90) NOT NULL;
-ALTER TABLE cliente ADD COLUMN documento VARCHAR(50) NOT NULL;
-ALTER TABLE cliente ADD COLUMN telefone VARCHAR(15) NOT NULL;
-ALTER TABLE cliente ADD COLUMN endereco VARCHAR(90) NOT NULL;
-ALTER TABLE cliente ADD COLUMN ativo BOOLEAN DEFAULT TRUE;

@@ -6,7 +6,6 @@ import br.com.fiap.numberone.inventory.api.mappers.InventoryItemApiMapper;
 import br.com.fiap.numberone.inventory.application.services.InventoryItemService;
 import br.com.fiap.numberone.inventory.domain.entities.InventoryItem;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

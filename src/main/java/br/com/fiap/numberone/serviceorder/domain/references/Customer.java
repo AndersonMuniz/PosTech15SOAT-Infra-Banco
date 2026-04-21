@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.domain.references;
 
-import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
