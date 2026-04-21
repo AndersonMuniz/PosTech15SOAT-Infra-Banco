@@ -1,6 +1,6 @@
-package br.com.fiap.numberone.inventory.api.dto.requests;
+package br.com.fiap.numberone.automotiveservice.api.dto.requests;
 
-import br.com.fiap.numberone.inventory.domain.enums.ServiceType;
+import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;

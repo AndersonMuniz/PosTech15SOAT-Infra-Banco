@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.inventory.domain.enums;
+package br.com.fiap.numberone.automotiveservice.domain.enums;
 
 public enum ServiceType {
     PREVENTIVO,

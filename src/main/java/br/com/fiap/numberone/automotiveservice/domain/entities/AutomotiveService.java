@@ -1,7 +1,7 @@
-package br.com.fiap.numberone.inventory.domain.entities;
+package br.com.fiap.numberone.automotiveservice.domain.entities;
 
-import br.com.fiap.numberone.inventory.domain.enums.ServiceType;
-import br.com.fiap.numberone.inventory.domain.exceptions.AutomotiveServiceBusinessException;
+import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
+import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutomotiveServiceBusinessException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

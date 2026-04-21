@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.inventory.api.dto.responses;
 
-import br.com.fiap.numberone.inventory.domain.enums.ServiceType;
+import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
