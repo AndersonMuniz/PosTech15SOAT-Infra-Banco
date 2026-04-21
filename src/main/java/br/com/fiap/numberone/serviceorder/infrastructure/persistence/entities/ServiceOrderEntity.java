@@ -1,8 +1,8 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
-import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
+import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
-import br.com.fiap.numberone.veiculo.domain.entities.VeiculoEntity;
+import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,12 +40,12 @@ public class ServiceOrderEntity {
     private String notes;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_cliente")
-    private ClienteEntity customer;
+    @JoinColumn(name = "id_client")
+    private ClientEntity customer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_veiculo")
-    private VeiculoEntity vehicleEntity;
+    @JoinColumn(name = "id_vehicle")
+    private VehicleEntity vehicleEntity;
 
     @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
