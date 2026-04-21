@@ -2,6 +2,7 @@ package br.com.fiap.numberone.client.application.mappers;
 
 import br.com.fiap.numberone.client.api.dtos.requests.ClientRequest;
 import br.com.fiap.numberone.client.api.dtos.responses.ClientResponse;
+import br.com.fiap.numberone.client.domain.entities.Client;
 import br.com.fiap.numberone.client.domain.entities.Cliente;
 import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ class ClientMapperTest {
         ClientRequest request = new ClientRequest("Ana", TipoDocumento.PESSOA_FISICA, "52998224725",
                 "11999999999", "Rua 1", null);
 
-        Cliente cliente = mapper.toEntity(request);
+        Client cliente = mapper.toEntity(request);
 
         assertEquals("Ana", cliente.getNome());
         assertEquals(TipoDocumento.PESSOA_FISICA, cliente.getTipoDocumento());
@@ -32,9 +33,9 @@ class ClientMapperTest {
         ClientRequest request = new ClientRequest("Empresa", TipoDocumento.PESSOA_JURIDICA, "11444777000161",
                 "1133333333", "Av 2", false);
 
-        Cliente cliente = mapper.toEntity(request);
+        Client client = mapper.toEntity(request);
 
-        assertFalse(cliente.getAtivo());
+        assertFalse(client.getAtivo());
     }
 
     @Test
@@ -43,7 +44,7 @@ class ClientMapperTest {
         LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
         LocalDateTime updatedAt = LocalDateTime.now();
 
-        Cliente cliente = Cliente.builder()
+        Client client = Client.builder()
                 .id(id)
                 .nome("Carlos")
                 .tipoDocumento(TipoDocumento.PESSOA_FISICA)
@@ -55,7 +56,7 @@ class ClientMapperTest {
                 .updatedAt(updatedAt)
                 .build();
 
-        ClientResponse response = mapper.toResponse(cliente);
+        ClientResponse response = mapper.toResponse(client);
 
         assertEquals(id, response.id());
         assertEquals("Carlos", response.nome());
