@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- Criação da tabela Cliente
 CREATE TABLE cliente (
      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -19,8 +21,8 @@ CREATE TABLE ordem_servico (
     descricao_diagnostico VARCHAR(255),
     descricao_diagnostico_final VARCHAR(255),
     observacao VARCHAR(255),
-    id_cliente BIGINT,
-    id_veiculo BIGINT,
+    id_cliente UUID,
+    id_veiculo UUID,
     status VARCHAR(50),
     data_hora_entrada TIMESTAMP WITHOUT TIME ZONE,
     data_hora_prevista TIMESTAMP WITHOUT TIME ZONE,
