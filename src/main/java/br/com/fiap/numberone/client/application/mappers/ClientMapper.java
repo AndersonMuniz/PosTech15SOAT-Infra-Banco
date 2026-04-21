@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientMapper {
 
+
     public Client toEntity(ClientRequest request) {
         return Client.builder()
                 .nome(request.nome())

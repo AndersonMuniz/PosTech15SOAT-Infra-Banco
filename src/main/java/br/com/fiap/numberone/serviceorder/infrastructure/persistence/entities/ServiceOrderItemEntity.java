@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
-import br.com.fiap.numberone.inventory.infrastructure.persistence.entities.AutomotiveServiceEntity;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.StatusOrderAutoservice;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
