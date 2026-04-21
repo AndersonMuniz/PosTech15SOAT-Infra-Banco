@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.automotiveservice.api.dto.responses;
+package br.com.fiap.numberone.inventory.api.dto.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

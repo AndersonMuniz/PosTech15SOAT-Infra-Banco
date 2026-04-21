@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.automotiveservice.api.controllers;
 
 import br.com.fiap.numberone.automotiveservice.api.dto.requests.AutomotiveServiceRequest;
-import br.com.fiap.numberone.inventory.api.dto.responses.AutomotiveServiceResponse;
+import br.com.fiap.numberone.automotiveservice.api.dto.responses.AutomotiveServiceResponse;
 import br.com.fiap.numberone.automotiveservice.api.mappers.AutomotiveServiceApiMapper;
 import br.com.fiap.numberone.automotiveservice.application.services.AutomotiveServiceService;
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;

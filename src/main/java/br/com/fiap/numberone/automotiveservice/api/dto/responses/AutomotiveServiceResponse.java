@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.inventory.api.dto.responses;
+package br.com.fiap.numberone.automotiveservice.api.dto.responses;
 
 import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
 import java.math.BigDecimal;
