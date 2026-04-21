@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.domain.entities;
 
-import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Customer;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Vehicle;
