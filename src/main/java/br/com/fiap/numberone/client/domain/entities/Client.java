@@ -1,6 +1,6 @@
-package br.com.fiap.numberone.cliente.domain.entities;
+package br.com.fiap.numberone.client.domain.entities;
 
-import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cliente {
+public class Client {
 
     private UUID id;
     private String nome;
@@ -25,15 +25,15 @@ public class Cliente {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Cliente updateFrom(Cliente novoCliente) {
-        return Cliente.builder()
+    public Client updateFrom(Client novoClient) {
+        return Client.builder()
                 .id(this.id)
-                .nome(novoCliente.nome)
-                .tipoDocumento(novoCliente.tipoDocumento)
-                .documento(novoCliente.documento)
-                .telefone(novoCliente.telefone)
-                .endereco(novoCliente.endereco)
-                .ativo(novoCliente.ativo)
+                .nome(novoClient.nome)
+                .tipoDocumento(novoClient.tipoDocumento)
+                .documento(novoClient.documento)
+                .telefone(novoClient.telefone)
+                .endereco(novoClient.endereco)
+                .ativo(novoClient.ativo)
                 .createdAt(this.createdAt)
                 .updatedAt(LocalDateTime.now())
                 .build();

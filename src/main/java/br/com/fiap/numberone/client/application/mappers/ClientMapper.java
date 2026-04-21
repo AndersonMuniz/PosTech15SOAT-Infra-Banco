@@ -2,14 +2,15 @@ package br.com.fiap.numberone.client.application.mappers;
 
 import br.com.fiap.numberone.client.api.dtos.requests.ClientRequest;
 import br.com.fiap.numberone.client.api.dtos.responses.ClientResponse;
-import br.com.fiap.numberone.client.domain.entities.Cliente;
+import br.com.fiap.numberone.client.domain.entities.Client;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ClientMapper {
 
-    public Cliente toEntity(ClientRequest request) {
-        return Cliente.builder()
+
+    public Client toEntity(ClientRequest request) {
+        return Client.builder()
                 .nome(request.nome())
                 .tipoDocumento(request.tipoDocumento())
                 .documento(request.documento())
@@ -19,17 +20,17 @@ public class ClientMapper {
                 .build();
     }
 
-    public ClientResponse toResponse(Cliente cliente) {
+    public ClientResponse toResponse(Client client) {
         return new ClientResponse(
-                cliente.getId(),
-                cliente.getNome(),
-                cliente.getTipoDocumento(),
-                cliente.getDocumento(),
-                cliente.getTelefone(),
-                cliente.getEndereco(),
-                cliente.getAtivo(),
-                cliente.getCreatedAt(),
-                cliente.getUpdatedAt()
+                client.getId(),
+                client.getNome(),
+                client.getTipoDocumento(),
+                client.getDocumento(),
+                client.getTelefone(),
+                client.getEndereco(),
+                client.getAtivo(),
+                client.getCreatedAt(),
+                client.getUpdatedAt()
         );
     }
 }

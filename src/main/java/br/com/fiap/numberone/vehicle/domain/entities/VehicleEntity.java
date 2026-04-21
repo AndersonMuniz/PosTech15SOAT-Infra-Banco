@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.veiculo.domain.entities;
+package br.com.fiap.numberone.vehicle.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "veiculo")
+@Table(name = "vehicle")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class VeiculoEntity {
+public class VehicleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class VeiculoEntity {
     @Transient
     private Integer ano;
     @Transient
-    private String idCliente;
+    private String idClient;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

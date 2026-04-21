@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.shared.api.exception;
 
-import br.com.fiap.numberone.cliente.domain.exceptions.DocumentoException;
+import br.com.fiap.numberone.client.domain.exceptions.DocumentoException;
 import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutoServiceNotFoundException;
 import br.com.fiap.numberone.shared.security.domain.exceptions.InvalidCredentialsException;
 import com.fasterxml.jackson.annotation.JsonProperty;

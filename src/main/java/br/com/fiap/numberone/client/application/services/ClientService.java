@@ -3,11 +3,11 @@ package br.com.fiap.numberone.client.application.services;
 import br.com.fiap.numberone.client.api.dtos.requests.ClientRequest;
 import br.com.fiap.numberone.client.api.dtos.responses.ClientResponse;
 import br.com.fiap.numberone.client.application.mappers.ClientMapper;
-import br.com.fiap.numberone.client.domain.entities.Cliente;
+import br.com.fiap.numberone.client.domain.entities.Client;
 import br.com.fiap.numberone.client.domain.validators.DocumentoValidator;
-import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClienteEntity;
-import br.com.fiap.numberone.client.infrastructure.persistence.mappers.ClienteEntityMapper;
-import br.com.fiap.numberone.client.infrastructure.repositories.ClienteRepository;
+import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
+import br.com.fiap.numberone.client.infrastructure.persistence.mappers.ClientEntityMapper;
+import br.com.fiap.numberone.client.infrastructure.repositories.ClientRepository;
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,57 +17,57 @@ import java.util.UUID;
 @Service
 public class ClientService {
 
-    private final ClienteRepository clienteRepository;
+    private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
-    private final ClienteEntityMapper clienteEntityMapper;
+    private final ClientEntityMapper clientEntityMapper;
 
-    public ClientService(ClienteRepository clienteRepository, ClientMapper clientMapper, ClienteEntityMapper clienteEntityMapper) {
-        this.clienteRepository = clienteRepository;
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper, ClientEntityMapper clientEntityMapper) {
+        this.clientRepository = clientRepository;
         this.clientMapper = clientMapper;
-        this.clienteEntityMapper = clienteEntityMapper;
+        this.clientEntityMapper = clientEntityMapper;
     }
 
     public ClientResponse create(ClientRequest request) {
         DocumentoValidator.validar(request.tipoDocumento(), request.documento());
 
-        Cliente cliente = clientMapper.toEntity(request);
-        ClienteEntity saved = clienteRepository.save(clienteEntityMapper.toEntity(cliente));
+        Client client = clientMapper.toEntity(request);
+        ClientEntity saved = clientRepository.save(clientEntityMapper.toEntity(client));
 
-        return clientMapper.toResponse(clienteEntityMapper.toDomain(saved));
+        return clientMapper.toResponse(clientEntityMapper.toDomain(saved));
     }
 
     public ClientResponse update(UUID id, ClientRequest request) {
         DocumentoValidator.validar(request.tipoDocumento(), request.documento());
 
-        Cliente clienteExistente = clienteRepository.findById(id)
-                .map(clienteEntityMapper::toDomain)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com id: " + id));
+        Client clientExistente = clientRepository.findById(id)
+                .map(clientEntityMapper::toDomain)
+                .orElseThrow(() -> new ResourceNotFoundException("Client não encontrado com id: " + id));
 
-        Cliente clienteAtualizado = clienteExistente.updateFrom(clientMapper.toEntity(request));
-        ClienteEntity saved = clienteRepository.save(clienteEntityMapper.toEntity(clienteAtualizado));
+        Client clientAtualizado = clientExistente.updateFrom(clientMapper.toEntity(request));
+        ClientEntity saved = clientRepository.save(clientEntityMapper.toEntity(clientAtualizado));
 
-        return clientMapper.toResponse(clienteEntityMapper.toDomain(saved));
+        return clientMapper.toResponse(clientEntityMapper.toDomain(saved));
     }
 
     public ClientResponse findById(UUID id) {
-        return clienteRepository.findById(id)
-                .map(clienteEntityMapper::toDomain)
+        return clientRepository.findById(id)
+                .map(clientEntityMapper::toDomain)
                 .map(clientMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Client não encontrado com id: " + id));
     }
 
     public List<ClientResponse> findAll() {
-        return clienteRepository.findAll()
+        return clientRepository.findAll()
                 .stream()
-                .map(clienteEntityMapper::toDomain)
+                .map(clientEntityMapper::toDomain)
                 .map(clientMapper::toResponse)
                 .toList();
     }
 
     public void delete(UUID id) {
-        ClienteEntity cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com id: " + id));
+        ClientEntity client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client não encontrado com id: " + id));
 
-        clienteRepository.delete(cliente);
+        clientRepository.delete(client);
     }
 }

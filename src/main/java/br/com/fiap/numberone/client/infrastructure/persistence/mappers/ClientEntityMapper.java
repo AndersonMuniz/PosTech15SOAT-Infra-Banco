@@ -1,14 +1,14 @@
-package br.com.fiap.numberone.cliente.infrastructure.persistence.mappers;
+package br.com.fiap.numberone.client.infrastructure.persistence.mappers;
 
-import br.com.fiap.numberone.cliente.domain.entities.Cliente;
-import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
+import br.com.fiap.numberone.client.domain.entities.Client;
+import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ClienteEntityMapper {
+public class ClientEntityMapper {
 
-    public ClienteEntity toEntity(Cliente domain) {
-        return ClienteEntity.builder()
+    public ClientEntity toEntity(Client domain) {
+        return ClientEntity.builder()
                 .id(domain.getId())
                 .nome(domain.getNome())
                 .tipoDocumento(domain.getTipoDocumento())
@@ -21,8 +21,8 @@ public class ClienteEntityMapper {
                 .build();
     }
 
-    public Cliente toDomain(ClienteEntity entity) {
-        return Cliente.builder()
+    public Client toDomain(ClientEntity entity) {
+        return Client.builder()
                 .id(entity.getId())
                 .nome(entity.getNome())
                 .tipoDocumento(entity.getTipoDocumento())

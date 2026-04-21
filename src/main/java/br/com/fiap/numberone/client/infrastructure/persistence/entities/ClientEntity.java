@@ -1,6 +1,6 @@
-package br.com.fiap.numberone.cliente.infrastructure.persistence.entities;
+package br.com.fiap.numberone.client.infrastructure.persistence.entities;
 
-import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,8 +15,8 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cliente")
-public class ClienteEntity {
+@Table(name = "client")
+public class ClientEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
