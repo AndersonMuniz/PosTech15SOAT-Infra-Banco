@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
-import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.veiculo.domain.entities.VeiculoEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -45,6 +47,10 @@ public class ServiceOrderEntity {
     @JoinColumn(name = "id_veiculo")
     private VeiculoEntity vehicleEntity;
 
+    @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ServiceOrderItemEntity> items = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ServiceOrderStatus status = ServiceOrderStatus.RECEIVED;
@@ -66,14 +72,14 @@ public class ServiceOrderEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        if (this.status == null) {
+        createdAt = LocalDateTime.now();
+        if (status == null) {
             status = ServiceOrderStatus.RECEIVED;
         }
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 }

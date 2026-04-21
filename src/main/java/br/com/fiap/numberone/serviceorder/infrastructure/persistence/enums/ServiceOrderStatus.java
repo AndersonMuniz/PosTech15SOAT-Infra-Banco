@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.serviceorder.domain.enums;
+package br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums;
 
 public enum ServiceOrderStatus {
 

@@ -1,27 +1,69 @@
-//package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
-//
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.EntityListeners;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
-//import jakarta.persistence.Id;
-//import lombok.AllArgsConstructor;
-//import lombok.Builder;
-//import lombok.Getter;
-//import lombok.NoArgsConstructor;
-//import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-//
-//import java.util.UUID;
-//
-//@Entity
-//@EntityListeners(AuditingEntityListener.class)
-//@Getter
-//@Builder
-//@NoArgsConstructor
-//@AllArgsConstructor
-//public class ServiceOrderItemEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private UUID id;
-//}
+package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
+
+import br.com.fiap.numberone.inventory.infrastructure.persistence.entities.AutomotiveServiceEntity;
+import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.StatusOrderAutoservice;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "ordem_servico_servico")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ServiceOrderItemEntity {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_ordem_servico", nullable = false)
+    private ServiceOrderEntity serviceOrder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_servico")
+    private AutomotiveServiceEntity automotiveService;
+
+    @Column(name = "valor")
+    private BigDecimal value;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusOrderAutoservice status;
+
+    @Column(name = "opcional")
+    private Boolean optional;
+
+    @Column(name = "data_hora_inicio")
+    private LocalDateTime startDateTime;
+
+    @Column(name = "data_hora_fim")
+    private LocalDateTime endDateTime;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+        if (status == null) {
+            status = StatusOrderAutoservice.PENDING;
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
