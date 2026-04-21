@@ -10,6 +10,7 @@ public record ClienteResponse(
         String nome,
         TipoDocumento tipoDocumento,
         String documento,
+        String email,
         String telefone,
         String endereco,
         Boolean ativo,

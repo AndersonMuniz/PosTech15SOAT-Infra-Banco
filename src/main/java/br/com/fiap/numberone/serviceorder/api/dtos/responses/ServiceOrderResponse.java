@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
 import br.com.fiap.numberone.cliente.domain.enums.TipoDocumento;
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,6 +26,7 @@ public record ServiceOrderResponse(
             String name,
             TipoDocumento documentType,
             String document,
+            String email,
             String phone,
             String address,
             Boolean active

@@ -32,6 +32,9 @@ public class ClienteEntity {
     @Column(nullable = false, length = 50)
     private String documento;
 
+    @Column(nullable = false, length = 120)
+    private String email;
+
     @Column(nullable = false, length = 15)
     private String telefone;
 

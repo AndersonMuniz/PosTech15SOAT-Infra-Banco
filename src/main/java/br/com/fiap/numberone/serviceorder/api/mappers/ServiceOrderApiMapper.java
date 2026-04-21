@@ -3,10 +3,10 @@ package br.com.fiap.numberone.serviceorder.api.mappers;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.FinalDiagnosisRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderResponse;
-import br.com.fiap.numberone.serviceorder.domain.entities.Diagnosis;
+import br.com.fiap.numberone.serviceorder.domain.valueobjects.Diagnosis;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Customer;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Vehicle;
+import br.com.fiap.numberone.serviceorder.domain.references.Customer;
+import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

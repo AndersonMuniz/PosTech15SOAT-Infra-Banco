@@ -3,9 +3,7 @@ package br.com.fiap.numberone.serviceorder.api.controllers;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.FinalDiagnosisRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderResponse;
-import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderAutoserviceApiMapper;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderApiMapper;
-import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderAutoService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderService;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import jakarta.validation.Valid;
@@ -22,21 +20,14 @@ import java.util.UUID;
 public class ServiceOrderController {
 
     private final ServiceOrderApiMapper orderApiMapper;
-    private final ServiceOrderAutoserviceApiMapper serviceOrderAutoserviceApiMapper;
-
     private final ServiceOrderService serviceOrderService;
-//    private final ServiceOrderAutoService serviceOrderAutoService;
 
     public ServiceOrderController(
             ServiceOrderApiMapper orderApiMapper,
-            ServiceOrderAutoserviceApiMapper serviceOrderAutoserviceApiMapper,
             ServiceOrderService serviceOrderService
-//            ServiceOrderAutoService serviceOrderAutoService
     ) {
         this.orderApiMapper = orderApiMapper;
-        this.serviceOrderAutoserviceApiMapper = serviceOrderAutoserviceApiMapper;
         this.serviceOrderService = serviceOrderService;
-//        this.serviceOrderAutoService = serviceOrderAutoService;
     }
 
     @GetMapping("/{id}")
@@ -65,7 +56,7 @@ public class ServiceOrderController {
         return ResponseEntity.created(location).body(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/start-diagnosis")
     public ResponseEntity<ServiceOrderResponse> addFinalDiagnosis(
             @PathVariable UUID id,
             @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
@@ -74,12 +65,57 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-//    @PostMapping("/{id}/services")
-//    public ResponseEntity<ServiceOrderResponse> addService(
-//            @PathVariable UUID id,
-//            @Valid @RequestBody CreateOrderAutoserviceRequest createOrderAutoserviceRequest
-//    ) {
-//        ServiceOrderAutoservice serviceOrder = serviceOrderAutoService.createServiceOrderService(id, orderAutoserviceApiMapper.toDomain(createOrderAutoserviceRequest));
-//        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
-//    }
+    @PostMapping("/{id}/request-approval")
+    public ResponseEntity<ServiceOrderResponse> requestApprovalServiceOrder(@PathVariable UUID id) {
+        ServiceOrder serviceOrder = serviceOrderService.requestApproval(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @GetMapping("/{id}/approval/approve")
+    public ResponseEntity<String> approveServiceOrderByEmailLink(@PathVariable UUID id) {
+        serviceOrderService.approve(id);
+        return ResponseEntity.ok("Service order approved successfully.");
+    }
+
+    @GetMapping("/{id}/approval/reject")
+    public ResponseEntity<String> rejectServiceOrderByEmailLink(@PathVariable UUID id) {
+        serviceOrderService.reject(id);
+        return ResponseEntity.ok("Service order rejected successfully.");
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<ServiceOrderResponse> cancelServieOrder(
+            @PathVariable UUID id,
+            @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, orderApiMapper.toDomain(finalDiagnosisRequest));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/start")
+    public ResponseEntity<ServiceOrderResponse> startServieOrder(
+            @PathVariable UUID id,
+            @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, orderApiMapper.toDomain(finalDiagnosisRequest));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<ServiceOrderResponse> completeServieOrder(
+            @PathVariable UUID id,
+            @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, orderApiMapper.toDomain(finalDiagnosisRequest));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/deliver")
+    public ResponseEntity<ServiceOrderResponse> deliverServieOrder(
+            @PathVariable UUID id,
+            @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.addFinalDiagnosis(id, orderApiMapper.toDomain(finalDiagnosisRequest));
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
 }

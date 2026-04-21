@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.cliente.infrastructure.persistence.entities.ClienteEntity;
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.veiculo.domain.entities.VeiculoEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

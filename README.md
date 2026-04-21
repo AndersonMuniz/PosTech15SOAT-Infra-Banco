@@ -56,6 +56,21 @@ Ou sobrescreva por variavel de ambiente:
 
 Por padrao, o profile `dev` sera usado.
 
+### 3. Mailpit para emails locais
+
+Suba o Mailpit com:
+
+```bash
+docker compose up -d mailpit
+```
+
+Com a configuracao atual da aplicacao, ele ficara disponivel em:
+
+- SMTP: `localhost:1025`
+- inbox web: `http://localhost:8025`
+
+Assim, os emails enviados pela aplicacao ficarao visiveis na interface web do Mailpit.
+
 ## Usuario admin local
 
 Ao subir a aplicacao pela primeira vez, um usuario admin e criado automaticamente se a tabela `admin_users` estiver vazia.
@@ -135,6 +150,8 @@ Servicos:
 
 - app: `http://localhost:8080`
 - postgres: `localhost:5432`
+- mailpit smtp: `localhost:1025`
+- mailpit web: `http://localhost:8025`
 
 ## Proximos passos do dominio
 

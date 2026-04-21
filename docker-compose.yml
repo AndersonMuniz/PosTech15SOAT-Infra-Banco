@@ -11,6 +11,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: numberone-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 #  app:
 #    build:
 #      context: .
@@ -26,6 +33,10 @@ services:
 #      BOOTSTRAP_ADMIN_USERNAME: admin
 #      BOOTSTRAP_ADMIN_PASSWORD: admin123456
 #      BOOTSTRAP_ADMIN_ROLE: ADMIN
+#      MAIL_HOST: mailpit
+#      MAIL_PORT: 1025
+#      APP_MAIL_FROM: no-reply@numberone.local
+#      SERVICE_ORDER_APPROVAL_BASE_URL: http://localhost:8080
 #    ports:
 #      - "8080:8080"
 

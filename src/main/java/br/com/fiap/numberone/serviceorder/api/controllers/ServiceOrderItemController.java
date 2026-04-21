@@ -1,0 +1,41 @@
+package br.com.fiap.numberone.serviceorder.api.controllers;
+
+import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderItemRequest;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderItemResponse;
+import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderItemApiMapper;
+import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderItemService;
+import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+
+@RestController
+@RequestMapping("/api/service-orders/{id}")
+public class ServiceOrderItemController {
+
+    private final ServiceOrderItemApiMapper serviceOrderItemApiMapper;
+
+    private final ServiceOrderItemService serviceOrderItemService;
+
+    public ServiceOrderItemController(
+            ServiceOrderItemApiMapper serviceOrderItemApiMapper,
+            ServiceOrderItemService serviceOrderItemService
+    ) {
+        this.serviceOrderItemApiMapper = serviceOrderItemApiMapper;
+        this.serviceOrderItemService = serviceOrderItemService;
+    }
+
+
+    @PostMapping("/services")
+    public ResponseEntity<ServiceOrderItemResponse> addServiceItem(
+            @PathVariable UUID id,
+            @Valid @RequestBody CreateServiceOrderItemRequest createOrderAutoserviceRequest
+    ) {
+        ServiceOrderItem serviceOrderItem = serviceOrderItemService.createServiceOrderService(id, serviceOrderItemApiMapper.toDomain(createOrderAutoserviceRequest));
+        return ResponseEntity.ok(serviceOrderItemApiMapper.toResponse(serviceOrderItem));
+    }
+
+}

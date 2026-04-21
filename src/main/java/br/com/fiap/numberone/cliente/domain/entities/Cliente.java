@@ -19,6 +19,7 @@ public class Cliente {
     private String nome;
     private TipoDocumento tipoDocumento;
     private String documento;
+    private String email;
     private String telefone;
     private String endereco;
     private Boolean ativo;
@@ -31,6 +32,7 @@ public class Cliente {
                 .nome(novoCliente.nome)
                 .tipoDocumento(novoCliente.tipoDocumento)
                 .documento(novoCliente.documento)
+                .email(novoCliente.email)
                 .telefone(novoCliente.telefone)
                 .endereco(novoCliente.endereco)
                 .ativo(novoCliente.ativo)
