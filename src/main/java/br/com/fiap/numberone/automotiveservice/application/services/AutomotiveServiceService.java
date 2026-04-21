@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.automotiveservice.application.services;
 
-import br.com.fiap.numberone.inventory.application.gateways.LoggerGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.LoggerGateway;
 import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
 import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutoServiceNotFoundException;

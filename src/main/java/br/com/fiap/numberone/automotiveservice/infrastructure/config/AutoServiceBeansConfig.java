@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.automotiveservice.infrastructure.config;
 
 import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
-import br.com.fiap.numberone.inventory.application.gateways.LoggerGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.LoggerGateway;
 import br.com.fiap.numberone.automotiveservice.application.services.AutomotiveServiceService;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.gateways.AutoServiceGatewayImpl;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
