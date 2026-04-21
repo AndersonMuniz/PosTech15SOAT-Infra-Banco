@@ -1,6 +1,6 @@
-package br.com.fiap.numberone.inventory.infrastructure.persistence.entities;
+package br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities;
 
-import br.com.fiap.numberone.inventory.domain.enums.ServiceType;
+import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

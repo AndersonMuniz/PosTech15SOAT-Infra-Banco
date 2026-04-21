@@ -1,9 +1,9 @@
-package br.com.fiap.numberone.inventory.application.services;
+package br.com.fiap.numberone.automotiveservice.application.services;
 
 import br.com.fiap.numberone.inventory.application.gateways.LoggerGateway;
-import br.com.fiap.numberone.inventory.application.gateways.AutoServiceGateway;
-import br.com.fiap.numberone.inventory.domain.entities.AutomotiveService;
-import br.com.fiap.numberone.inventory.domain.exceptions.AutoServiceNotFoundException;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
+import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutoServiceNotFoundException;
 
 import java.util.List;
 import java.util.UUID;

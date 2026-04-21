@@ -1,12 +1,11 @@
 package br.com.fiap.numberone.inventory.api.controllers;
 
 import br.com.fiap.numberone.inventory.api.dto.requests.InventoryItemRequest;
-import br.com.fiap.numberone.inventory.api.dto.responses.InventoryItemResponse;
+import br.com.fiap.numberone.automotiveservice.api.dto.responses.InventoryItemResponse;
 import br.com.fiap.numberone.inventory.api.mappers.InventoryItemApiMapper;
 import br.com.fiap.numberone.inventory.application.services.InventoryItemService;
 import br.com.fiap.numberone.inventory.domain.entities.InventoryItem;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

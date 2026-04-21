@@ -1,10 +1,10 @@
-package br.com.fiap.numberone.inventory.infrastructure.persistence.gateways;
+package br.com.fiap.numberone.automotiveservice.infrastructure.persistence.gateways;
 
-import br.com.fiap.numberone.inventory.application.gateways.AutoServiceGateway;
-import br.com.fiap.numberone.inventory.domain.entities.AutomotiveService;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.entities.AutomotiveServiceEntity;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.repositories.AutoServiceRepository;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.repositories.AutoServiceRepository;
 
 import java.util.List;
 import java.util.Optional;

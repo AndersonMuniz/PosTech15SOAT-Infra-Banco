@@ -1,6 +1,6 @@
-package br.com.fiap.numberone.inventory.application.gateways;
+package br.com.fiap.numberone.automotiveservice.application.gateways;
 
-import br.com.fiap.numberone.inventory.domain.entities.AutomotiveService;
+import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
 
 import java.util.List;
 import java.util.Optional;

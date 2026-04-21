@@ -1,11 +1,11 @@
-package br.com.fiap.numberone.inventory.infrastructure.config;
+package br.com.fiap.numberone.automotiveservice.infrastructure.config;
 
-import br.com.fiap.numberone.inventory.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
 import br.com.fiap.numberone.inventory.application.gateways.LoggerGateway;
-import br.com.fiap.numberone.inventory.application.services.AutomotiveServiceService;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.gateways.AutoServiceGatewayImpl;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
-import br.com.fiap.numberone.inventory.infrastructure.persistence.repositories.AutoServiceRepository;
+import br.com.fiap.numberone.automotiveservice.application.services.AutomotiveServiceService;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.gateways.AutoServiceGatewayImpl;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
+import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.repositories.AutoServiceRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

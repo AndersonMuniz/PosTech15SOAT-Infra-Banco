@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.inventory.domain.exceptions;
+package br.com.fiap.numberone.automotiveservice.domain.exceptions;
 
 public class AutomotiveServiceBusinessException extends RuntimeException {
     private static final long serialVersionUID = 1L;

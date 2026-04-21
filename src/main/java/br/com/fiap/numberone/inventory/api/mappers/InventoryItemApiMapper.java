@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.inventory.api.mappers;
 
 import br.com.fiap.numberone.inventory.api.dto.requests.InventoryItemRequest;
-import br.com.fiap.numberone.inventory.api.dto.responses.InventoryItemResponse;
+import br.com.fiap.numberone.automotiveservice.api.dto.responses.InventoryItemResponse;
 import br.com.fiap.numberone.inventory.domain.entities.InventoryItem;
 import org.mapstruct.Mapper;
 
