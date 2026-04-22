@@ -16,6 +16,7 @@ public record ServiceOrderResponse(
         CustomerResponse customer,
         VehicleResponse vehicle,
         List<ServiceOrderItemResponse> serviceItems,
+        List<ServiceOrderBudgetResponse> budgets,
         ServiceOrderStatus status,
         LocalDateTime entryDateTime,
         LocalDateTime expectedDateTime,

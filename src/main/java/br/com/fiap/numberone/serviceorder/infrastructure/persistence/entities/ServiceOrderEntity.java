@@ -51,6 +51,10 @@ public class ServiceOrderEntity {
     @Builder.Default
     private List<ServiceOrderItemEntity> items = new ArrayList<>();
 
+    @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ServiceOrderBudgetEntity> budgets = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ServiceOrderStatus status = ServiceOrderStatus.RECEIVED;

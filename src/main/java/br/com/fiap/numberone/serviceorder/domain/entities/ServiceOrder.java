@@ -30,6 +30,7 @@ public class ServiceOrder {
     private Customer customer;
     private Vehicle vehicle;
     private List<ServiceOrderItem> serviceItems = new ArrayList<>();
+    private List<ServiceOrderBudget> budgets = new ArrayList<>();
     private ServiceOrderStatus status;
     private LocalDateTime entryDateTime;
     private LocalDateTime expectedDateTime;

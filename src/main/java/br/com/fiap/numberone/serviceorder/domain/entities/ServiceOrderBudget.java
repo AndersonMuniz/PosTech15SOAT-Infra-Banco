@@ -33,4 +33,29 @@ public class ServiceOrderBudget {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public void attachServiceOrder(ServiceOrder serviceOrder) {
+        if (ServiceOrderStatus.IN_DIAGNOSIS != serviceOrder.getStatus()) {
+            throw new InvalidServiceOrderStatusException("Service order status does not allow creating new budget: " + serviceOrder.getStatus());
+        }
+        this.serviceOrder = serviceOrder;
+    }
+
+    public void defineQuotedAmount(BigDecimal quotedAmount) {
+        this.quotedAmount = quotedAmount;
+    }
+
+    public void markAsSent() {
+        this.status = ServiceOrderBudgetStatus.SENT;
+        this.sentAt = LocalDateTime.now();
+    }
+
+    public void approve() {
+        this.status = ServiceOrderBudgetStatus.APPROVED;
+        this.approvedAmount = this.quotedAmount;
+        this.approvedAt = LocalDateTime.now();
+    }
+
+    public void reject() {
+        this.status = ServiceOrderBudgetStatus.REJECTED;
+    }
 }

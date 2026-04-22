@@ -10,7 +10,5 @@ public record CreateServiceOrderBudgetRequest(
         @NotNull(message = "serviceOrderId is required")
         UUID serviceOrderId,
         @Positive(message = "quotedAmount must be positive")
-        BigDecimal quotedAmount,
-        @Positive(message = "aprovedAmount must be positive")
-        BigDecimal approvedAmount
+        BigDecimal quotedAmount
 ) { }

@@ -73,24 +73,6 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderValue));
     }
 
-    @PostMapping("/{id}/request-approval")
-    public ResponseEntity<ServiceOrderResponse> requestApprovalServiceOrder(@PathVariable UUID id) {
-        ServiceOrder serviceOrder = serviceOrderService.requestApproval(id);
-        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
-    }
-
-    @GetMapping("/{id}/approval/approve")
-    public ResponseEntity<String> approveServiceOrderByEmailLink(@PathVariable UUID id) {
-        serviceOrderService.approve(id);
-        return ResponseEntity.ok("Service order approved successfully.");
-    }
-
-    @GetMapping("/{id}/approval/reject")
-    public ResponseEntity<String> rejectServiceOrderByEmailLink(@PathVariable UUID id) {
-        serviceOrderService.reject(id);
-        return ResponseEntity.ok("Service order rejected successfully.");
-    }
-
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<ServiceOrderResponse> cancelServieOrder(
             @PathVariable UUID id

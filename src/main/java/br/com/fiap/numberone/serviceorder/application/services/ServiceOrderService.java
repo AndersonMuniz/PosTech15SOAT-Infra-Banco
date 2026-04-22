@@ -2,7 +2,6 @@ package br.com.fiap.numberone.serviceorder.application.services;
 
 import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
-import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderApprovalNotificationGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.VehicleGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
@@ -21,18 +20,15 @@ import java.util.UUID;
 public class ServiceOrderService {
 
     private final ServiceOrderGateway serviceOrderGateway;
-    private final ServiceOrderApprovalNotificationGateway serviceOrderApprovalNotificationGateway;
     private final CustomerGateway customerGateway;
     private final VehicleGateway vehicleGateway;
 
     public ServiceOrderService(
             ServiceOrderGateway serviceOrderGateway,
-            ServiceOrderApprovalNotificationGateway serviceOrderApprovalNotificationGateway,
             CustomerGateway customerGateway,
             VehicleGateway vehicleGateway
     ) {
         this.serviceOrderGateway = serviceOrderGateway;
-        this.serviceOrderApprovalNotificationGateway = serviceOrderApprovalNotificationGateway;
         this.customerGateway = customerGateway;
         this.vehicleGateway = vehicleGateway;
     }
@@ -68,22 +64,6 @@ public class ServiceOrderService {
         return serviceOrderGateway.save(serviceOrder);
     }
 
-    public ServiceOrder requestApproval(UUID id) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
-
-        serviceOrder.updateStatus(ServiceOrderStatus.WAITING_APPROVAL);
-
-        ServiceOrder savedServiceOrder = serviceOrderGateway.save(serviceOrder);
-        String recipientEmail = savedServiceOrder.getCustomer() != null ? savedServiceOrder.getCustomer().getEmail() : null;
-        if (recipientEmail == null || recipientEmail.isBlank()) {
-            throw new IllegalArgumentException("Customer email is required to request approval");
-        }
-        serviceOrderApprovalNotificationGateway.sendApprovalRequest(savedServiceOrder, recipientEmail);
-
-        return savedServiceOrder;
-    }
-
     public ServiceOrderValue calculateServices(UUID id) {
         ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
@@ -100,21 +80,4 @@ public class ServiceOrderService {
                 .build();
     }
 
-    public void approve(UUID id) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
-
-        serviceOrder.updateStatus(ServiceOrderStatus.APPROVED);
-
-        serviceOrderGateway.save(serviceOrder);
-    }
-
-    public void reject(UUID id) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
-
-        serviceOrder.updateStatus(ServiceOrderStatus.REJECTED);
-
-        serviceOrderGateway.save(serviceOrder);
-    }
 }
