@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.automotiveservice.infrastructure.persistence.gateways;
 
-import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutomotiveServiceGateway;
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class AutoServiceGatewayImpl implements AutoServiceGateway {
+public class AutoServiceGatewayImpl implements AutomotiveServiceGateway {
 
     private final AutoServiceRepository repository;
     private final AutomotiveServicePersistenceMapper mapper;

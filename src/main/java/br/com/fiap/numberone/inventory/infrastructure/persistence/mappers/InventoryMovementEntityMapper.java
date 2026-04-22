@@ -7,7 +7,24 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface InventoryMovementEntityMapper {
 
-    InventoryMovement toDomain(InventoryMovementEntity entity);
-
     InventoryMovementEntity toEntity(InventoryMovement domain);
+
+    default InventoryMovement toDomain(InventoryMovementEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+
+        return InventoryMovement.restore(
+                entity.getId(),
+                entity.getInventoryItemId(),
+                entity.getMovementType(),
+                entity.getMovementOrigin(),
+                entity.getOriginReferenceId(),
+                entity.getQuantityBefore(),
+                entity.getQuantityAfter(),
+                entity.getObservation(),
+                entity.getResponsibleUserId(),
+                entity.getCreatedAt()
+        );
+    }
 }

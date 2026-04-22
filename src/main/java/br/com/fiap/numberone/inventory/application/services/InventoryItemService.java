@@ -35,8 +35,8 @@ public class InventoryItemService {
                 newData.getUnitOfMeasure(),
                 newData.getCostPerUnit(),
                 newData.getSalePrice(),
-                newData.getStockQuantity(),
-                newData.getMinimumStock(),
+                newData.getInventoryQuantity(),
+                newData.getMinimumInventoryQuantity(),
                 newData.getBrand(),
                 newData.getApplicableVehicle()
         );

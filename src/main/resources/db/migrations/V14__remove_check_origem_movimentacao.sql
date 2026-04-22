@@ -1,0 +1,2 @@
+ALTER TABLE movimentacao_estoque
+DROP CONSTRAINT IF EXISTS chk_movimentacao_estoque_origem_movimentacao;

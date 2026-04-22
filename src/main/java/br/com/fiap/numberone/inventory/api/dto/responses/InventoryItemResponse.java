@@ -39,10 +39,10 @@ public class InventoryItemResponse {
     private BigDecimal salePrice;
 
     @JsonProperty("quantidadeEstoque")
-    private Integer stockQuantity;
+    private Integer inventoryQuantity;
 
     @JsonProperty("estoqueMinimo")
-    private Integer minimumStock;
+    private Integer minimumInventoryQuantity;
 
     @JsonProperty("marca")
     private String brand;
