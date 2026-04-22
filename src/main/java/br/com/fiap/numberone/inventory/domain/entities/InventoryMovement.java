@@ -1,16 +1,22 @@
 package br.com.fiap.numberone.inventory.domain.entities;
 
+import br.com.fiap.numberone.inventory.domain.enums.InventoryMovementOrigin;
 import br.com.fiap.numberone.inventory.domain.enums.InventoryMovementType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class InventoryMovement {
+
     private UUID id;
     private UUID inventoryItemId;
-    private InventoryMovementType type;
-    private int quantity;
-    private String reason;
+    private InventoryMovementType movementType;
+    private InventoryMovementOrigin movementOrigin;
+    private UUID originReferenceId;
+    private int quantityBefore;
+    private int quantityAfter;
+    private String observation;
+    private UUID responsibleUserId;
     private LocalDateTime createdAt;
 
     public UUID getId() {
@@ -29,28 +35,60 @@ public class InventoryMovement {
         this.inventoryItemId = inventoryItemId;
     }
 
-    public InventoryMovementType getType() {
-        return type;
+    public InventoryMovementType getMovementType() {
+        return movementType;
     }
 
-    public void setType(InventoryMovementType type) {
-        this.type = type;
+    public void setMovementType(InventoryMovementType movementType) {
+        this.movementType = movementType;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public InventoryMovementOrigin getMovementOrigin() {
+        return movementOrigin;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setMovementOrigin(InventoryMovementOrigin movementOrigin) {
+        this.movementOrigin = movementOrigin;
     }
 
-    public String getReason() {
-        return reason;
+    public UUID getOriginReferenceId() {
+        return originReferenceId;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
+    public void setOriginReferenceId(UUID originReferenceId) {
+        this.originReferenceId = originReferenceId;
+    }
+
+    public int getQuantityBefore() {
+        return quantityBefore;
+    }
+
+    public void setQuantityBefore(int quantityBefore) {
+        this.quantityBefore = quantityBefore;
+    }
+
+    public int getQuantityAfter() {
+        return quantityAfter;
+    }
+
+    public void setQuantityAfter(int quantityAfter) {
+        this.quantityAfter = quantityAfter;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
+    }
+
+    public UUID getResponsibleUserId() {
+        return responsibleUserId;
+    }
+
+    public void setResponsibleUserId(UUID responsibleUserId) {
+        this.responsibleUserId = responsibleUserId;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -61,3 +99,5 @@ public class InventoryMovement {
         this.createdAt = createdAt;
     }
 }
+
+

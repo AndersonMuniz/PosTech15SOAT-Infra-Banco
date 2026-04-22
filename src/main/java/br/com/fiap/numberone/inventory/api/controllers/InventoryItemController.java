@@ -58,4 +58,16 @@ public class InventoryItemController {
     public ResponseEntity<InventoryItemResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(inventoryItemApiMapper.toResponse(inventoryItemService.findById(id)));
     }
+
+    @PatchMapping("/{id}/inativar")
+    public ResponseEntity<Void> inactivate(@PathVariable UUID id) {
+        inventoryItemService.inactivate(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/ativar")
+    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+        inventoryItemService.activate(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -1,7 +1,9 @@
 package br.com.fiap.numberone.automotiveservice.domain.entities;
 
 import br.com.fiap.numberone.automotiveservice.domain.enums.ServiceType;
-import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutomotiveServiceBusinessException;
+import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutomotiveServiceAlreadyActiveException;
+import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutomotiveServiceAlreadyInactiveException;
+import br.com.fiap.numberone.automotiveservice.domain.exceptions.InvalidAutomotiveServiceDataException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,9 +21,6 @@ public class AutomotiveService {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public AutomotiveService() {
-    }
 
     public AutomotiveService(
             UUID id,
@@ -42,120 +41,133 @@ public class AutomotiveService {
         this.serviceType = serviceType;
         this.baseValue = baseValue;
         this.estimatedTimeMinutes = estimatedTimeMinutes;
-        this.active = active;
+        this.active = active != null ? active : true;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+
+        validate();
+    }
+
+    public void update(
+            String code,
+            String name,
+            String description,
+            ServiceType serviceType,
+            BigDecimal baseValue,
+            Integer estimatedTimeMinutes
+    ) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.serviceType = serviceType;
+        this.baseValue = baseValue;
+        this.estimatedTimeMinutes = estimatedTimeMinutes;
+        this.updatedAt = LocalDateTime.now();
+
+        validate();
+    }
+
+    public void deactivate() {
+        if (Boolean.FALSE.equals(this.active)) {
+            throw new AutomotiveServiceAlreadyInactiveException("O serviço automotivo já está inativo");
+        }
+
+        this.active = false;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void activate() {
+        if (Boolean.TRUE.equals(this.active)) {
+            throw new AutomotiveServiceAlreadyActiveException("O serviço automotivo já está ativo");
+        }
+
+        this.active = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    private void validate() {
+        if (code == null || code.isBlank()) {
+            throw new InvalidAutomotiveServiceDataException("O código do serviço é obrigatório");
+        }
+
+        if (name == null || name.isBlank()) {
+            throw new InvalidAutomotiveServiceDataException("O nome do serviço é obrigatório");
+        }
+
+        if (description == null || description.isBlank()) {
+            throw new InvalidAutomotiveServiceDataException("A descrição do serviço é obrigatória");
+        }
+
+        if (serviceType == null) {
+            throw new InvalidAutomotiveServiceDataException("O tipo do serviço é obrigatório");
+        }
+
+        if (baseValue == null) {
+            throw new InvalidAutomotiveServiceDataException("O valor base do serviço é obrigatório");
+        }
+
+        if (baseValue.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidAutomotiveServiceDataException("O valor base do serviço não pode ser negativo");
+        }
+
+        if (estimatedTimeMinutes == null) {
+            throw new InvalidAutomotiveServiceDataException("O tempo estimado em minutos é obrigatório");
+        }
+
+        if (estimatedTimeMinutes <= 0) {
+            throw new InvalidAutomotiveServiceDataException("O tempo estimado em minutos deve ser maior que zero");
+        }
     }
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getCode() {
         return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public ServiceType getServiceType() {
         return serviceType;
     }
 
-    public void setServiceType(ServiceType serviceType) {
-        this.serviceType = serviceType;
-    }
-
     public BigDecimal getBaseValue() {
         return baseValue;
-    }
-
-    public void setBaseValue(BigDecimal baseValue) {
-        this.baseValue = baseValue;
     }
 
     public Integer getEstimatedTimeMinutes() {
         return estimatedTimeMinutes;
     }
 
-    public void setEstimatedTimeMinutes(Integer estimatedTimeMinutes) {
-        this.estimatedTimeMinutes = estimatedTimeMinutes;
-    }
-
     public Boolean getActive() {
         return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public void updateFrom(AutomotiveService newData) {
-        if (newData.name != null) {
-            this.name = newData.name;
-        }
-        if (newData.description != null) {
-            this.description = newData.description;
-        }
-        if (newData.serviceType != null) {
-            this.serviceType = newData.serviceType;
-        }
-        if (newData.baseValue != null) {
-            this.baseValue = newData.baseValue;
-        }
-        if (newData.estimatedTimeMinutes != null) {
-            this.estimatedTimeMinutes = newData.estimatedTimeMinutes;
-        }
-        if (newData.active != null) {
-            this.active = newData.active;
-        }
-
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    public void deactivate() {
-        if (Boolean.FALSE.equals(this.active)) {
-            throw new AutomotiveServiceBusinessException("O serviço automotivo já está inativo");
-        }
-
-        this.active = false;
-        this.updatedAt = LocalDateTime.now();
     }
 }

@@ -2,6 +2,9 @@ package br.com.fiap.numberone.inventory.domain.entities;
 
 import br.com.fiap.numberone.inventory.domain.enums.ItemType;
 import br.com.fiap.numberone.inventory.domain.enums.UnitOfMeasure;
+import br.com.fiap.numberone.inventory.domain.exceptions.InventoryItemAlreadyActiveException;
+import br.com.fiap.numberone.inventory.domain.exceptions.InventoryItemAlreadyInactiveException;
+import br.com.fiap.numberone.inventory.domain.exceptions.InvalidInventoryItemDataException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,108 +28,189 @@ public class InventoryItem {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public UUID getId() {
-        return id;
+    public InventoryItem(
+            UUID id,
+            String code,
+            String name,
+            String description,
+            ItemType itemType,
+            UnitOfMeasure unitOfMeasure,
+            BigDecimal costPerUnit,
+            BigDecimal salePrice,
+            Integer stockQuantity,
+            Integer minimumStock,
+            String brand,
+            String applicableVehicle,
+            Boolean active,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt
+    ) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.itemType = itemType;
+        this.unitOfMeasure = unitOfMeasure;
+        this.costPerUnit = costPerUnit;
+        this.salePrice = salePrice;
+        this.stockQuantity = stockQuantity;
+        this.minimumStock = minimumStock;
+        this.brand = brand;
+        this.applicableVehicle = applicableVehicle;
+        this.active = active != null ? active : true;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+
+        validate();
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void update(
+            String code,
+            String name,
+            String description,
+            ItemType itemType,
+            UnitOfMeasure unitOfMeasure,
+            BigDecimal costPerUnit,
+            BigDecimal salePrice,
+            Integer stockQuantity,
+            Integer minimumStock,
+            String brand,
+            String applicableVehicle
+    ) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.itemType = itemType;
+        this.unitOfMeasure = unitOfMeasure;
+        this.costPerUnit = costPerUnit;
+        this.salePrice = salePrice;
+        this.stockQuantity = stockQuantity;
+        this.minimumStock = minimumStock;
+        this.brand = brand;
+        this.applicableVehicle = applicableVehicle;
+        this.updatedAt = LocalDateTime.now();
+
+        validate();
+    }
+
+    public void activate() {
+        if (Boolean.TRUE.equals(this.active)) {
+            throw new InventoryItemAlreadyActiveException("O item de estoque já está ativo");
+        }
+
+        this.active = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void deactivate() {
+        if (Boolean.FALSE.equals(this.active)) {
+            throw new InventoryItemAlreadyInactiveException("O item de estoque já está inativo");
+        }
+
+        this.active = false;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    private void validate() {
+        if (code == null || code.isBlank()) {
+            throw new InvalidInventoryItemDataException("O código do item é obrigatório");
+        }
+
+        if (name == null || name.isBlank()) {
+            throw new InvalidInventoryItemDataException("O nome do item é obrigatório");
+        }
+
+        if (itemType == null) {
+            throw new InvalidInventoryItemDataException("O tipo do item é obrigatório");
+        }
+
+        if (unitOfMeasure == null) {
+            throw new InvalidInventoryItemDataException("A unidade de medida do item é obrigatória");
+        }
+
+        if (costPerUnit == null) {
+            throw new InvalidInventoryItemDataException("O custo unitário do item é obrigatório");
+        }
+
+        if (costPerUnit.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidInventoryItemDataException("O custo unitário do item deve ser maior que zero");
+        }
+
+        if (salePrice == null) {
+            throw new InvalidInventoryItemDataException("O preço de venda do item é obrigatório");
+        }
+
+        if (salePrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidInventoryItemDataException("O preço de venda do item deve ser maior que zero");
+        }
+
+        if (stockQuantity == null) {
+            throw new InvalidInventoryItemDataException("A quantidade em estoque é obrigatória");
+        }
+
+        if (stockQuantity < 0) {
+            throw new InvalidInventoryItemDataException("A quantidade em estoque não pode ser negativa");
+        }
+
+        if (minimumStock == null) {
+            throw new InvalidInventoryItemDataException("O estoque mínimo é obrigatório");
+        }
+
+        if (minimumStock < 0) {
+            throw new InvalidInventoryItemDataException("O estoque mínimo não pode ser negativo");
+        }
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public String getCode() {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public ItemType getItemType() {
         return itemType;
-    }
-
-    public void setItemType(ItemType itemType) {
-        this.itemType = itemType;
     }
 
     public UnitOfMeasure getUnitOfMeasure() {
         return unitOfMeasure;
     }
 
-    public void setUnitOfMeasure(UnitOfMeasure unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure;
-    }
-
     public BigDecimal getCostPerUnit() {
         return costPerUnit;
-    }
-
-    public void setCostPerUnit(BigDecimal costPerUnit) {
-        this.costPerUnit = costPerUnit;
     }
 
     public BigDecimal getSalePrice() {
         return salePrice;
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
-    }
-
     public Integer getStockQuantity() {
         return stockQuantity;
-    }
-
-    public void setStockQuantity(Integer stockQuantity) {
-        this.stockQuantity = stockQuantity;
     }
 
     public Integer getMinimumStock() {
         return minimumStock;
     }
 
-    public void setMinimumStock(Integer minimumStock) {
-        this.minimumStock = minimumStock;
-    }
-
     public String getBrand() {
         return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public String getApplicableVehicle() {
         return applicableVehicle;
     }
 
-    public void setApplicableVehicle(String applicableVehicle) {
-        this.applicableVehicle = applicableVehicle;
-    }
-
     public Boolean getActive() {
         return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -137,26 +221,15 @@ public class InventoryItem {
         return updatedAt;
     }
 
-    public void activate() {
-        this.active = true;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void deactivate() {
-        this.active = false;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public void updateFrom(InventoryItem newData) {
-        if (newData.code != null) this.code = newData.code;
-        if (newData.name != null) this.name = newData.name;
-        if (newData.description != null) this.description = newData.description;
-        if (newData.itemType != null) this.itemType = newData.itemType;
-        if (newData.unitOfMeasure != null) this.unitOfMeasure = newData.unitOfMeasure;
-        if (newData.costPerUnit != null) this.costPerUnit = newData.costPerUnit;
-        if (newData.salePrice != null) this.salePrice = newData.salePrice;
-        if (newData.stockQuantity != null) this.stockQuantity = newData.stockQuantity;
-        if (newData.minimumStock != null) this.minimumStock = newData.minimumStock;
-        if (newData.brand != null) this.brand = newData.brand;
-        if (newData.applicableVehicle != null) this.applicableVehicle = newData.applicableVehicle;
-        if (newData.active != null) this.active = newData.active;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
