@@ -18,10 +18,10 @@ import lombok.NoArgsConstructor;
 public class InventoryItemEntity {
 
     @Id
-    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "codigo", length = 100)
+    @Column(name = "codigo", nullable = false, unique = true, length = 100)
     private String code;
 
     @Column(name = "nome", nullable = false, length = 150)
@@ -31,24 +31,24 @@ public class InventoryItemEntity {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_item", length = 50)
+    @Column(name = "tipo_item", nullable = false, length = 50)
     private ItemType itemType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "unidade_medida", length = 50)
+    @Column(name = "unidade_medida", nullable = false, length = 50)
     private UnitOfMeasure unitOfMeasure;
 
-    @Column(name = "custo_unitario", precision = 10, scale = 2)
+    @Column(name = "custo_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal costPerUnit;
 
-    @Column(name = "preco_venda", precision = 10, scale = 2)
+    @Column(name = "preco_venda", nullable = false, precision = 10, scale = 2)
     private BigDecimal salePrice;
 
-    @Column(name = "quantidade_estoque")
-    private Integer stockQuantity;
+    @Column(name = "quantidade_estoque", nullable = false)
+    private Integer inventoryQuantity;
 
-    @Column(name = "estoque_minimo")
-    private Integer minimumStock;
+    @Column(name = "estoque_minimo", nullable = false)
+    private Integer minimumInventoryQuantity;
 
     @Column(name = "marca", length = 100)
     private String brand;
@@ -56,13 +56,13 @@ public class InventoryItemEntity {
     @Column(name = "veiculo_aplicavel", length = 255)
     private String applicableVehicle;
 
-    @Column(name = "ativo")
+    @Column(name = "ativo", nullable = false)
     private Boolean active;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -74,10 +74,6 @@ public class InventoryItemEntity {
 
         if (this.active == null) {
             this.active = true;
-        }
-
-        if (this.applicableVehicle == null) {
-            this.applicableVehicle = "UNIVERSAL";
         }
     }
 

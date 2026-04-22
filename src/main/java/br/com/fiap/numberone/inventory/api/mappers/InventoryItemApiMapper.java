@@ -8,7 +8,26 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface InventoryItemApiMapper {
 
-    InventoryItem toDomain(InventoryItemRequest request);
+    default InventoryItem toDomain(InventoryItemRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        return InventoryItem.create(
+                request.getCode(),
+                request.getName(),
+                request.getDescription(),
+                request.getItemType(),
+                request.getUnitOfMeasure(),
+                request.getCostPerUnit(),
+                request.getSalePrice(),
+                request.getInventoryQuantity(),
+                request.getMinimumInventoryQuantity(),
+                request.getBrand(),
+                request.getApplicableVehicle(),
+                request.getActive()
+        );
+    }
 
     InventoryItemResponse toResponse(InventoryItem domain);
 }

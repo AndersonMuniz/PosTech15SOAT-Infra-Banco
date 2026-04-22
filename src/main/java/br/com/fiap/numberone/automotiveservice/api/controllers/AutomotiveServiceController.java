@@ -65,4 +65,10 @@ public class AutomotiveServiceController {
         autoServiceService.inactivate(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/ativar")
+    public ResponseEntity<Void> activate(@PathVariable UUID id) {
+        autoServiceService.activate(id);
+        return ResponseEntity.noContent().build();
+    }
 }

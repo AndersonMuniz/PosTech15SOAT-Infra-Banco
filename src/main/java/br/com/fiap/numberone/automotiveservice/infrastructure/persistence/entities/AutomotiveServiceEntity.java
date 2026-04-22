@@ -25,16 +25,16 @@ import lombok.NoArgsConstructor;
 public class AutomotiveServiceEntity {
 
     @Id
-    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "codigo", nullable = false, length = 100)
+    @Column(name = "codigo", nullable = false, unique = true, length = 100)
     private String code;
 
     @Column(name = "nome", nullable = false, length = 150)
     private String name;
 
-    @Column(name = "descricao", nullable = false, length = 255)
+    @Column(name = "descricao", length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)

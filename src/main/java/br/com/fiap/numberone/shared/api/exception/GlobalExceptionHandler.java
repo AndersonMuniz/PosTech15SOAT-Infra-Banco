@@ -1,7 +1,6 @@
 package br.com.fiap.numberone.shared.api.exception;
 
 import br.com.fiap.numberone.client.domain.exceptions.DocumentoException;
-import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutoServiceNotFoundException;
 import br.com.fiap.numberone.shared.security.domain.exceptions.InvalidCredentialsException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -146,17 +145,6 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.badRequest().body(response);
-    }
-
-    @ExceptionHandler(AutoServiceNotFoundException.class)
-    public ResponseEntity<Object> handleAutoServiceNotFoundException(AutoServiceNotFoundException ex, WebRequest request) {
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                List.of()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

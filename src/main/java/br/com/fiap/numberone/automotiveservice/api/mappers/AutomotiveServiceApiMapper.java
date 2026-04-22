@@ -8,7 +8,21 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface AutomotiveServiceApiMapper {
 
-    AutomotiveService toDomain(AutomotiveServiceRequest request);
+    default AutomotiveService toDomain(AutomotiveServiceRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        return AutomotiveService.create(
+                request.getCode(),
+                request.getName(),
+                request.getDescription(),
+                request.getServiceType(),
+                request.getBaseValue(),
+                request.getEstimatedTimeMinutes(),
+                true
+        );
+    }
 
     AutomotiveServiceResponse toResponse(AutomotiveService domain);
 }

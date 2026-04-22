@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.automotiveservice.infrastructure.config;
 
-import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutomotiveServiceGateway;
 import br.com.fiap.numberone.automotiveservice.application.services.AutomotiveServiceService;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.gateways.AutoServiceGatewayImpl;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers.AutomotiveServicePersistenceMapper;
@@ -13,13 +13,13 @@ import org.springframework.context.annotation.Configuration;
 public class AutoServiceBeansConfig {
 
     @Bean
-    public AutoServiceGateway autoServiceGateway(AutoServiceRepository autoServiceRepository, AutomotiveServicePersistenceMapper autoServiceEntityMapper) {
+    public AutomotiveServiceGateway autoServiceGateway(AutoServiceRepository autoServiceRepository, AutomotiveServicePersistenceMapper autoServiceEntityMapper) {
         return new AutoServiceGatewayImpl(autoServiceRepository, autoServiceEntityMapper);
     }
 
     @Bean
-    public AutomotiveServiceService autoServiceService(AutoServiceGateway autoServiceGateway, LoggerGateway loggerGateway) {
-        return new AutomotiveServiceService(autoServiceGateway,loggerGateway);
+    public AutomotiveServiceService autoServiceService(AutomotiveServiceGateway autoServiceGateway, LoggerGateway loggerGateway) {
+        return new AutomotiveServiceService(autoServiceGateway, loggerGateway);
     }
 }
 

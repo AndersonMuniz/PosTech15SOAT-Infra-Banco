@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface InventoryMovementGateway {
-    void save(InventoryMovement mov);
+
+    InventoryMovement save(InventoryMovement movement);
+
     List<InventoryMovement> findByInventoryItemId(UUID inventoryItemId);
 }
