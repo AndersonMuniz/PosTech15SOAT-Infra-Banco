@@ -4,13 +4,17 @@ import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderApprovalNotificationGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.VehicleGateway;
+import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
+import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Diagnosis;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
+import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderValue;
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,6 +82,22 @@ public class ServiceOrderService {
         serviceOrderApprovalNotificationGateway.sendApprovalRequest(savedServiceOrder, recipientEmail);
 
         return savedServiceOrder;
+    }
+
+    public ServiceOrderValue calculateServices(UUID id) {
+        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
+
+        BigDecimal totalValue = serviceOrder.getServiceItems()
+                .stream()
+                .filter(serviceOrderItem -> serviceOrderItem.getStatus() != OrderItemStatus.CANCELLED)
+                .map(ServiceOrderItem::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return ServiceOrderValue.builder()
+                .serviceOrderId(id)
+                .totalValue(totalValue)
+                .build();
     }
 
     public void approve(UUID id) {

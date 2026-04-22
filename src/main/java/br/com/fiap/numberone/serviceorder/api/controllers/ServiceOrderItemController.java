@@ -13,7 +13,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/service-orders/{id}")
+@RequestMapping("/api/service-orders-items")
 public class ServiceOrderItemController {
 
     private final ServiceOrderItemApiMapper serviceOrderItemApiMapper;
@@ -29,13 +29,20 @@ public class ServiceOrderItemController {
     }
 
 
-    @PostMapping("/services")
+    @PostMapping
     public ResponseEntity<ServiceOrderItemResponse> addServiceItem(
-            @PathVariable UUID id,
-            @Valid @RequestBody CreateServiceOrderItemRequest createOrderAutoserviceRequest
+            @Valid @RequestBody CreateServiceOrderItemRequest createOrderItemRequest
     ) {
-        ServiceOrderItem serviceOrderItem = serviceOrderItemService.createServiceOrderService(id, serviceOrderItemApiMapper.toDomain(createOrderAutoserviceRequest));
+        ServiceOrderItem serviceOrderItem = serviceOrderItemService.createServiceOrderItem(serviceOrderItemApiMapper.toDomain(createOrderItemRequest));
         return ResponseEntity.ok(serviceOrderItemApiMapper.toResponse(serviceOrderItem));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ServiceOrderItemResponse> removeServiceItem(
+            @PathVariable UUID id
+    ) {
+        serviceOrderItemService.deleteServiceOrderItem(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

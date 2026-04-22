@@ -17,6 +17,5 @@ public interface ServiceOrderItemApiMapper {
     ServiceOrderItem toDomain(CreateServiceOrderItemRequest dto);
 
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
-    @Mapping(target = "serviceId", source = "automotiveService.id")
     ServiceOrderItemResponse toResponse(ServiceOrderItem entity);
 }

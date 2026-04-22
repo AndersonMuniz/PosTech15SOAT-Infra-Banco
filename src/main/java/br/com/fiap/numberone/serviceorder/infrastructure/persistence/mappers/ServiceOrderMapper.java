@@ -6,12 +6,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        componentModel = MappingConstants.ComponentModel.SPRING,
+        uses = { CustomerMapper.class, VehicleMapper.class, ServiceOrderItemMapper.class }
+)
 public interface ServiceOrderMapper {
 
-    @Mapping(target = "vehicleEntity.id", source = "vehicle.id")
+    @Mapping(target = "vehicleEntity", source = "vehicle")
+    @Mapping(target = "items", source = "serviceItems")
     ServiceOrderEntity toEntity(ServiceOrder domain);
 
-    @Mapping(target = "vehicle.id", source = "vehicleEntity.id")
+    @Mapping(target = "vehicle", source = "vehicleEntity")
+    @Mapping(target = "serviceItems", source = "items")
     ServiceOrder toDomain(ServiceOrderEntity entity);
 }

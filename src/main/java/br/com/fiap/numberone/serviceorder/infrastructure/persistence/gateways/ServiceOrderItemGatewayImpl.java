@@ -46,4 +46,10 @@ public class ServiceOrderItemGatewayImpl implements ServiceOrderItemGateway {
                 .map(mapper::toDomain)
                 .toList();
     }
+
+    @Override
+    @Transactional
+    public void deleteById(UUID id) {
+        repository.deleteById(id);
+    }
 }

@@ -9,7 +9,7 @@ import java.util.UUID;
 public record ServiceOrderItemResponse(
         UUID id,
         UUID serviceOrderId,
-        UUID serviceId,
+        AutomotiveServiceResponse automotiveService,
         BigDecimal value,
         OrderItemStatus status,
         Boolean optional,
@@ -18,5 +18,16 @@ public record ServiceOrderItemResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-
+    public record AutomotiveServiceResponse (
+            UUID id,
+            String code,
+            String name,
+            String description,
+            String serviceType,
+            BigDecimal baseValue,
+            Integer estimatedTimeMinutes,
+            Boolean active
+    ) { }
 }
+
+

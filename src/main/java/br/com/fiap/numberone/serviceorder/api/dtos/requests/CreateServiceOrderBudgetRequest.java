@@ -6,13 +6,11 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public record CreateServiceOrderItemRequest(
-        @NotNull(message = "serviceId is required")
-        UUID serviceId,
+public record CreateServiceOrderBudgetRequest(
         @NotNull(message = "serviceOrderId is required")
         UUID serviceOrderId,
-        @Positive(message = "value must be positive")
-        @NotNull(message = "serviceId is required")
-        BigDecimal value,
-        Boolean optional
+        @Positive(message = "quotedAmount must be positive")
+        BigDecimal quotedAmount,
+        @Positive(message = "aprovedAmount must be positive")
+        BigDecimal approvedAmount
 ) { }

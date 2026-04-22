@@ -4,6 +4,7 @@ import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record ServiceOrderResponse(
@@ -14,6 +15,7 @@ public record ServiceOrderResponse(
         String notes,
         CustomerResponse customer,
         VehicleResponse vehicle,
+        List<ServiceOrderItemResponse> serviceItems,
         ServiceOrderStatus status,
         LocalDateTime entryDateTime,
         LocalDateTime expectedDateTime,
