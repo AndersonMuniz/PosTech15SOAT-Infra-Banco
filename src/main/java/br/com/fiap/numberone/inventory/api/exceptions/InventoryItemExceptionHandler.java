@@ -58,15 +58,13 @@ public class InventoryItemExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBusinessExceptions(
             RuntimeException ex
     ) {
-        int status = 422;
-
         ErrorResponse response = new ErrorResponse(
-                status,
+                UNPROCESSABLE_ENTITY,
                 ex.getMessage(),
                 List.of()
         );
 
-        return ResponseEntity.status(HttpStatusCode.valueOf(status)).body(response);
+        return ResponseEntity.status(HttpStatusCode.valueOf(UNPROCESSABLE_ENTITY)).body(response);
     }
 
 }

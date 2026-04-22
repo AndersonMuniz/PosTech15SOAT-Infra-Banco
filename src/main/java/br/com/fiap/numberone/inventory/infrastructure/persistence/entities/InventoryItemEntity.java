@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class InventoryItemEntity {
 
     @Id
-    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @Column(name = "codigo", nullable = false, unique = true, length = 100)
@@ -45,10 +45,10 @@ public class InventoryItemEntity {
     private BigDecimal salePrice;
 
     @Column(name = "quantidade_estoque", nullable = false)
-    private Integer stockQuantity;
+    private Integer inventoryQuantity;
 
     @Column(name = "estoque_minimo", nullable = false)
-    private Integer minimumStock;
+    private Integer minimumInventoryQuantity;
 
     @Column(name = "marca", length = 100)
     private String brand;

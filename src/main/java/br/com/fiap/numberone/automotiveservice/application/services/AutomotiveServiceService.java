@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.automotiveservice.application.services;
 
-import br.com.fiap.numberone.automotiveservice.application.gateways.AutoServiceGateway;
+import br.com.fiap.numberone.automotiveservice.application.gateways.AutomotiveServiceGateway;
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
 import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutoServiceNotFoundException;
 import br.com.fiap.numberone.automotiveservice.domain.exceptions.AutomotiveServiceBusinessException;
@@ -11,10 +11,10 @@ import java.util.UUID;
 
 public class AutomotiveServiceService {
 
-    private final AutoServiceGateway autoServiceGateway;
+    private final AutomotiveServiceGateway autoServiceGateway;
     private final LoggerGateway logger;
 
-    public AutomotiveServiceService(AutoServiceGateway autoServiceGateway, LoggerGateway loggerGateway) {
+    public AutomotiveServiceService(AutomotiveServiceGateway autoServiceGateway, LoggerGateway loggerGateway) {
         this.autoServiceGateway = autoServiceGateway;
         this.logger = loggerGateway;
     }

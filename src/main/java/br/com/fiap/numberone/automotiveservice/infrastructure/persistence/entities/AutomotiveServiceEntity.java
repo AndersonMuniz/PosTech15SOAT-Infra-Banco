@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class AutomotiveServiceEntity {
 
     @Id
-    @GeneratedValue
+    @Column(nullable = false, updatable = false)
     private UUID id;
 
     @Column(name = "codigo", nullable = false, unique = true, length = 100)

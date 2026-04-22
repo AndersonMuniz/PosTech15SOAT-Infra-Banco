@@ -51,12 +51,12 @@ public class InventoryItemRequest {
     @JsonProperty("quantidadeEstoque")
     @NotNull(message = "O campo quantidadeEstoque é obrigatório.")
     @Min(value = 0, message = "O campo quantidadeEstoque não pode ser negativo.")
-    private Integer stockQuantity;
+    private Integer inventoryQuantity;
 
     @JsonProperty("estoqueMinimo")
     @NotNull(message = "O campo estoqueMinimo é obrigatório.")
     @Min(value = 0, message = "O campo estoqueMinimo não pode ser negativo.")
-    private Integer minimumStock;
+    private Integer minimumInventoryQuantity;
 
     @JsonProperty("marca")
     @Size(max = 100, message = "O campo marca deve ter no máximo 100 caracteres.")
