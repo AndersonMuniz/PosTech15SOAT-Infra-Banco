@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "client")
+@Table(name = "cliente")
 public class ClientEntity {
 
     @Id

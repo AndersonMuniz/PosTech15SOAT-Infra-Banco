@@ -8,7 +8,7 @@ class ClienteEntityTest {
 
     @Test
     void prePersistDeveDefinirCreatedAtEAtivoTrueQuandoNulo() {
-        ClienteEntity entity = ClienteEntity.builder().build();
+        ClientEntity entity = ClientEntity.builder().build();
 
         entity.prePersist();
 
@@ -18,7 +18,7 @@ class ClienteEntityTest {
 
     @Test
     void prePersistNaoDeveSobrescreverAtivoQuandoJaDefinido() {
-        ClienteEntity entity = ClienteEntity.builder().ativo(false).build();
+        ClientEntity entity = ClientEntity.builder().ativo(false).build();
 
         entity.prePersist();
 
@@ -27,7 +27,7 @@ class ClienteEntityTest {
 
     @Test
     void preUpdateDeveDefinirUpdatedAt() {
-        ClienteEntity entity = ClienteEntity.builder().build();
+        ClientEntity entity = ClientEntity.builder().build();
 
         entity.preUpdate();
 

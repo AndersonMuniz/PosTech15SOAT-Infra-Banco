@@ -2,7 +2,7 @@ package br.com.fiap.numberone.client.infrastructure.persistence.mappers;
 
 import br.com.fiap.numberone.client.domain.entities.Cliente;
 import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
-import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClienteEntity;
+import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ class ClienteEntityMapperTest {
                 .updatedAt(updatedAt)
                 .build();
 
-        ClienteEntity entity = mapper.toEntity(domain);
+        ClientEntity entity = mapper.toEntity(domain);
 
         assertEquals(id, entity.getId());
         assertEquals("Nome", entity.getNome());
@@ -46,7 +46,7 @@ class ClienteEntityMapperTest {
         LocalDateTime createdAt = LocalDateTime.now().minusDays(2);
         LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
-        ClienteEntity entity = ClienteEntity.builder()
+        ClientEntity entity = ClientEntity.builder()
                 .id(id)
                 .nome("Nome")
                 .tipoDocumento(TipoDocumento.PESSOA_JURIDICA)
