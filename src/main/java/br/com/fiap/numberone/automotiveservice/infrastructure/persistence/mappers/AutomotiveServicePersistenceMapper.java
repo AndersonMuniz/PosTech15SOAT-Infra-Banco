@@ -1,9 +1,9 @@
 package br.com.fiap.numberone.automotiveservice.infrastructure.persistence.mappers;
 
-import org.mapstruct.Mapper;
-
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
+import org.mapstruct.Mapper;
+
 @Mapper(componentModel = "spring")
 public interface AutomotiveServicePersistenceMapper {
 

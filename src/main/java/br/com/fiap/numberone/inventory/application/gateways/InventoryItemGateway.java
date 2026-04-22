@@ -7,7 +7,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface InventoryItemGateway {
-    InventoryItem save(InventoryItem item);
+    InventoryItem save(InventoryItem inventoryItem);
     Optional<InventoryItem> findById(UUID id);
-    List<InventoryItem> findAll();
+    Optional<InventoryItem> findByCode(String code);
+    boolean existsByCode(String code);
+    List<InventoryItem> findAllActive();
 }
