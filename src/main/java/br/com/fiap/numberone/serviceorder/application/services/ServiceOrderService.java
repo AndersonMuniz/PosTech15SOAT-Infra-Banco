@@ -6,6 +6,7 @@ import br.com.fiap.numberone.serviceorder.application.gateways.VehicleGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Diagnosis;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
@@ -37,11 +38,6 @@ public class ServiceOrderService {
         return serviceOrderGateway.findAll();
     }
 
-    public ServiceOrder getServiceOrder(UUID id) {
-        return serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
-    }
-
     public ServiceOrder createServiceOrder(ServiceOrder serviceOrder) {
         Customer validatedCustomer = customerGateway.findById(serviceOrder.getCustomer().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
@@ -55,18 +51,49 @@ public class ServiceOrderService {
     }
 
     public ServiceOrder addFinalDiagnosis(UUID id, Diagnosis diagnosis) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
+        ServiceOrder serviceOrder = getServiceOrder(id);
 
         serviceOrder.applyFinalDiagnosis(diagnosis.getFinalDiagnosisDescription(), diagnosis.getNotes());
-        serviceOrder.updateStatus(ServiceOrderStatus.IN_DIAGNOSIS);
+        return changeOrderStatus(serviceOrder, ServiceOrderStatus.IN_DIAGNOSIS);
+    }
 
-        return serviceOrderGateway.save(serviceOrder);
+    public ServiceOrder startOrderService(UUID id) {
+        ServiceOrder serviceOrder = getServiceOrder(id);
+
+        return changeOrderStatus(serviceOrder, ServiceOrderStatus.IN_PROGRESS);
+    }
+
+    public ServiceOrder completeOrderService(UUID id) {
+        ServiceOrder serviceOrder = getServiceOrder(id);
+
+        validateServiceItemsAreFinished(serviceOrder);
+        return changeOrderStatus(serviceOrder, ServiceOrderStatus.COMPLETED);
+    }
+
+    private static void validateServiceItemsAreFinished(ServiceOrder serviceOrder) {
+        boolean serviceItemNotEnded = serviceOrder.getServiceItems()
+                .stream()
+                .anyMatch(serviceOrderItem -> List.of(
+                        OrderItemStatus.PENDING, OrderItemStatus.IN_PROGRESS).contains(serviceOrderItem.getStatus())
+                );
+
+        if(serviceItemNotEnded) {
+            throw new ServiceOrderItemEndStatusException("Service order contains service items pending or in progress status");
+        }
+    }
+
+    public ServiceOrder deliverOrderService(UUID id) {
+        ServiceOrder serviceOrder = getServiceOrder(id);
+
+        if (serviceOrder.getStatus() == ServiceOrderStatus.COMPLETED) {
+            validateServiceItemsAreFinished(serviceOrder);
+        }
+
+        return changeOrderStatus(serviceOrder, ServiceOrderStatus.DELIVERED);
     }
 
     public ServiceOrderValue calculateServices(UUID id) {
-        ServiceOrder serviceOrder = serviceOrderGateway.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
+        ServiceOrder serviceOrder = getServiceOrder(id);
 
         BigDecimal totalValue = serviceOrder.getServiceItems()
                 .stream()
@@ -78,6 +105,16 @@ public class ServiceOrderService {
                 .serviceOrderId(id)
                 .totalValue(totalValue)
                 .build();
+    }
+
+    public ServiceOrder getServiceOrder(UUID id) {
+        return serviceOrderGateway.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service order not found for id: " + id));
+    }
+
+    private ServiceOrder changeOrderStatus(ServiceOrder serviceOrder, ServiceOrderStatus targetStatus) {
+        serviceOrder.updateStatus(targetStatus);
+        return serviceOrderGateway.save(serviceOrder);
     }
 
 }

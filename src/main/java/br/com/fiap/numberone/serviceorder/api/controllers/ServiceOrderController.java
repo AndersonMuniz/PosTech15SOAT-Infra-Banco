@@ -74,30 +74,33 @@ public class ServiceOrderController {
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<ServiceOrderResponse> cancelServieOrder(
+    public ResponseEntity<ServiceOrderResponse> cancelServiceOrder(
             @PathVariable UUID id
     ) {
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/start")
-    public ResponseEntity<ServiceOrderResponse> startServieOrder(
+    public ResponseEntity<ServiceOrderResponse> startServiceOrder(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.noContent().build();
+        ServiceOrder serviceOrder = serviceOrderService.startOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<ServiceOrderResponse> completeServieOrder(
+    public ResponseEntity<ServiceOrderResponse> completeServiceOrder(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.noContent().build();
+        ServiceOrder serviceOrder = serviceOrderService.completeOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
     @PatchMapping("/{id}/deliver")
-    public ResponseEntity<ServiceOrderResponse> deliverServieOrder(
+    public ResponseEntity<ServiceOrderResponse> deliverServiceOrder(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.noContent().build();
+        ServiceOrder serviceOrder = serviceOrderService.deliverOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 }

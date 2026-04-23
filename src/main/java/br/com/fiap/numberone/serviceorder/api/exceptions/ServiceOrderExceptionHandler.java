@@ -5,6 +5,7 @@ import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerEmailExcepti
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderBudgetStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
 import br.com.fiap.numberone.shared.api.exception.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,8 @@ public class ServiceOrderExceptionHandler {
             InvalidServiceOrderBudgetStatusException.class,
             AutomotiveServiceNotActiveException.class,
             CustomerNotActiveException.class,
-            CustomerEmailException.class
+            CustomerEmailException.class,
+            ServiceOrderItemEndStatusException.class
     })
     public ResponseEntity<ErrorResponse> handleValidationErrors(Exception ex) {
 

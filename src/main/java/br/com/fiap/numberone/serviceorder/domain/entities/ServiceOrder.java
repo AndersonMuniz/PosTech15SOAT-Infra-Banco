@@ -81,9 +81,9 @@ public class ServiceOrder {
             ).contains(nextStatus);
             case APPROVED -> List.of(ServiceOrderStatus.IN_PROGRESS, ServiceOrderStatus.CANCELED).contains(nextStatus);
             case IN_PROGRESS -> List.of(ServiceOrderStatus.COMPLETED, ServiceOrderStatus.CANCELED).contains(nextStatus);
-            case COMPLETED -> Objects.equals(ServiceOrderStatus.DELIVERED, nextStatus);
+            case COMPLETED, CANCELED -> Objects.equals(ServiceOrderStatus.DELIVERED, nextStatus);
             case REJECTED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.WAITING_APPROVAL).contains(nextStatus);
-            case CANCELED, DELIVERED -> false;
+            case DELIVERED -> false;
         };
     }
 }
