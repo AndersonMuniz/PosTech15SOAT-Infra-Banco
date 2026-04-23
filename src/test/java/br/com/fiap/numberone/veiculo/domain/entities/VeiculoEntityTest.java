@@ -17,7 +17,7 @@ class VeiculoEntityTest {
         LocalDateTime updatedAt = LocalDateTime.now();
 
         VehicleEntity entity = new VehicleEntity(id, "ABC1D23", "Fiat", "Argo", 2023,
-                "cliente-1", createdAt, updatedAt);
+                UUID.randomUUID(), createdAt, updatedAt);
 
         assertEquals(id, entity.getId());
         assertEquals("ABC1D23", entity.getPlaca());

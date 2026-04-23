@@ -41,7 +41,7 @@ public record ServiceOrderResponse(
             String brand,
             String model,
             Integer year,
-            String customerId,
+            UUID customerId,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) { }
