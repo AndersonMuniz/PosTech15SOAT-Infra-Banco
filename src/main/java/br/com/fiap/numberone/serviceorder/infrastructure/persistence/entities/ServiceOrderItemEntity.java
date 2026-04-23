@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.StatusOrderAutoservice;
+import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +37,7 @@ public class ServiceOrderItemEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private StatusOrderAutoservice status;
+    private OrderItemStatus status;
 
     @Column(name = "opcional")
     private Boolean optional;
@@ -58,7 +58,7 @@ public class ServiceOrderItemEntity {
     public void prePersist() {
         createdAt = LocalDateTime.now();
         if (status == null) {
-            status = StatusOrderAutoservice.PENDING;
+            status = OrderItemStatus.PENDING;
         }
     }
 

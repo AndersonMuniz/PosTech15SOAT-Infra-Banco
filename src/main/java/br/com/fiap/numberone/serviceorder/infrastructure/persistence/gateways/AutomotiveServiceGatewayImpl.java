@@ -2,7 +2,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.repositories.AutoServiceRepository;
 import br.com.fiap.numberone.serviceorder.application.gateways.AutomotiveServiceGateway;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.AutomotiveService;
+import br.com.fiap.numberone.serviceorder.domain.references.AutomotiveService;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers.AutomotiveServiceMapper;
 import org.springframework.stereotype.Component;
 

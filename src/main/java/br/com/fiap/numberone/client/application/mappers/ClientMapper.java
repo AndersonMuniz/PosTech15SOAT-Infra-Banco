@@ -14,6 +14,7 @@ public class ClientMapper {
                 .nome(request.nome())
                 .tipoDocumento(request.tipoDocumento())
                 .documento(request.documento())
+                .email(request.email())
                 .telefone(request.telefone())
                 .endereco(request.endereco())
                 .ativo(request.ativo() != null ? request.ativo() : Boolean.TRUE)
@@ -26,6 +27,7 @@ public class ClientMapper {
                 client.getNome(),
                 client.getTipoDocumento(),
                 client.getDocumento(),
+                client.getEmail(),
                 client.getTelefone(),
                 client.getEndereco(),
                 client.getAtivo(),

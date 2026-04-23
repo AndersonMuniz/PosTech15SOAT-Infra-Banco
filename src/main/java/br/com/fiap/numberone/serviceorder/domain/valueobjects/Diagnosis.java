@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.serviceorder.domain.entities;
+package br.com.fiap.numberone.serviceorder.domain.valueobjects;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

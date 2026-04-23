@@ -2,7 +2,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
 import br.com.fiap.numberone.client.infrastructure.repositories.ClientRepository;
 import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Customer;
+import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers.CustomerMapper;
 import org.springframework.stereotype.Component;
 

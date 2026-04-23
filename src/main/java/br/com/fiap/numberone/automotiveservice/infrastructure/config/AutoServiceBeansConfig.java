@@ -19,7 +19,7 @@ public class AutoServiceBeansConfig {
 
     @Bean
     public AutomotiveServiceService autoServiceService(AutomotiveServiceGateway autoServiceGateway, LoggerGateway loggerGateway) {
-        return new AutomotiveServiceService(autoServiceGateway,loggerGateway);
+        return new AutomotiveServiceService(autoServiceGateway, loggerGateway);
     }
 }
 

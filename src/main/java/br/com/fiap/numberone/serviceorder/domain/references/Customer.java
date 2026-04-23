@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.serviceorder.domain.valueobjects;
+package br.com.fiap.numberone.serviceorder.domain.references;
 
 import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,7 @@ public class Customer {
     private String name;
     private TipoDocumento documentType;
     private String document;
+    private String email;
     private String phone;
     private String address;
     private Boolean active;

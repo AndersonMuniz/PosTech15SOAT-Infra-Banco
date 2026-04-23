@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers;
 
 import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Customer;
+import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -17,6 +17,7 @@ public interface CustomerMapper {
     @Mapping(target = "ativo", source = "active")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "email", source = "email")
     ClientEntity toEntity(Customer customer);
 
     @Mapping(target = "name", source = "nome")
@@ -25,5 +26,6 @@ public interface CustomerMapper {
     @Mapping(target = "phone", source = "telefone")
     @Mapping(target = "address", source = "endereco")
     @Mapping(target = "active", source = "ativo")
+    @Mapping(target = "email", source = "email")
     Customer toDomain(ClientEntity entity);
 }

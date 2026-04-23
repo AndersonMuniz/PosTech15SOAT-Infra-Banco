@@ -3,12 +3,10 @@ package br.com.fiap.numberone.shared.infrastructure.logging;
 import br.com.fiap.numberone.shared.application.gateways.LoggerGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Slf4j
-@Component
 public class Slf4jLoggerGateway implements LoggerGateway {
 
     @Override

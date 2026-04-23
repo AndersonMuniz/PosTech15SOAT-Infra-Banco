@@ -41,6 +41,9 @@ public class ClientEntity {
     @Column(nullable = false)
     private Boolean ativo;
 
+    @Column(nullable = false)
+    private String email;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
