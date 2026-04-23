@@ -15,13 +15,15 @@ class VehicleTest {
         LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
         LocalDateTime updatedAt = LocalDateTime.now();
 
+        UUID customerId = UUID.randomUUID();
+
         Vehicle vehicle = Vehicle.builder()
                 .id(id)
                 .licensePlate("ABC1D23")
                 .brand("Toyota")
                 .model("Corolla")
                 .year(2020)
-                .customerId("cliente-10")
+                .customerId(customerId)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();
@@ -29,7 +31,7 @@ class VehicleTest {
         assertEquals(id, vehicle.getId());
         assertEquals("Toyota", vehicle.getBrand());
         assertEquals("Corolla", vehicle.getModel());
-        assertEquals("cliente-10", vehicle.getCustomerId());
+        assertEquals(customerId, vehicle.getCustomerId());
         assertEquals(createdAt, vehicle.getCreatedAt());
         assertEquals(updatedAt, vehicle.getUpdatedAt());
     }
