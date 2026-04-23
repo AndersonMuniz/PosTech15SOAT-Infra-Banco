@@ -1,11 +1,9 @@
 package br.com.fiap.numberone.serviceorder.domain.entities;
 
-import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderBudgetStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
-import br.com.fiap.numberone.serviceorder.domain.exceptions.AutomotiveServiceNotActiveException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderBudgetStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
-import br.com.fiap.numberone.serviceorder.domain.references.AutomotiveService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +32,7 @@ public class ServiceOrderBudget {
     private LocalDateTime updatedAt;
 
     public void attachServiceOrder(ServiceOrder serviceOrder) {
-        if (ServiceOrderStatus.IN_DIAGNOSIS != serviceOrder.getStatus()) {
+        if (!List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.REJECTED).contains(serviceOrder.getStatus())) {
             throw new InvalidServiceOrderStatusException("Service order status does not allow creating new budget: " + serviceOrder.getStatus());
         }
         this.serviceOrder = serviceOrder;
@@ -45,17 +43,28 @@ public class ServiceOrderBudget {
     }
 
     public void markAsSent() {
+        validateStatusTransition(ServiceOrderBudgetStatus.DRAFT, "sending");
         this.status = ServiceOrderBudgetStatus.SENT;
         this.sentAt = LocalDateTime.now();
     }
 
     public void approve() {
+        validateStatusTransition(ServiceOrderBudgetStatus.SENT, "approving");
         this.status = ServiceOrderBudgetStatus.APPROVED;
         this.approvedAmount = this.quotedAmount;
         this.approvedAt = LocalDateTime.now();
     }
 
     public void reject() {
+        validateStatusTransition(ServiceOrderBudgetStatus.SENT, "rejecting");
         this.status = ServiceOrderBudgetStatus.REJECTED;
+    }
+
+    private void validateStatusTransition(ServiceOrderBudgetStatus expectedStatus, String action) {
+        if (status != expectedStatus) {
+            throw new InvalidServiceOrderBudgetStatusException(
+                    "Budget status does not allow " + action + ": " + status
+            );
+        }
     }
 }

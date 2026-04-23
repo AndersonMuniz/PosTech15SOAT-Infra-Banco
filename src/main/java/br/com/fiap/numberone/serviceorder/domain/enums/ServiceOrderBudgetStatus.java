@@ -5,6 +5,7 @@ public enum ServiceOrderBudgetStatus {
     DRAFT,
     SENT,
     APPROVED,
-    REJECTED
+    REJECTED,
+    CANCELLED
 
 }

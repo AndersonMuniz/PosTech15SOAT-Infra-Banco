@@ -43,13 +43,9 @@ public class ServiceOrderBudgetController {
         return ResponseEntity.created(location).body(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @PostMapping("/request-approval")
-    public ResponseEntity<ServiceOrderBudgetResponse> requestApprovalBudget(
-            @Valid @RequestBody CreateServiceOrderBudgetRequest createServiceOrderBudgetRequest
-    ) {
-        ServiceOrderBudget serviceOrderBudget = budgetService.requestApproval(
-                budgetApiMapper.toDomain(createServiceOrderBudgetRequest)
-        );
+    @PostMapping("/{id}/request-approval")
+    public ResponseEntity<ServiceOrderBudgetResponse> requestApprovalBudget(@PathVariable UUID id) {
+        ServiceOrderBudget serviceOrderBudget = budgetService.requestApproval(id);
         return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 

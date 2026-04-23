@@ -17,6 +17,7 @@ public interface CustomerMapper {
     @Mapping(target = "ativo", source = "active")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "email", source = "email")
     ClientEntity toEntity(Customer customer);
 
     @Mapping(target = "name", source = "nome")
@@ -25,5 +26,6 @@ public interface CustomerMapper {
     @Mapping(target = "phone", source = "telefone")
     @Mapping(target = "address", source = "endereco")
     @Mapping(target = "active", source = "ativo")
+    @Mapping(target = "email", source = "email")
     Customer toDomain(ClientEntity entity);
 }

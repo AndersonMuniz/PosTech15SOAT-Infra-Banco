@@ -1,5 +1,9 @@
 package br.com.fiap.numberone.serviceorder.api.exceptions;
 
+import br.com.fiap.numberone.serviceorder.domain.exceptions.AutomotiveServiceNotActiveException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerEmailException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderBudgetStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
 import br.com.fiap.numberone.shared.api.exception.ErrorResponse;
 import org.slf4j.Logger;
@@ -11,14 +15,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-@RestControllerAdvice(basePackages = "br.com.fiap.numberone.ordemservico")
+@RestControllerAdvice(basePackages = "br.com.fiap.numberone.serviceorder")
 public class ServiceOrderExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceOrderExceptionHandler.class);
 
-    @ExceptionHandler(InvalidServiceOrderStatusException.class)
-    public ResponseEntity<ErrorResponse> handleValidationErrors(InvalidServiceOrderStatusException ex) {
-        log.warn("Service order status does not allow the requested action: {}", ex.getMessage());
+    @ExceptionHandler({
+            InvalidServiceOrderStatusException.class,
+            InvalidServiceOrderBudgetStatusException.class,
+            AutomotiveServiceNotActiveException.class,
+            CustomerNotActiveException.class,
+            CustomerEmailException.class
+    })
+    public ResponseEntity<ErrorResponse> handleValidationErrors(Exception ex) {
 
         ErrorResponse response = new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_CONTENT.value(),
