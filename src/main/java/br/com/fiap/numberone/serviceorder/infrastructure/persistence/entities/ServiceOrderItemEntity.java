@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,6 +43,10 @@ public class ServiceOrderItemEntity {
 
     @Column(name = "opcional")
     private Boolean optional;
+
+    @OneToMany(mappedBy = "serviceOrderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ServiceOrderItemSupplyEntity> supplies = new ArrayList<>();
 
     @Column(name = "data_hora_inicio")
     private LocalDateTime startDateTime;

@@ -77,7 +77,8 @@ public class ServiceOrderController {
     public ResponseEntity<ServiceOrderResponse> cancelServiceOrder(
             @PathVariable UUID id
     ) {
-        return ResponseEntity.noContent().build();
+        ServiceOrder serviceOrder = serviceOrderService.cancelOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
     @PatchMapping("/{id}/start")

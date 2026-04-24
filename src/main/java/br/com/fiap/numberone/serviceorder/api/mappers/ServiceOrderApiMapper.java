@@ -4,10 +4,12 @@ import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderRe
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.FinalDiagnosisRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderBudgetResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderItemResponse;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderItemSupplyResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderValueResponse;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderBudget;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
+import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItemSupply;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Diagnosis;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
@@ -41,6 +43,9 @@ public interface ServiceOrderApiMapper {
 
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
     ServiceOrderItemResponse toResponse(ServiceOrderItem serviceOrderItem);
+
+    @Mapping(target = "serviceOrderItemId", source = "serviceOrderItem.id")
+    ServiceOrderItemSupplyResponse toResponse(ServiceOrderItemSupply serviceOrderItemSupply);
 
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
     ServiceOrderBudgetResponse toResponse(ServiceOrderBudget serviceOrderBudget);
