@@ -16,8 +16,8 @@ import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderBudge
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderItemService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderItemSupplyService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderService;
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.InventoryItemGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.InventoryWithdrawalGatewayImpl;
+import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderInventoryItemGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderBudgetGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderItemGatewayImpl;
@@ -53,11 +53,11 @@ public class ServiceOrderBeansConfig {
     }
 
     @Bean
-    public InventoryItemGateway inventoryItemGateway(
+    public InventoryItemGateway serviceOrderInventoryItemGateway(
             InventoryItemRepository inventoryItemRepository,
             InventoryItemMapper inventoryItemMapper
     ) {
-        return new InventoryItemGatewayImpl(inventoryItemRepository, inventoryItemMapper);
+        return new ServiceOrderInventoryItemGatewayImpl(inventoryItemRepository, inventoryItemMapper);
     }
 
     @Bean
@@ -113,12 +113,12 @@ public class ServiceOrderBeansConfig {
     public ServiceOrderItemSupplyService serviceOrderItemSupplyService(
             ServiceOrderItemSupplyGateway serviceOrderItemSupplyGateway,
             ServiceOrderItemGateway serviceOrderItemGateway,
-            InventoryItemGateway inventoryItemGateway
+            InventoryItemGateway serviceOrderInventoryItemGateway
     ) {
         return new ServiceOrderItemSupplyService(
                 serviceOrderItemSupplyGateway,
                 serviceOrderItemGateway,
-                inventoryItemGateway
+                serviceOrderInventoryItemGateway
         );
     }
 
