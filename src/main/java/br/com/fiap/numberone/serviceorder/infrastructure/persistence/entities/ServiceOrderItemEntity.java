@@ -3,10 +3,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 import br.com.fiap.numberone.automotiveservice.infrastructure.persistence.entities.AutomotiveServiceEntity;
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +14,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "ordem_servico_servico")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -71,5 +69,11 @@ public class ServiceOrderItemEntity {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void linkChildren() {
+        if (supplies != null) {
+            supplies.forEach(supply -> supply.setServiceOrderItem(this));
+        }
     }
 }

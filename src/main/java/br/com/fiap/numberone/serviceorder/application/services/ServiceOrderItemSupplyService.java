@@ -81,8 +81,9 @@ public class ServiceOrderItemSupplyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory item not found for id: " + id));
     }
 
-    private static void verifyOrderItemStatus(ServiceOrderItemSupply serviceOrderItemSupply) {
-        OrderItemStatus serviceOrderItemStatus = serviceOrderItemSupply.getServiceOrderItem().getStatus();
+    private void verifyOrderItemStatus(ServiceOrderItemSupply serviceOrderItemSupply) {
+        ServiceOrderItem serviceOrderItem = getServiceOrderItem(serviceOrderItemSupply.getServiceOrderItem().getId());
+        OrderItemStatus serviceOrderItemStatus = serviceOrderItem.getStatus();
 
         if (List.of(OrderItemStatus.CANCELLED, OrderItemStatus.COMPLETED).contains(serviceOrderItemStatus)) {
             throw new InvalidServiceOrderItemStatusException(

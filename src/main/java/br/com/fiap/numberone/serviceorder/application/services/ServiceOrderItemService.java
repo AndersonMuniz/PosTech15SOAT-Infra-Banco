@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ServiceOrderItemService {
-
     private final ServiceOrderGateway serviceOrderGateway;
     private final ServiceOrderItemGateway serviceOrderItemGateway;
     private final AutomotiveServiceGateway automotiveServiceGateway;
@@ -90,7 +89,7 @@ public class ServiceOrderItemService {
 
     public ServiceOrderItem changeServiceOrderItemStatus(ServiceOrderItem serviceOrderItem, OrderItemStatus targetStatus) {
         serviceOrderItem.updateStatus(targetStatus);
-        return serviceOrderItemGateway.save(serviceOrderItem);
+        return serviceOrderItemGateway.updateStatus(serviceOrderItem.getId(), serviceOrderItem.getStatus());
     }
 
     private ServiceOrderItem getServiceOrderItem(UUID id) {

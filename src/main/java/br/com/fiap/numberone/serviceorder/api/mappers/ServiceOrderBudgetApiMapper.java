@@ -10,7 +10,6 @@ import org.mapstruct.Mapping;
 public interface ServiceOrderBudgetApiMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "serviceOrder.id", source = "serviceOrderId")
     @Mapping(target = "approvedAmount", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "sentAt", ignore = true)

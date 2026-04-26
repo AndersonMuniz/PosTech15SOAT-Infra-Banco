@@ -11,7 +11,8 @@ public record CreateServiceOrderItemRequest(
         UUID serviceId,
         @NotNull(message = "serviceOrderId is required")
         UUID serviceOrderId,
-        @Positive(message = "quantityUsed must be positive")
-        @NotNull(message = "quantityUsed is required")
-        Integer quantityUsed
+        @Positive(message = "value must be positive")
+        @NotNull(message = "value is required")
+        BigDecimal value,
+        Boolean optional
 ) { }

@@ -43,8 +43,14 @@ public interface ServiceOrderItemMapper {
     ServiceOrderEntity toServiceOrderEntityRef(ServiceOrder domain);
 
     @Named("toAutomotiveServiceRef")
-    @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "id", source = "id")
+    @Mapping(target = "code", source = "code")
+    @Mapping(target = "name", source = "name")
+    @Mapping(target = "description", source = "description")
+    @Mapping(target = "serviceType", source = "serviceType")
+    @Mapping(target = "baseValue", source = "baseValue")
+    @Mapping(target = "estimatedTimeMinutes", source = "estimatedTimeMinutes")
+    @Mapping(target = "active", source = "active")
     AutomotiveService toAutomotiveServiceRef(AutomotiveServiceEntity entity);
 
     @Named("toAutomotiveServiceEntityRef")

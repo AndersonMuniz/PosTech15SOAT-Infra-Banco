@@ -2,10 +2,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.inventory.infrastructure.persistence.entities.InventoryItemEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,6 +10,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "ordem_servico_servico_item")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

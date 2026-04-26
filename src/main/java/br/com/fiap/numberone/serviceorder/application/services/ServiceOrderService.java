@@ -51,7 +51,13 @@ public class ServiceOrderService {
         ServiceOrder serviceOrder = getServiceOrder(id);
 
         serviceOrder.applyFinalDiagnosis(diagnosis.getFinalDiagnosisDescription(), diagnosis.getNotes());
-        return changeOrderStatus(serviceOrder, ServiceOrderStatus.IN_DIAGNOSIS);
+        serviceOrder.updateStatus(ServiceOrderStatus.IN_DIAGNOSIS);
+        return serviceOrderGateway.updateFinalDiagnosis(
+                serviceOrder.getId(),
+                serviceOrder.getFinalDiagnosisDescription(),
+                serviceOrder.getNotes(),
+                serviceOrder.getStatus()
+        );
     }
 
     public ServiceOrder startOrderService(UUID id) {
@@ -102,7 +108,7 @@ public class ServiceOrderService {
 
     private ServiceOrder changeOrderStatus(ServiceOrder serviceOrder, ServiceOrderStatus targetStatus) {
         serviceOrder.updateStatus(targetStatus);
-        return serviceOrderGateway.save(serviceOrder);
+        return serviceOrderGateway.updateStatus(serviceOrder.getId(), serviceOrder.getStatus());
     }
 
 }

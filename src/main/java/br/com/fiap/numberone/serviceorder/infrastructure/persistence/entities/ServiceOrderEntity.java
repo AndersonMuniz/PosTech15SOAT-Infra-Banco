@@ -86,4 +86,17 @@ public class ServiceOrderEntity {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void linkChildren() {
+        if (items != null) {
+            items.forEach(item -> {
+                item.setServiceOrder(this);
+                item.linkChildren();
+            });
+        }
+
+        if (budgets != null) {
+            budgets.forEach(budget -> budget.setServiceOrder(this));
+        }
+    }
 }
