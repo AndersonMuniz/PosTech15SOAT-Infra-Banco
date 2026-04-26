@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.api.controllers;
 
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderTrackingResponse;
-import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderApiMapper;
+import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderTrackingApiMapper;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderTrackingService;
 
 import org.springframework.http.ResponseEntity;
@@ -13,21 +13,21 @@ import java.util.UUID;
 @RequestMapping("/api/public/service-orders")
 public class ServiceOrderTrackingController {
 
-    private final ServiceOrderApiMapper serviceOrderApiMapper;
+    private final ServiceOrderTrackingApiMapper serviceOrderTrackingApiMapper;
     private final ServiceOrderTrackingService serviceOrderTrackingService;
 
     public ServiceOrderTrackingController(
-            ServiceOrderApiMapper serviceOrderApiMapper,
+            ServiceOrderTrackingApiMapper serviceOrderTrackingApiMapper,
             ServiceOrderTrackingService serviceOrderTrackingService
     ) {
-        this.serviceOrderApiMapper = serviceOrderApiMapper;
+        this.serviceOrderTrackingApiMapper = serviceOrderTrackingApiMapper;
         this.serviceOrderTrackingService = serviceOrderTrackingService;
     }
 
     @GetMapping("/{id}/tracking")
     public ResponseEntity<ServiceOrderTrackingResponse> getServiceOrderTracking(@PathVariable UUID id) {
         return ResponseEntity.ok(
-                serviceOrderApiMapper.toTrackingResponse(serviceOrderTrackingService.getTracking(id))
+                serviceOrderTrackingApiMapper.toResponse(serviceOrderTrackingService.getTracking(id))
         );
     }
 

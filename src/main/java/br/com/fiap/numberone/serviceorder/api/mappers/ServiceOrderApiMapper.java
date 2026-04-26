@@ -16,9 +16,6 @@ import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderValue;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.Comparator;
-import java.util.List;
-
 @Mapper(componentModel = "spring")
 public interface ServiceOrderApiMapper {
 
@@ -42,41 +39,16 @@ public interface ServiceOrderApiMapper {
 
     ServiceOrderResponse toResponse(ServiceOrder entity);
 
-    @Mapping(target = "budget", expression = "java(getLatestBudgetResponse(entity.getBudgets()))")
-    ServiceOrderTrackingResponse toTrackingResponse(ServiceOrder entity);
-
     ServiceOrderResponse.CustomerResponse toResponse(Customer customer);
 
     ServiceOrderResponse.VehicleResponse toResponse(Vehicle vehicle);
 
-    ServiceOrderTrackingResponse.VehicleResponse toTrackingResponse(Vehicle vehicle);
-
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
     ServiceOrderItemResponse toResponse(ServiceOrderItem serviceOrderItem);
-
-    @Mapping(target = "serviceName", source = "automotiveService.name")
-    @Mapping(target = "serviceType", source = "automotiveService.serviceType")
-    ServiceOrderTrackingResponse.ServiceItemResponse toTrackingResponse(ServiceOrderItem serviceOrderItem);
 
     @Mapping(target = "serviceOrderItemId", source = "serviceOrderItem.id")
     ServiceOrderItemSupplyResponse toResponse(ServiceOrderItemSupply serviceOrderItemSupply);
 
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
     ServiceOrderBudgetResponse toResponse(ServiceOrderBudget serviceOrderBudget);
-
-    ServiceOrderTrackingResponse.BudgetResponse toTrackingResponse(ServiceOrderBudget serviceOrderBudget);
-
-    default ServiceOrderTrackingResponse.BudgetResponse getLatestBudgetResponse(List<ServiceOrderBudget> budgets) {
-        if (budgets == null || budgets.isEmpty()) {
-            return null;
-        }
-
-        ServiceOrderBudget latestBudget = budgets.stream()
-                .filter(java.util.Objects::nonNull)
-                .max(Comparator.comparing(ServiceOrderBudget::getCreatedAt,
-                        Comparator.nullsLast(Comparator.naturalOrder())))
-                .orElse(null);
-
-        return latestBudget == null ? null : toTrackingResponse(latestBudget);
-    }
 }
