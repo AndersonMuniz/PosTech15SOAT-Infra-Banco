@@ -22,17 +22,23 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrderEntity
 
     @Modifying
     @Query("""
-        update ServiceOrderEntity so
-           set so.finalDiagnosisDescription = :finalDiagnosisDescription,
-               so.notes = :notes,
-               so.status = :status,
-               so.updatedAt = CURRENT_TIMESTAMP
-         where so.id = :id
+    update ServiceOrderEntity so
+       set so.finalDiagnosisDescription = :#{#update.finalDiagnosisDescription},
+           so.notes = :#{#update.notes},
+           so.expectedDateTime = :#{#update.expectedDateTime},
+           so.status = :#{#update.status},
+           so.updatedAt = CURRENT_TIMESTAMP
+     where so.id = :#{#update.serviceOrderId}
     """)
-    int updateFinalDiagnosis(
-            @Param("id") UUID id,
-            @Param("finalDiagnosisDescription") String finalDiagnosisDescription,
-            @Param("notes") String notes,
-            @Param("status") ServiceOrderStatus status
-    );
+    void updateFinalDiagnosis(@Param("update") br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderFinalDiagnosisUpdate update);
+
+    @Modifying
+    @Query("""
+    update ServiceOrderEntity so
+       set so.deliveryDateTime = :#{#update.deliveryDateTime},
+           so.status = :#{#update.status},
+           so.updatedAt = CURRENT_TIMESTAMP
+     where so.id = :#{#update.serviceOrderId}
+    """)
+    void deliver(@Param("update") br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderDeliveryUpdate update);
 }

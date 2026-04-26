@@ -1,5 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderDeliveryUpdate;
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderFinalDiagnosisUpdate;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
@@ -59,9 +61,18 @@ public class ServiceOrderGatewayImpl implements ServiceOrderGateway {
 
     @Override
     @Transactional
-    public ServiceOrder updateFinalDiagnosis(UUID id, String finalDiagnosisDescription, String notes, ServiceOrderStatus status) {
-        repository.updateFinalDiagnosis(id, finalDiagnosisDescription, notes, status);
-        return repository.findById(id)
+    public ServiceOrder updateFinalDiagnosis(ServiceOrderFinalDiagnosisUpdate update) {
+        repository.updateFinalDiagnosis(update);
+        return repository.findById(update.getServiceOrderId())
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Updated service order could not be reloaded"));
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrder deliver(ServiceOrderDeliveryUpdate update) {
+        repository.deliver(update);
+        return repository.findById(update.getServiceOrderId())
                 .map(mapper::toDomain)
                 .orElseThrow(() -> new IllegalStateException("Updated service order could not be reloaded"));
     }

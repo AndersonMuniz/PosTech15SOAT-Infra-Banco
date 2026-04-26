@@ -1,5 +1,7 @@
 package br.com.fiap.numberone.serviceorder.application.services;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemCompletionUpdate;
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemStartUpdate;
 import br.com.fiap.numberone.serviceorder.application.gateways.AutomotiveServiceGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.InventoryWithdrawalGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
@@ -14,6 +16,7 @@ import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ServiceOrderItemService {
@@ -84,7 +87,20 @@ public class ServiceOrderItemService {
 
     public ServiceOrderItem completeServiceOrderItem(UUID id) {
         ServiceOrderItem serviceOrderItem = getServiceOrderItem(id);
-        return changeServiceOrderItemStatus(serviceOrderItem, OrderItemStatus.COMPLETED);
+
+        if (isItemAlreadyCompleted(serviceOrderItem)) {
+            return serviceOrderItem;
+        }
+
+        serviceOrderItem.updateStatus(OrderItemStatus.COMPLETED);
+        serviceOrderItem.defineEndDateTime(LocalDateTime.now());
+        return serviceOrderItemGateway.complete(
+                ServiceOrderItemCompletionUpdate.builder()
+                        .serviceOrderItemId(serviceOrderItem.getId())
+                        .endDateTime(serviceOrderItem.getEndDateTime())
+                        .status(serviceOrderItem.getStatus())
+                        .build()
+        );
     }
 
     public ServiceOrderItem changeServiceOrderItemStatus(ServiceOrderItem serviceOrderItem, OrderItemStatus targetStatus) {
@@ -106,7 +122,7 @@ public class ServiceOrderItemService {
         UUID serviceOrderId = serviceOrderItem.getServiceOrder().getId();
         ServiceOrder serviceOrder = getServiceOrder(serviceOrderId);
 
-        if (serviceOrder.getStatus() != ServiceOrderStatus.APPROVED) {
+        if (serviceOrder.getStatus() != ServiceOrderStatus.IN_PROGRESS) {
             throw new InvalidServiceOrderStatusException(
                     "Service order status does not allow starting service item: " + serviceOrder.getStatus()
             );
@@ -115,6 +131,10 @@ public class ServiceOrderItemService {
 
     private boolean isItemAlreadyInProgress(ServiceOrderItem serviceOrderItem) {
         return serviceOrderItem.getStatus() == OrderItemStatus.IN_PROGRESS;
+    }
+
+    private boolean isItemAlreadyCompleted(ServiceOrderItem serviceOrderItem) {
+        return serviceOrderItem.getStatus() == OrderItemStatus.COMPLETED;
     }
 
     private boolean hasUnavailableSupply(ServiceOrderItem serviceOrderItem) {
@@ -131,7 +151,15 @@ public class ServiceOrderItemService {
     }
 
     private ServiceOrderItem startItemAndConsumeSupplies(ServiceOrderItem serviceOrderItem) {
-        ServiceOrderItem startedServiceOrderItem = changeServiceOrderItemStatus(serviceOrderItem, OrderItemStatus.IN_PROGRESS);
+        serviceOrderItem.updateStatus(OrderItemStatus.IN_PROGRESS);
+        serviceOrderItem.defineStartDateTime(LocalDateTime.now());
+        ServiceOrderItem startedServiceOrderItem = serviceOrderItemGateway.start(
+                ServiceOrderItemStartUpdate.builder()
+                        .serviceOrderItemId(serviceOrderItem.getId())
+                        .startDateTime(serviceOrderItem.getStartDateTime())
+                        .status(serviceOrderItem.getStatus())
+                        .build()
+        );
         consumeSupplies(startedServiceOrderItem);
         return startedServiceOrderItem;
     }

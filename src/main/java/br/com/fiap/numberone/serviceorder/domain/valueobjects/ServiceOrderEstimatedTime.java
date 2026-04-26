@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Diagnosis {
-    private String notes;
-    private String finalDiagnosisDescription;
-    private LocalDateTime expectedDateTime;
+public class ServiceOrderEstimatedTime {
+
+    private UUID serviceOrderId;
+    private Integer totalEstimatedMinutes;
+    private LocalDateTime suggestedExpectedDateTime;
 }

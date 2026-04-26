@@ -1,5 +1,7 @@
 package br.com.fiap.numberone.serviceorder.application.gateways;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderDeliveryUpdate;
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderFinalDiagnosisUpdate;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
@@ -17,5 +19,7 @@ public interface ServiceOrderGateway {
 
     ServiceOrder updateStatus(UUID id, ServiceOrderStatus status);
 
-    ServiceOrder updateFinalDiagnosis(UUID id, String finalDiagnosisDescription, String notes, ServiceOrderStatus status);
+    ServiceOrder updateFinalDiagnosis(ServiceOrderFinalDiagnosisUpdate update);
+
+    ServiceOrder deliver(ServiceOrderDeliveryUpdate update);
 }

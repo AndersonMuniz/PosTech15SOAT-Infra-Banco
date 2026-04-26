@@ -1,5 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemCompletionUpdate;
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemStartUpdate;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderItemGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
@@ -70,5 +72,25 @@ public class ServiceOrderItemGatewayImpl implements ServiceOrderItemGateway {
         return repository.findById(id)
                 .map(mapper::toDomain)
                 .orElseThrow(() -> new IllegalStateException("Updated service order item could not be reloaded"));
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrderItem start(ServiceOrderItemStartUpdate update) {
+        repository.start(update);
+        entityManager.clear();
+        return repository.findById(update.getServiceOrderItemId())
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Started service order item could not be reloaded"));
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrderItem complete(ServiceOrderItemCompletionUpdate update) {
+        repository.complete(update);
+        entityManager.clear();
+        return repository.findById(update.getServiceOrderItemId())
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Completed service order item could not be reloaded"));
     }
 }

@@ -58,8 +58,7 @@ public class ServiceOrderItemSupplyController {
             @Valid @RequestBody UpdateServiceOrderItemSupplyRequest updateServiceOrderItemSupplyRequest
     ) {
         ServiceOrderItemSupply serviceOrderItemSupply = supplyService.updateItemSupply(
-                id,
-                supplyApiMapper.toDomain(updateServiceOrderItemSupplyRequest)
+                id, supplyApiMapper.toUpdate(updateServiceOrderItemSupplyRequest)
         );
         return ResponseEntity.ok(supplyApiMapper.toResponse(serviceOrderItemSupply));
     }

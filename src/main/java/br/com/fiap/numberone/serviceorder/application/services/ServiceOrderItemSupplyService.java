@@ -1,5 +1,6 @@
 package br.com.fiap.numberone.serviceorder.application.services;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemSupplyUpdate;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderItemGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderItemSupplyGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.InventoryItemGateway;
@@ -41,13 +42,13 @@ public class ServiceOrderItemSupplyService {
         return serviceOrderItemSupplyGateway.save(serviceOrderItemSupply);
     }
 
-    public ServiceOrderItemSupply updateItemSupply(UUID id, ServiceOrderItemSupply serviceOrderItemSupply) {
+    public ServiceOrderItemSupply updateItemSupply(UUID id, ServiceOrderItemSupplyUpdate update) {
         ServiceOrderItemSupply currentSupply = getItemSupply(id);
-        InventoryItem inventoryItem = getInventoryItem(serviceOrderItemSupply.getInventoryItem().getId());
+        InventoryItem inventoryItem = getInventoryItem(update.getInventoryItemId());
 
-        verifyOrderItemStatus(serviceOrderItemSupply);
+        verifyOrderItemStatus(currentSupply);
 
-        currentSupply.updateSupply(inventoryItem, serviceOrderItemSupply.getQuantityUsed());
+        currentSupply.updateSupply(inventoryItem, update.getQuantityUsed());
 
         return serviceOrderItemSupplyGateway.save(currentSupply);
     }

@@ -30,4 +30,24 @@ public interface ServiceOrderItemRepository extends JpaRepository<ServiceOrderIt
          where soi.id = :id
     """)
     int updateStatus(@Param("id") UUID id, @Param("status") OrderItemStatus status);
+
+    @Modifying
+    @Query("""
+        update ServiceOrderItemEntity soi
+           set soi.startDateTime = :#{#update.startDateTime},
+               soi.status = :#{#update.status},
+               soi.updatedAt = CURRENT_TIMESTAMP
+         where soi.id = :#{#update.serviceOrderItemId}
+    """)
+    int start(@Param("update") br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemStartUpdate update);
+
+    @Modifying
+    @Query("""
+        update ServiceOrderItemEntity soi
+           set soi.endDateTime = :#{#update.endDateTime},
+               soi.status = :#{#update.status},
+               soi.updatedAt = CURRENT_TIMESTAMP
+         where soi.id = :#{#update.serviceOrderItemId}
+    """)
+    int complete(@Param("update") br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderItemCompletionUpdate update);
 }

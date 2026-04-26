@@ -57,6 +57,10 @@ public class ServiceOrder {
         this.notes = notes;
     }
 
+    public void defineExpectedDateTime(LocalDateTime expectedDateTime) {
+        this.expectedDateTime = expectedDateTime;
+    }
+
     public void updateStatus(ServiceOrderStatus serviceOrderStatus) {
         if (status == null) {
             this.status = serviceOrderStatus;

@@ -66,6 +66,14 @@ public class ServiceOrderItem {
         this.status = orderItemStatus;
     }
 
+    public void defineStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public void defineEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
     private boolean isTransitionAllowed(OrderItemStatus nextStatus) {
         return switch (status) {
             case PENDING -> List.of(
