@@ -54,7 +54,7 @@ public class EmailServiceOrderBudgetApprovalNotificationGateway implements Servi
 
     private String buildDecisionUrl(UUID budgetId, String decision) {
         return UriComponentsBuilder.fromUriString(properties.baseUrl())
-                .path("/api/budgets/{id}/approval/{decision}")
+                .path("/api/service-order-budgets/{id}/approval/{decision}")
                 .buildAndExpand(budgetId, decision)
                 .toUriString();
     }

@@ -2,10 +2,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderBudgetStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +21,7 @@ public class ServiceOrderBudgetEntity {
     @Column(name = "id")
     private UUID id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ordem_servico", nullable = false)
     private ServiceOrderEntity serviceOrder;

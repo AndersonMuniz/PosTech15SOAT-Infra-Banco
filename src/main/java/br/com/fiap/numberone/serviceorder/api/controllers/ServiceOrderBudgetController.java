@@ -5,6 +5,7 @@ import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderBudgetR
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderBudgetApiMapper;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderBudgetService;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderBudget;
+import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/budgets")
+@RequestMapping("/api/admin")
 public class ServiceOrderBudgetController {
 
     private final ServiceOrderBudgetApiMapper budgetApiMapper;
@@ -28,34 +29,49 @@ public class ServiceOrderBudgetController {
         this.budgetService = budgetService;
     }
 
-    @PostMapping
+    @PostMapping("/service-orders/{serviceOrderId}/budgets")
     public ResponseEntity<ServiceOrderBudgetResponse> createServiceOrderBudget(
+            @PathVariable UUID serviceOrderId,
             @Valid @RequestBody CreateServiceOrderBudgetRequest createServiceOrderBudgetRequest
     ) {
-        ServiceOrderBudget serviceOrderBudget = budgetService.createDraftBudget(
-                budgetApiMapper.toDomain(createServiceOrderBudgetRequest)
-        );
+        ServiceOrderBudget serviceOrderBudget = ServiceOrderBudget.builder()
+                .serviceOrder(ServiceOrder.builder().id(serviceOrderId).build())
+                .quotedAmount(createServiceOrderBudgetRequest.quotedAmount())
+                .build();
+        serviceOrderBudget = budgetService.createDraftBudget(serviceOrderBudget);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{id}")
+                .replacePath("/api/service-order-budgets/{id}")
                 .buildAndExpand(serviceOrderBudget.getId())
                 .toUri();
         return ResponseEntity.created(location).body(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @PostMapping("/{id}/request-approval")
+    @PatchMapping("/service-order-budgets/{id}/request-approval")
     public ResponseEntity<ServiceOrderBudgetResponse> requestApprovalBudget(@PathVariable UUID id) {
         ServiceOrderBudget serviceOrderBudget = budgetService.requestApproval(id);
         return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @GetMapping("/{id}/approval/approve")
+    @PatchMapping("/service-order-budgets/{id}/approve")
+    public ResponseEntity<ServiceOrderBudgetResponse> approveBudget(@PathVariable UUID id) {
+        ServiceOrderBudget serviceOrderBudget = budgetService.approve(id);
+        return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
+    }
+
+    @PatchMapping("/service-order-budgets/{id}/reject")
+    public ResponseEntity<ServiceOrderBudgetResponse> rejectBudget(@PathVariable UUID id) {
+        ServiceOrderBudget serviceOrderBudget = budgetService.reject(id);
+        return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
+    }
+
+    @GetMapping("/service-order-budgets/{id}/approval/approve")
     public ResponseEntity<String> approveBudgetByEmailLink(@PathVariable UUID id) {
         budgetService.approve(id);
         return ResponseEntity.ok("Budget approved successfully.");
     }
 
-    @GetMapping("/{id}/approval/reject")
+    @GetMapping("/service-order-budgets/{id}/approval/reject")
     public ResponseEntity<String> rejectBudgetByEmailLink(@PathVariable UUID id) {
         budgetService.reject(id);
         return ResponseEntity.ok("Budget rejected successfully.");

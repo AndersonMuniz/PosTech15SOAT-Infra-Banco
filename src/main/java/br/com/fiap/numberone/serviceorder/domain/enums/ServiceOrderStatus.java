@@ -9,6 +9,6 @@ public enum ServiceOrderStatus {
     REJECTED,
     IN_PROGRESS,
     COMPLETED,
-    CANCELED,
+    CANCELLED,
     DELIVERED
 }

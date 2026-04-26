@@ -53,7 +53,7 @@ public class ServiceOrderBudgetService {
             throw new CustomerEmailException("Customer email is required to request budget approval");
         }
         serviceOrder.updateStatus(ServiceOrderStatus.WAITING_APPROVAL);
-        serviceOrderGateway.save(serviceOrder);
+        serviceOrderGateway.updateStatus(serviceOrder.getId(), serviceOrder.getStatus());
 
         ServiceOrderBudget savedBudget = serviceOrderBudgetGateway.save(serviceOrderBudget);
 
@@ -62,28 +62,30 @@ public class ServiceOrderBudgetService {
         return savedBudget;
     }
 
-    public void approve(UUID id) {
+    public ServiceOrderBudget approve(UUID id) {
         ServiceOrderBudget serviceOrderBudget = getServiceOrderBudget(id);
 
         serviceOrderBudget.approve();
-        serviceOrderBudgetGateway.save(serviceOrderBudget);
+        ServiceOrderBudget savedBudget = serviceOrderBudgetGateway.save(serviceOrderBudget);
 
         updateServiceOrderStatus(serviceOrderBudget, ServiceOrderStatus.APPROVED);
+        return savedBudget;
     }
 
-    public void reject(UUID id) {
+    public ServiceOrderBudget reject(UUID id) {
         ServiceOrderBudget serviceOrderBudget = getServiceOrderBudget(id);
 
         serviceOrderBudget.reject();
-        serviceOrderBudgetGateway.save(serviceOrderBudget);
+        ServiceOrderBudget savedBudget = serviceOrderBudgetGateway.save(serviceOrderBudget);
 
         updateServiceOrderStatus(serviceOrderBudget, ServiceOrderStatus.REJECTED);
+        return savedBudget;
     }
 
     private void updateServiceOrderStatus(ServiceOrderBudget serviceOrderBudget, ServiceOrderStatus approved) {
         ServiceOrder serviceOrder = getServiceOrder(serviceOrderBudget);
         serviceOrder.updateStatus(approved);
-        serviceOrderGateway.save(serviceOrder);
+        serviceOrderGateway.updateStatus(serviceOrder.getId(), serviceOrder.getStatus());
     }
 
     private ServiceOrderBudget getServiceOrderBudget(UUID id) {

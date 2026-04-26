@@ -4,6 +4,7 @@ import br.com.fiap.numberone.serviceorder.domain.exceptions.AutomotiveServiceNot
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerEmailException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderBudgetStatusException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderItemStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
 import br.com.fiap.numberone.shared.api.exception.ErrorResponse;
@@ -24,6 +25,7 @@ public class ServiceOrderExceptionHandler {
     @ExceptionHandler({
             InvalidServiceOrderStatusException.class,
             InvalidServiceOrderBudgetStatusException.class,
+            InvalidServiceOrderItemStatusException.class,
             AutomotiveServiceNotActiveException.class,
             CustomerNotActiveException.class,
             CustomerEmailException.class,

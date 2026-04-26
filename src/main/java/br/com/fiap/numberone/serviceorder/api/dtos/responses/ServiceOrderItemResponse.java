@@ -4,6 +4,7 @@ import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public record ServiceOrderItemResponse(
@@ -13,6 +14,7 @@ public record ServiceOrderItemResponse(
         BigDecimal value,
         OrderItemStatus status,
         Boolean optional,
+        List<ServiceOrderItemSupplyResponse> supplies,
         LocalDateTime startDateTime,
         LocalDateTime endDateTime,
         LocalDateTime createdAt,
@@ -29,5 +31,4 @@ public record ServiceOrderItemResponse(
             Boolean active
     ) { }
 }
-
 

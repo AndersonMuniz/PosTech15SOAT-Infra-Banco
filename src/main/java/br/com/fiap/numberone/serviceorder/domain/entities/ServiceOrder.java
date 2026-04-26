@@ -1,8 +1,10 @@
 package br.com.fiap.numberone.serviceorder.domain.entities;
 
+import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,10 @@ public class ServiceOrder {
         this.notes = notes;
     }
 
+    public void defineExpectedDateTime(LocalDateTime expectedDateTime) {
+        this.expectedDateTime = expectedDateTime;
+    }
+
     public void updateStatus(ServiceOrderStatus serviceOrderStatus) {
         if (status == null) {
             this.status = serviceOrderStatus;
@@ -72,18 +79,38 @@ public class ServiceOrder {
 
     private boolean isTransitionAllowed(ServiceOrderStatus nextStatus) {
         return switch (status) {
-            case RECEIVED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.CANCELED).contains(nextStatus);
-            case IN_DIAGNOSIS -> List.of(ServiceOrderStatus.WAITING_APPROVAL, ServiceOrderStatus.CANCELED).contains(nextStatus);
+            case RECEIVED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case IN_DIAGNOSIS -> List.of(ServiceOrderStatus.WAITING_APPROVAL, ServiceOrderStatus.CANCELLED).contains(nextStatus);
             case WAITING_APPROVAL -> List.of(
                     ServiceOrderStatus.APPROVED,
                     ServiceOrderStatus.REJECTED,
-                    ServiceOrderStatus.CANCELED
+                    ServiceOrderStatus.CANCELLED
             ).contains(nextStatus);
-            case APPROVED -> List.of(ServiceOrderStatus.IN_PROGRESS, ServiceOrderStatus.CANCELED).contains(nextStatus);
-            case IN_PROGRESS -> List.of(ServiceOrderStatus.COMPLETED, ServiceOrderStatus.CANCELED).contains(nextStatus);
-            case COMPLETED, CANCELED -> Objects.equals(ServiceOrderStatus.DELIVERED, nextStatus);
+            case APPROVED -> List.of(ServiceOrderStatus.IN_PROGRESS, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case IN_PROGRESS -> List.of(ServiceOrderStatus.COMPLETED, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case COMPLETED, CANCELLED -> Objects.equals(ServiceOrderStatus.DELIVERED, nextStatus);
             case REJECTED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.WAITING_APPROVAL).contains(nextStatus);
             case DELIVERED -> false;
         };
+    }
+
+    public void validateServiceItemsAreFinished() {
+        boolean serviceItemNotEnded = serviceItems
+                .stream()
+                .anyMatch(serviceOrderItem -> List.of(
+                        OrderItemStatus.PENDING, OrderItemStatus.IN_PROGRESS).contains(serviceOrderItem.getStatus())
+                );
+
+        if(serviceItemNotEnded) {
+            throw new ServiceOrderItemEndStatusException("Service order contains service items pending or in progress status");
+        }
+    }
+
+    public BigDecimal getServiceItemsTotalValue() {
+        return serviceItems
+                .stream()
+                .filter(serviceOrderItem -> serviceOrderItem.getStatus() != OrderItemStatus.CANCELLED)
+                .map(ServiceOrderItem::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

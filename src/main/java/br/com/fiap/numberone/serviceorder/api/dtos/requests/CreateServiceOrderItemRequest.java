@@ -12,7 +12,7 @@ public record CreateServiceOrderItemRequest(
         @NotNull(message = "serviceOrderId is required")
         UUID serviceOrderId,
         @Positive(message = "value must be positive")
-        @NotNull(message = "serviceId is required")
+        @NotNull(message = "value is required")
         BigDecimal value,
         Boolean optional
 ) { }
