@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/service-orders")
+@RequestMapping("/api/admin/service-orders")
 public class ServiceOrderController {
 
     private final ServiceOrderApiMapper orderApiMapper;

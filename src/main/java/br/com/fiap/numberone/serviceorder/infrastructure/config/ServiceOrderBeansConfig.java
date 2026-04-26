@@ -16,6 +16,7 @@ import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderBudge
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderItemService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderItemSupplyService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderService;
+import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderTrackingService;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.InventoryWithdrawalGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderInventoryItemGatewayImpl;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways.ServiceOrderBudgetGatewayImpl;
@@ -79,6 +80,11 @@ public class ServiceOrderBeansConfig {
                 customerGateway,
                 vehicleGateway
         );
+    }
+
+    @Bean
+    public ServiceOrderTrackingService serviceOrderTrackingService(ServiceOrderGateway serviceOrderGateway) {
+        return new ServiceOrderTrackingService(serviceOrderGateway);
     }
 
     @Bean

@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/admin")
 public class ServiceOrderBudgetController {
 
     private final ServiceOrderBudgetApiMapper budgetApiMapper;
