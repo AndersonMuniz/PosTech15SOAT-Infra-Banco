@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api")
 public class ServiceOrderBudgetController {
 
     private final ServiceOrderBudgetApiMapper budgetApiMapper;
@@ -29,7 +29,7 @@ public class ServiceOrderBudgetController {
         this.budgetService = budgetService;
     }
 
-    @PostMapping("/service-orders/{serviceOrderId}/budgets")
+    @PostMapping("/admin/ordens-servico/{serviceOrderId}/orcamentos")
     public ResponseEntity<ServiceOrderBudgetResponse> createServiceOrderBudget(
             @PathVariable UUID serviceOrderId,
             @Valid @RequestBody CreateServiceOrderBudgetRequest createServiceOrderBudgetRequest
@@ -41,39 +41,39 @@ public class ServiceOrderBudgetController {
         serviceOrderBudget = budgetService.createDraftBudget(serviceOrderBudget);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .replacePath("/api/service-order-budgets/{id}")
+                .replacePath("/api/admin/orcamentos-ordem-servico/{id}")
                 .buildAndExpand(serviceOrderBudget.getId())
                 .toUri();
         return ResponseEntity.created(location).body(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @PatchMapping("/service-order-budgets/{id}/request-approval")
+    @PatchMapping("/admin/orcamentos-ordem-servico/{id}/solicitar-aprovacao")
     public ResponseEntity<ServiceOrderBudgetResponse> requestApprovalBudget(@PathVariable UUID id) {
         ServiceOrderBudget serviceOrderBudget = budgetService.requestApproval(id);
         return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @PatchMapping("/service-order-budgets/{id}/approve")
+    @PatchMapping("/admin/orcamentos-ordem-servico/{id}/aprovar")
     public ResponseEntity<ServiceOrderBudgetResponse> approveBudget(@PathVariable UUID id) {
         ServiceOrderBudget serviceOrderBudget = budgetService.approve(id);
         return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @PatchMapping("/service-order-budgets/{id}/reject")
+    @PatchMapping("/admin/orcamentos-ordem-servico/{id}/rejeitar")
     public ResponseEntity<ServiceOrderBudgetResponse> rejectBudget(@PathVariable UUID id) {
         ServiceOrderBudget serviceOrderBudget = budgetService.reject(id);
         return ResponseEntity.ok(budgetApiMapper.toResponse(serviceOrderBudget));
     }
 
-    @GetMapping("/service-order-budgets/{id}/approval/approve")
+    @GetMapping("/public/orcamentos-ordem-servico/{id}/aprovacao/aprovar")
     public ResponseEntity<String> approveBudgetByEmailLink(@PathVariable UUID id) {
         budgetService.approve(id);
-        return ResponseEntity.ok("Budget approved successfully.");
+        return ResponseEntity.ok("Orcamento aprovado com sucesso.");
     }
 
-    @GetMapping("/service-order-budgets/{id}/approval/reject")
+    @GetMapping("/public/orcamentos-ordem-servico/{id}/aprovacao/rejeitar")
     public ResponseEntity<String> rejectBudgetByEmailLink(@PathVariable UUID id) {
         budgetService.reject(id);
-        return ResponseEntity.ok("Budget rejected successfully.");
+        return ResponseEntity.ok("Orcamento rejeitado com sucesso.");
     }
 }

@@ -25,21 +25,21 @@ public class EmailServiceOrderBudgetApprovalNotificationGateway implements Servi
 
     @Override
     public void sendApprovalRequest(ServiceOrderBudget serviceOrderBudget, String recipientEmail) {
-        String approvalUrl = buildDecisionUrl(serviceOrderBudget.getId(), "approve");
-        String rejectionUrl = buildDecisionUrl(serviceOrderBudget.getId(), "reject");
+        String approvalUrl = buildDecisionUrl(serviceOrderBudget.getId(), "aprovar");
+        String rejectionUrl = buildDecisionUrl(serviceOrderBudget.getId(), "rejeitar");
 
-        String subject = "Budget approval required for service order " + serviceOrderBudget.getServiceOrder().getId();
+        String subject = "Aprovacao de orcamento da ordem de servico " + serviceOrderBudget.getServiceOrder().getId();
         String body = """
-                A service order budget is waiting for approval.
+                Um orcamento de ordem de servico esta aguardando aprovacao.
 
-                Service order ID: %s
-                Budget ID: %s
-                Quoted amount: %s
+                ID da ordem de servico: %s
+                ID do orcamento: %s
+                Valor orcado: %s
 
-                Approve:
+                Aprovar:
                 %s
 
-                Reject:
+                Rejeitar:
                 %s
                 """.formatted(
                 serviceOrderBudget.getServiceOrder().getId(),
@@ -54,7 +54,7 @@ public class EmailServiceOrderBudgetApprovalNotificationGateway implements Servi
 
     private String buildDecisionUrl(UUID budgetId, String decision) {
         return UriComponentsBuilder.fromUriString(properties.baseUrl())
-                .path("/api/service-order-budgets/{id}/approval/{decision}")
+                .path("/api/public/orcamentos-ordem-servico/{id}/aprovacao/{decision}")
                 .buildAndExpand(budgetId, decision)
                 .toUriString();
     }

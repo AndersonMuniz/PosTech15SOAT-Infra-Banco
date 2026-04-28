@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin/service-orders")
+@RequestMapping("/api/admin/ordens-servico")
 public class ServiceOrderController {
 
     private final ServiceOrderApiMapper orderApiMapper;
@@ -62,7 +62,7 @@ public class ServiceOrderController {
         return ResponseEntity.created(location).body(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}/start-diagnosis")
+    @PatchMapping("/{id}/iniciar-diagnostico")
     public ResponseEntity<ServiceOrderResponse> addFinalDiagnosis(
             @PathVariable UUID id,
             @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
@@ -71,25 +71,25 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @GetMapping("/{id}/calculate-services")
+    @GetMapping("/{id}/calcular-servicos")
     public ResponseEntity<ServiceOrderValueResponse> calculateServices(@PathVariable UUID id) {
         ServiceOrderValue serviceOrderValue = serviceOrderService.calculateServices(id);
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderValue));
     }
 
-    @GetMapping("/{id}/calculate-estimated-time")
+    @GetMapping("/{id}/calcular-tempo-estimado")
     public ResponseEntity<ServiceOrderEstimatedTimeResponse> calculateEstimatedTime(@PathVariable UUID id) {
         ServiceOrderEstimatedTime serviceOrderEstimatedTime = serviceOrderService.calculateEstimatedTime(id);
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderEstimatedTime));
     }
 
-    @GetMapping("/{id}/average-service-execution-time")
+    @GetMapping("/{id}/tempo-medio-execucao-servicos")
     public ResponseEntity<ServiceOrderAverageExecutionTimeResponse> calculateAverageServiceExecutionTime(@PathVariable UUID id) {
         ServiceOrderAverageExecutionTime serviceOrderAverageExecutionTime = serviceOrderService.calculateAverageServiceExecutionTime(id);
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderAverageExecutionTime));
     }
 
-    @PatchMapping("/{id}/cancel")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<ServiceOrderResponse> cancelServiceOrder(
             @PathVariable UUID id
     ) {
@@ -97,7 +97,7 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}/start")
+    @PatchMapping("/{id}/iniciar")
     public ResponseEntity<ServiceOrderResponse> startServiceOrder(
             @PathVariable UUID id
     ) {
@@ -105,7 +105,7 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}/complete")
+    @PatchMapping("/{id}/concluir")
     public ResponseEntity<ServiceOrderResponse> completeServiceOrder(
             @PathVariable UUID id
     ) {
@@ -113,7 +113,7 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}/deliver")
+    @PatchMapping("/{id}/entregar")
     public ResponseEntity<ServiceOrderResponse> deliverServiceOrder(
             @PathVariable UUID id
     ) {

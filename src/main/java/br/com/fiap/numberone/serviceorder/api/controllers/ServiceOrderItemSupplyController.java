@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/admin/service-order-items/{serviceOrderItemId}/supplies")
+@RequestMapping("/api/admin/itens-ordem-servico/{serviceOrderItemId}/insumos")
 public class ServiceOrderItemSupplyController {
 
     private final ServiceOrderItemSupplyApiMapper supplyApiMapper;

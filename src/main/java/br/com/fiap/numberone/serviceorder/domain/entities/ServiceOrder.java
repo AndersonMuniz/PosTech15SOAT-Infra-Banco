@@ -109,8 +109,38 @@ public class ServiceOrder {
     public BigDecimal getServiceItemsTotalValue() {
         return serviceItems
                 .stream()
+                .filter(Objects::nonNull)
                 .filter(serviceOrderItem -> serviceOrderItem.getStatus() != OrderItemStatus.CANCELLED)
-                .map(ServiceOrderItem::getValue)
+                .map(this::calculateServiceItemTotalValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateServiceItemTotalValue(ServiceOrderItem serviceOrderItem) {
+        BigDecimal serviceValue = Objects.requireNonNullElse(serviceOrderItem.getValue(), BigDecimal.ZERO);
+        BigDecimal suppliesValue = calculateServiceItemSuppliesTotalValue(serviceOrderItem);
+
+        return serviceValue.add(suppliesValue);
+    }
+
+    private BigDecimal calculateServiceItemSuppliesTotalValue(ServiceOrderItem serviceOrderItem) {
+        if (serviceOrderItem.getSupplies() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return serviceOrderItem.getSupplies()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(this::calculateSupplyTotalValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal calculateSupplyTotalValue(ServiceOrderItemSupply supply) {
+        if (supply.getInventoryItem() == null || supply.getInventoryItem().getSalePrice() == null || supply.getQuantityUsed() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        return supply.getInventoryItem()
+                .getSalePrice()
+                .multiply(BigDecimal.valueOf(supply.getQuantityUsed()));
     }
 }

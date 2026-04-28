@@ -5,9 +5,7 @@ import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderBudge
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderBudget;
-import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
-import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerEmailException;
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 
@@ -102,11 +100,7 @@ public class ServiceOrderBudgetService {
         if (quotedAmount != null) {
             return quotedAmount;
         }
-        return serviceOrder.getServiceItems()
-                .stream()
-                .filter(serviceOrderItem -> serviceOrderItem.getStatus() != OrderItemStatus.CANCELLED)
-                .map(ServiceOrderItem::getValue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return serviceOrder.getServiceItemsTotalValue();
     }
 
 }

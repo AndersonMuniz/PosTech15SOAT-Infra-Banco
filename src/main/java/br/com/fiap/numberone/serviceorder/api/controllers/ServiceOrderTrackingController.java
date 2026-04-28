@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/public/service-orders")
+@RequestMapping("/api/public/ordens-servico")
 public class ServiceOrderTrackingController {
 
     private final ServiceOrderTrackingApiMapper serviceOrderTrackingApiMapper;
@@ -24,7 +24,7 @@ public class ServiceOrderTrackingController {
         this.serviceOrderTrackingService = serviceOrderTrackingService;
     }
 
-    @GetMapping("/{id}/tracking")
+    @GetMapping("/{id}/acompanhamento")
     public ResponseEntity<ServiceOrderTrackingResponse> getServiceOrderTracking(@PathVariable UUID id) {
         return ResponseEntity.ok(
                 serviceOrderTrackingApiMapper.toResponse(serviceOrderTrackingService.getTracking(id))

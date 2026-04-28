@@ -2,7 +2,6 @@ package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderBudgetStatus;
-import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ public record ServiceOrderTrackingResponse(
         String initialDescription,
         String finalDiagnosisDescription,
         VehicleResponse vehicle,
-        ServiceOrderStatus status,
+        ServiceOrderStatusResponse status,
         LocalDateTime entryDateTime,
         LocalDateTime expectedDateTime,
         LocalDateTime deliveryDateTime,

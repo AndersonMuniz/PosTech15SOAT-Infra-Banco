@@ -11,7 +11,7 @@ import org.mapstruct.Mapping;
 import java.util.Comparator;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ServiceOrderStatusApiMapper.class)
 public interface ServiceOrderTrackingApiMapper {
 
     @Mapping(target = "budget", expression = "java(getLatestBudgetResponse(entity.getBudgets()))")

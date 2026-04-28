@@ -1,7 +1,6 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
 import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
-import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +16,7 @@ public record ServiceOrderResponse(
         VehicleResponse vehicle,
         List<ServiceOrderItemResponse> serviceItems,
         List<ServiceOrderBudgetResponse> budgets,
-        ServiceOrderStatus status,
+        ServiceOrderStatusResponse status,
         LocalDateTime entryDateTime,
         LocalDateTime expectedDateTime,
         LocalDateTime deliveryDateTime,
