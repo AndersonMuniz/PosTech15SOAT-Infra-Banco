@@ -6,6 +6,7 @@ import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveExc
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderBudgetStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderItemStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemAlreadyInStatusException;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
 import br.com.fiap.numberone.shared.api.exception.ErrorResponse;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class ServiceOrderExceptionHandler {
             InvalidServiceOrderStatusException.class,
             InvalidServiceOrderBudgetStatusException.class,
             InvalidServiceOrderItemStatusException.class,
+            ServiceOrderItemAlreadyInStatusException.class,
             AutomotiveServiceNotActiveException.class,
             CustomerNotActiveException.class,
             CustomerEmailException.class,

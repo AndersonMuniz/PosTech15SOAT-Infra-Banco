@@ -55,7 +55,7 @@ public class ServiceOrderBudgetService {
 
         ServiceOrderBudget savedBudget = serviceOrderBudgetGateway.save(serviceOrderBudget);
 
-        serviceOrderBudgetApprovalNotificationGateway.sendApprovalRequest(savedBudget, recipientEmail);
+        serviceOrderBudgetApprovalNotificationGateway.sendApprovalRequest(serviceOrderBudget, recipientEmail);
 
         return savedBudget;
     }

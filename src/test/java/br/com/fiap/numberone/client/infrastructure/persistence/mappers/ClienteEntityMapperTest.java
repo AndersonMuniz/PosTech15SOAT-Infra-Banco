@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.client.infrastructure.persistence.mappers;
 
-import br.com.fiap.numberone.client.domain.entities.Cliente;
+import br.com.fiap.numberone.client.domain.entities.Client;
 import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
 import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClienteEntityMapperTest {
 
-    private final ClienteEntityMapper mapper = new ClienteEntityMapper();
+    private final ClientEntityMapper mapper = new ClientEntityMapper();
 
     @Test
     void deveMapearDomainParaEntity() {
@@ -20,7 +20,7 @@ class ClienteEntityMapperTest {
         LocalDateTime createdAt = LocalDateTime.now().minusDays(2);
         LocalDateTime updatedAt = LocalDateTime.now().minusDays(1);
 
-        Cliente domain = Cliente.builder()
+        Client domain = Client.builder()
                 .id(id)
                 .nome("Nome")
                 .tipoDocumento(TipoDocumento.PESSOA_FISICA)
@@ -58,7 +58,7 @@ class ClienteEntityMapperTest {
                 .updatedAt(updatedAt)
                 .build();
 
-        Cliente domain = mapper.toDomain(entity);
+        Client domain = mapper.toDomain(entity);
 
         assertEquals(id, domain.getId());
         assertEquals("Nome", domain.getNome());
