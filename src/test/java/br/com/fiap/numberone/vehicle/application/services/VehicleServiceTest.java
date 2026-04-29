@@ -4,7 +4,7 @@ import br.com.fiap.numberone.client.infrastructure.repositories.ClientRepository
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import br.com.fiap.numberone.vehicle.api.dtos.requests.VehicleRequest;
 import br.com.fiap.numberone.vehicle.application.mappers.VehicleMapper;
-import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
+import br.com.fiap.numberone.vehicle.domain.entities.Vehicle;
 import br.com.fiap.numberone.vehicle.infrastructure.persistence.mappers.VehicleEntityMapper;
 import br.com.fiap.numberone.vehicle.infrastructure.repositories.VehicleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,7 +65,7 @@ class VehicleServiceTest {
         UUID idClient = UUID.randomUUID();
 
         VehicleRequest request = new VehicleRequest("ABC1D23", "Fiat", "Pulse", 2024, idClient);
-        VehicleEntity entity = VehicleEntity.builder()
+        Vehicle entity = Vehicle.builder()
                 .id(vehicleId)
                 .placa("OLD1A11")
                 .marca("Fiat")

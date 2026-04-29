@@ -15,7 +15,7 @@ class ClienteTest {
         UUID id = UUID.randomUUID();
         LocalDateTime createdAt = LocalDateTime.now().minusDays(2);
 
-        Cliente atual = Cliente.builder()
+        Client atual = Client.builder()
                 .id(id)
                 .nome("Cliente Antigo")
                 .tipoDocumento(TipoDocumento.PESSOA_FISICA)
@@ -26,7 +26,7 @@ class ClienteTest {
                 .createdAt(createdAt)
                 .build();
 
-        Cliente novo = Cliente.builder()
+        Client novo = Client.builder()
                 .nome("Cliente Novo")
                 .tipoDocumento(TipoDocumento.PESSOA_JURIDICA)
                 .documento("11444777000161")
@@ -35,7 +35,7 @@ class ClienteTest {
                 .ativo(false)
                 .build();
 
-        Cliente atualizado = atual.updateFrom(novo);
+        Client atualizado = atual.updateFrom(novo);
 
         assertEquals(id, atualizado.getId());
         assertEquals(createdAt, atualizado.getCreatedAt());
