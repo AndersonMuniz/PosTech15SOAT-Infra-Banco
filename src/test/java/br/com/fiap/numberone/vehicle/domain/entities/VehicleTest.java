@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VehicleTest {
 
@@ -52,6 +55,38 @@ class VehicleTest {
         assertEquals(clientNovo, atualizado.getIdClient());
         assertNotNull(atualizado.getUpdatedAt());
         assertTrue(!atualizado.getUpdatedAt().isBefore(antes) && !atualizado.getUpdatedAt().isAfter(depois));
+    }
+
+    @Test
+    void deveAtualizarPermitindoCamposNulosNoNovoVeiculo() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime createdAt = LocalDateTime.now().minusDays(7);
+        LocalDateTime oldUpdatedAt = LocalDateTime.now().minusDays(2);
+
+        Vehicle atual = Vehicle.builder()
+                .id(id)
+                .placa("GHI3J45")
+                .marca("Volkswagen")
+                .modelo("Polo")
+                .ano(2020)
+                .idClient(UUID.randomUUID())
+                .createdAt(createdAt)
+                .updatedAt(oldUpdatedAt)
+                .build();
+
+        Vehicle novo = Vehicle.builder().build();
+
+        Vehicle atualizado = atual.updateFrom(novo);
+
+        assertEquals(id, atualizado.getId());
+        assertNull(atualizado.getPlaca());
+        assertNull(atualizado.getMarca());
+        assertNull(atualizado.getModelo());
+        assertNull(atualizado.getAno());
+        assertNull(atualizado.getIdClient());
+        assertEquals(createdAt, atualizado.getCreatedAt());
+        assertNotNull(atualizado.getUpdatedAt());
+        assertTrue(atualizado.getUpdatedAt().isAfter(oldUpdatedAt));
     }
 
     @Test
