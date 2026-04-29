@@ -1,15 +1,22 @@
 package br.com.fiap.numberone.serviceorder.domain.entities;
 
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.CustomerNotActiveException;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Customer;
-import br.com.fiap.numberone.serviceorder.domain.valueobjects.Vehicle;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
+import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemEndStatusException;
+import br.com.fiap.numberone.serviceorder.domain.references.Customer;
+import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -25,6 +32,8 @@ public class ServiceOrder {
     private String notes;
     private Customer customer;
     private Vehicle vehicle;
+    private List<ServiceOrderItem> serviceItems = new ArrayList<>();
+    private List<ServiceOrderBudget> budgets = new ArrayList<>();
     private ServiceOrderStatus status;
     private LocalDateTime entryDateTime;
     private LocalDateTime expectedDateTime;
@@ -46,5 +55,62 @@ public class ServiceOrder {
     public void applyFinalDiagnosis(String finalDiagnosisDescription, String notes) {
         this.finalDiagnosisDescription = finalDiagnosisDescription;
         this.notes = notes;
+    }
+
+    public void defineExpectedDateTime(LocalDateTime expectedDateTime) {
+        this.expectedDateTime = expectedDateTime;
+    }
+
+    public void updateStatus(ServiceOrderStatus serviceOrderStatus) {
+        if (status == null) {
+            this.status = serviceOrderStatus;
+            return;
+        }
+        if (status == serviceOrderStatus) {
+            return;
+        }
+        if (!isTransitionAllowed(serviceOrderStatus)) {
+            throw new InvalidServiceOrderStatusException(
+                    "Transition from " + status + " to " + serviceOrderStatus + " is not allowed"
+            );
+        }
+        this.status = serviceOrderStatus;
+    }
+
+    private boolean isTransitionAllowed(ServiceOrderStatus nextStatus) {
+        return switch (status) {
+            case RECEIVED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case IN_DIAGNOSIS -> List.of(ServiceOrderStatus.WAITING_APPROVAL, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case WAITING_APPROVAL -> List.of(
+                    ServiceOrderStatus.APPROVED,
+                    ServiceOrderStatus.REJECTED,
+                    ServiceOrderStatus.CANCELLED
+            ).contains(nextStatus);
+            case APPROVED -> List.of(ServiceOrderStatus.IN_PROGRESS, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case IN_PROGRESS -> List.of(ServiceOrderStatus.COMPLETED, ServiceOrderStatus.CANCELLED).contains(nextStatus);
+            case COMPLETED, CANCELLED -> Objects.equals(ServiceOrderStatus.DELIVERED, nextStatus);
+            case REJECTED -> List.of(ServiceOrderStatus.IN_DIAGNOSIS, ServiceOrderStatus.WAITING_APPROVAL).contains(nextStatus);
+            case DELIVERED -> false;
+        };
+    }
+
+    public void validateServiceItemsAreFinished() {
+        boolean serviceItemNotEnded = serviceItems
+                .stream()
+                .anyMatch(serviceOrderItem -> List.of(
+                        OrderItemStatus.PENDING, OrderItemStatus.IN_PROGRESS).contains(serviceOrderItem.getStatus())
+                );
+
+        if(serviceItemNotEnded) {
+            throw new ServiceOrderItemEndStatusException("Service order contains service items pending or in progress status");
+        }
+    }
+
+    public BigDecimal getServiceItemsTotalValue() {
+        return serviceItems
+                .stream()
+                .filter(serviceOrderItem -> serviceOrderItem.getStatus() != OrderItemStatus.CANCELLED)
+                .map(ServiceOrderItem::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

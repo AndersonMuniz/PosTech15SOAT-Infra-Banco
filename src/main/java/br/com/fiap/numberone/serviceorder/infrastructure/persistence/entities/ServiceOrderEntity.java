@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
-import br.com.fiap.numberone.serviceorder.infrastructure.persistence.enums.ServiceOrderStatus;
+import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,16 +40,20 @@ public class ServiceOrderEntity {
     private String notes;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_client")
+    @JoinColumn(name = "id_cliente")
     private ClientEntity customer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_vehicle")
+    @JoinColumn(name = "id_veiculo")
     private VehicleEntity vehicleEntity;
 
     @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ServiceOrderItemEntity> items = new ArrayList<>();
+
+    @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ServiceOrderBudgetEntity> budgets = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -81,5 +85,18 @@ public class ServiceOrderEntity {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void linkChildren() {
+        if (items != null) {
+            items.forEach(item -> {
+                item.setServiceOrder(this);
+                item.linkChildren();
+            });
+        }
+
+        if (budgets != null) {
+            budgets.forEach(budget -> budget.setServiceOrder(this));
+        }
     }
 }

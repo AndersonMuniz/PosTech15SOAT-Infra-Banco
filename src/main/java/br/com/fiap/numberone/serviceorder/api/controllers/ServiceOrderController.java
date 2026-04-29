@@ -2,12 +2,16 @@ package br.com.fiap.numberone.serviceorder.api.controllers;
 
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.FinalDiagnosisRequest;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderAverageExecutionTimeResponse;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderEstimatedTimeResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderResponse;
-import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderAutoserviceApiMapper;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderValueResponse;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderApiMapper;
-import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderAutoService;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderService;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
+import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderAverageExecutionTime;
+import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderEstimatedTime;
+import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderValue;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,25 +22,18 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/service-orders")
+@RequestMapping("/api/admin/service-orders")
 public class ServiceOrderController {
 
     private final ServiceOrderApiMapper orderApiMapper;
-    private final ServiceOrderAutoserviceApiMapper serviceOrderAutoserviceApiMapper;
-
     private final ServiceOrderService serviceOrderService;
-//    private final ServiceOrderAutoService serviceOrderAutoService;
 
     public ServiceOrderController(
             ServiceOrderApiMapper orderApiMapper,
-            ServiceOrderAutoserviceApiMapper serviceOrderAutoserviceApiMapper,
             ServiceOrderService serviceOrderService
-//            ServiceOrderAutoService serviceOrderAutoService
     ) {
         this.orderApiMapper = orderApiMapper;
-        this.serviceOrderAutoserviceApiMapper = serviceOrderAutoserviceApiMapper;
         this.serviceOrderService = serviceOrderService;
-//        this.serviceOrderAutoService = serviceOrderAutoService;
     }
 
     @GetMapping("/{id}")
@@ -65,7 +62,7 @@ public class ServiceOrderController {
         return ResponseEntity.created(location).body(orderApiMapper.toResponse(serviceOrder));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/start-diagnosis")
     public ResponseEntity<ServiceOrderResponse> addFinalDiagnosis(
             @PathVariable UUID id,
             @Valid @RequestBody FinalDiagnosisRequest finalDiagnosisRequest
@@ -74,12 +71,53 @@ public class ServiceOrderController {
         return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
     }
 
-//    @PostMapping("/{id}/services")
-//    public ResponseEntity<ServiceOrderResponse> addService(
-//            @PathVariable UUID id,
-//            @Valid @RequestBody CreateOrderAutoserviceRequest createOrderAutoserviceRequest
-//    ) {
-//        ServiceOrderAutoservice serviceOrder = serviceOrderAutoService.createServiceOrderService(id, orderAutoserviceApiMapper.toDomain(createOrderAutoserviceRequest));
-//        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
-//    }
+    @GetMapping("/{id}/calculate-services")
+    public ResponseEntity<ServiceOrderValueResponse> calculateServices(@PathVariable UUID id) {
+        ServiceOrderValue serviceOrderValue = serviceOrderService.calculateServices(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderValue));
+    }
+
+    @GetMapping("/{id}/calculate-estimated-time")
+    public ResponseEntity<ServiceOrderEstimatedTimeResponse> calculateEstimatedTime(@PathVariable UUID id) {
+        ServiceOrderEstimatedTime serviceOrderEstimatedTime = serviceOrderService.calculateEstimatedTime(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderEstimatedTime));
+    }
+
+    @GetMapping("/{id}/average-service-execution-time")
+    public ResponseEntity<ServiceOrderAverageExecutionTimeResponse> calculateAverageServiceExecutionTime(@PathVariable UUID id) {
+        ServiceOrderAverageExecutionTime serviceOrderAverageExecutionTime = serviceOrderService.calculateAverageServiceExecutionTime(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrderAverageExecutionTime));
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<ServiceOrderResponse> cancelServiceOrder(
+            @PathVariable UUID id
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.cancelOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/start")
+    public ResponseEntity<ServiceOrderResponse> startServiceOrder(
+            @PathVariable UUID id
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.startOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<ServiceOrderResponse> completeServiceOrder(
+            @PathVariable UUID id
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.completeOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
+
+    @PatchMapping("/{id}/deliver")
+    public ResponseEntity<ServiceOrderResponse> deliverServiceOrder(
+            @PathVariable UUID id
+    ) {
+        ServiceOrder serviceOrder = serviceOrderService.deliverOrderService(id);
+        return ResponseEntity.ok(orderApiMapper.toResponse(serviceOrder));
+    }
 }

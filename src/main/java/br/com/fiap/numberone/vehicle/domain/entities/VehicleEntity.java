@@ -42,7 +42,7 @@ public class VehicleEntity {
     @Column(nullable = false)
     private Integer ano;
 
-    @Column(name = "id_client", nullable = false)
+    @Column(name = "id_cliente", nullable = false)
     private UUID idClient;
 
     @Column(name = "created_at", updatable = false)

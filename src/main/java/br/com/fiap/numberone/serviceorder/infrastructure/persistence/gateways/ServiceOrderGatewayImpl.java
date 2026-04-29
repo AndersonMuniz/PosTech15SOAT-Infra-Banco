@@ -1,7 +1,10 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderDeliveryUpdate;
+import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderFinalDiagnosisUpdate;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
+import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities.ServiceOrderEntity;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers.ServiceOrderMapper;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.repositories.ServiceOrderRepository;
@@ -45,5 +48,32 @@ public class ServiceOrderGatewayImpl implements ServiceOrderGateway {
                 .stream()
                 .map(mapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrder updateStatus(UUID id, ServiceOrderStatus status) {
+        repository.updateStatus(id, status);
+        return repository.findById(id)
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Updated service order could not be reloaded"));
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrder updateFinalDiagnosis(ServiceOrderFinalDiagnosisUpdate update) {
+        repository.updateFinalDiagnosis(update);
+        return repository.findById(update.getServiceOrderId())
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Updated service order could not be reloaded"));
+    }
+
+    @Override
+    @Transactional
+    public ServiceOrder deliver(ServiceOrderDeliveryUpdate update) {
+        repository.deliver(update);
+        return repository.findById(update.getServiceOrderId())
+                .map(mapper::toDomain)
+                .orElseThrow(() -> new IllegalStateException("Updated service order could not be reloaded"));
     }
 }
