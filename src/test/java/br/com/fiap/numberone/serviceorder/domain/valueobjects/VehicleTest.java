@@ -1,5 +1,6 @@
 package br.com.fiap.numberone.serviceorder.domain.valueobjects;
 
+import br.com.fiap.numberone.vehicle.domain.entities.Vehicle;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -19,19 +20,19 @@ class VehicleTest {
 
         Vehicle vehicle = Vehicle.builder()
                 .id(id)
-                .licensePlate("ABC1D23")
-                .brand("Toyota")
-                .model("Corolla")
-                .year(2020)
-                .customerId(customerId)
+                .placa("ABC1D23")
+                .marca("Toyota")
+                .modelo("Corolla")
+                .ano(2020)
+                .idClient(customerId)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
                 .build();
 
         assertEquals(id, vehicle.getId());
-        assertEquals("Toyota", vehicle.getBrand());
-        assertEquals("Corolla", vehicle.getModel());
-        assertEquals(customerId, vehicle.getCustomerId());
+        assertEquals("Toyota", vehicle.getMarca());
+        assertEquals("Corolla", vehicle.getModelo());
+        assertEquals(customerId, vehicle.getIdClient());
         assertEquals(createdAt, vehicle.getCreatedAt());
         assertEquals(updatedAt, vehicle.getUpdatedAt());
     }

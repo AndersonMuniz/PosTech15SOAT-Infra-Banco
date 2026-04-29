@@ -104,7 +104,7 @@ class ClientServiceTest {
     void deveLancarExcecaoQuandoAtualizarClienteInexistente() {
         UUID id = UUID.randomUUID();
         ClientRequest request = new ClientRequest("Nome", TipoDocumento.PESSOA_FISICA, "52998224725",
-                "11999999999", "Rua", true);
+                "teste@teste.com","11999999999", "Rua", true);
 
         when(clientRepository.findById(id)).thenReturn(Optional.empty());
 
