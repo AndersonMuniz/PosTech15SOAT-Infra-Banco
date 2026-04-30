@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.gateways;
 
-import br.com.fiap.numberone.custumer.infrastructure.persistence.repositories.CustomerRepository;
+import br.com.fiap.numberone.customer.infrastructure.persistence.repositories.CustomerRepository;
 import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers.CustomerMapper;

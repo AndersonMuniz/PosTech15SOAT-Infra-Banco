@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.vehicle.infrastructure.config;
 
-import br.com.fiap.numberone.custumer.infrastructure.persistence.repositories.CustomerRepository;
+import br.com.fiap.numberone.customer.infrastructure.persistence.repositories.CustomerRepository;
 import br.com.fiap.numberone.vehicle.api.mappers.VehicleApiMapper;
 import br.com.fiap.numberone.vehicle.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.vehicle.application.gateways.VehicleGateway;
