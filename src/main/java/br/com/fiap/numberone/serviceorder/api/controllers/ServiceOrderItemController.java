@@ -13,7 +13,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/admin/service-orders-items")
+@RequestMapping("/api/admin/itens-ordem-servico")
 public class ServiceOrderItemController {
 
     private final ServiceOrderItemApiMapper serviceOrderItemApiMapper;
@@ -45,7 +45,7 @@ public class ServiceOrderItemController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}/start")
+    @PatchMapping("/{id}/iniciar")
     public ResponseEntity<ServiceOrderItemResponse> startServiceOrderItem(
             @PathVariable UUID id
     ) {
@@ -53,7 +53,7 @@ public class ServiceOrderItemController {
         return ResponseEntity.ok(serviceOrderItemApiMapper.toResponse(serviceOrderItem));
     }
 
-    @PatchMapping("/{id}/cancel")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<ServiceOrderItemResponse> cancelServiceOrderItem(
             @PathVariable UUID id
     ) {
@@ -61,7 +61,7 @@ public class ServiceOrderItemController {
         return ResponseEntity.ok(serviceOrderItemApiMapper.toResponse(serviceOrderItem));
     }
 
-    @PatchMapping("/{id}/complete")
+    @PatchMapping("/{id}/concluir")
     public ResponseEntity<ServiceOrderItemResponse> completeServiceOrderItem(
             @PathVariable UUID id
     ) {

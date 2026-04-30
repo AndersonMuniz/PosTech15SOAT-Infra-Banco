@@ -1,14 +1,17 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.util.UUID;
 
 public record CreateServiceOrderItemSupplyRequest(
-        @NotNull(message = "inventoryItemId is required")
+        @JsonProperty("idItemEstoque")
+        @NotNull(message = "idItemEstoque e obrigatorio")
         UUID inventoryItemId,
-        @NotNull(message = "quantityUsed is required")
-        @Positive(message = "quantityUsed must be positive")
+        @JsonProperty("quantidadeUsada")
+        @NotNull(message = "quantidadeUsada e obrigatoria")
+        @Positive(message = "quantidadeUsada deve ser maior que zero")
         Integer quantityUsed
 ) { }

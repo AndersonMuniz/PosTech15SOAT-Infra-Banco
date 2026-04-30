@@ -18,7 +18,7 @@ class ClientMapperTest {
     @Test
     void deveMapearRequestParaEntityComAtivoPadraoTrue() {
         ClientRequest request = new ClientRequest("Ana", TipoDocumento.PESSOA_FISICA, "52998224725",
-                "teste@teste.com","11999999999", "Rua 1", null);
+                "cliente@email.com","11999999999", "Rua 1", null);
 
         Client cliente = mapper.toEntity(request);
 
@@ -30,7 +30,7 @@ class ClientMapperTest {
     @Test
     void deveMapearRequestParaEntityMantendoAtivoInformado() {
         ClientRequest request = new ClientRequest("Empresa", TipoDocumento.PESSOA_JURIDICA, "11444777000161",
-                "teste@teste.com","1133333333", "Av 2", false);
+                "cliente@email.com", "1133333333", "Av 2", false);
 
         Client client = mapper.toEntity(request);
 

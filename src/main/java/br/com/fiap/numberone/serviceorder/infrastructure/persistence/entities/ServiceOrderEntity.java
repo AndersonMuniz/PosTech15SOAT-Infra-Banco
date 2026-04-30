@@ -2,7 +2,7 @@ package br.com.fiap.numberone.serviceorder.infrastructure.persistence.entities;
 
 import br.com.fiap.numberone.client.infrastructure.persistence.entities.ClientEntity;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
-import br.com.fiap.numberone.vehicle.domain.entities.Vehicle;
+import br.com.fiap.numberone.vehicle.infrastructure.persistence.entities.VehicleEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,7 +45,7 @@ public class ServiceOrderEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_veiculo")
-    private Vehicle vehicleEntity;
+    private VehicleEntity vehicleEntity;
 
     @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

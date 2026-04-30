@@ -11,6 +11,7 @@ import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import br.com.fiap.numberone.serviceorder.domain.exceptions.InvalidServiceOrderStatusException;
+import br.com.fiap.numberone.serviceorder.domain.exceptions.ServiceOrderItemAlreadyInStatusException;
 import br.com.fiap.numberone.serviceorder.domain.references.AutomotiveService;
 import br.com.fiap.numberone.shared.api.exception.ResourceNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,10 +69,7 @@ public class ServiceOrderItemService {
     public ServiceOrderItem startServiceOrderItem(UUID id) {
         ServiceOrderItem serviceOrderItem = getServiceOrderItem(id);
         validateServiceOrderAllowsItemStart(serviceOrderItem);
-
-        if (isItemAlreadyInProgress(serviceOrderItem)) {
-            return serviceOrderItem;
-        }
+        validateItemIsNotAlreadyInStatus(serviceOrderItem, OrderItemStatus.IN_PROGRESS);
 
         if (hasUnavailableSupply(serviceOrderItem)) {
             return moveItemToWaitingForSupplies(serviceOrderItem);
@@ -82,15 +80,13 @@ public class ServiceOrderItemService {
 
     public ServiceOrderItem cancelServiceOrderItem(UUID id) {
         ServiceOrderItem serviceOrderItem = getServiceOrderItem(id);
+        validateItemIsNotAlreadyInStatus(serviceOrderItem, OrderItemStatus.CANCELLED);
         return changeServiceOrderItemStatus(serviceOrderItem, OrderItemStatus.CANCELLED);
     }
 
     public ServiceOrderItem completeServiceOrderItem(UUID id) {
         ServiceOrderItem serviceOrderItem = getServiceOrderItem(id);
-
-        if (isItemAlreadyCompleted(serviceOrderItem)) {
-            return serviceOrderItem;
-        }
+        validateItemIsNotAlreadyInStatus(serviceOrderItem, OrderItemStatus.COMPLETED);
 
         serviceOrderItem.updateStatus(OrderItemStatus.COMPLETED);
         serviceOrderItem.defineEndDateTime(LocalDateTime.now());
@@ -129,12 +125,12 @@ public class ServiceOrderItemService {
         }
     }
 
-    private boolean isItemAlreadyInProgress(ServiceOrderItem serviceOrderItem) {
-        return serviceOrderItem.getStatus() == OrderItemStatus.IN_PROGRESS;
-    }
-
-    private boolean isItemAlreadyCompleted(ServiceOrderItem serviceOrderItem) {
-        return serviceOrderItem.getStatus() == OrderItemStatus.COMPLETED;
+    private void validateItemIsNotAlreadyInStatus(ServiceOrderItem serviceOrderItem, OrderItemStatus targetStatus) {
+        if (serviceOrderItem.getStatus() == targetStatus) {
+            throw new ServiceOrderItemAlreadyInStatusException(
+                    "Servico da ordem ja se encontra no status " + translateStatus(targetStatus)
+            );
+        }
     }
 
     private boolean hasUnavailableSupply(ServiceOrderItem serviceOrderItem) {
@@ -172,5 +168,15 @@ public class ServiceOrderItemService {
                         serviceOrderItemSupply.getId()
                 )
         );
+    }
+
+    private String translateStatus(OrderItemStatus status) {
+        return switch (status) {
+            case PENDING -> "PENDENTE";
+            case WAITING_FOR_PARTS_AND_SUPPLIES -> "AGUARDANDO_PECAS_E_INSUMOS";
+            case IN_PROGRESS -> "EM_EXECUCAO";
+            case CANCELLED -> "CANCELADO";
+            case COMPLETED -> "FINALIZADO";
+        };
     }
 }
