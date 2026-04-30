@@ -127,7 +127,7 @@ class VehicleControllerIntegrationTest {
                                   "idCliente": "%s"
                                 }
                                 """.formatted(customerId)))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.status").value(422))
                 .andExpect(jsonPath("$.message").value("Ja existe um veiculo com a placa informada"));
     }

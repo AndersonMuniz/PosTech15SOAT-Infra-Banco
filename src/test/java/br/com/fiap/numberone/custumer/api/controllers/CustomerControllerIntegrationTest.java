@@ -132,7 +132,7 @@ class CustomerControllerIntegrationTest {
                                   "ativo": true
                                 }
                                 """))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.status").value(422))
                 .andExpect(jsonPath("$.message").value("CPF invalido"));
     }

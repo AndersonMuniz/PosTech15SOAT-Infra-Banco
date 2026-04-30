@@ -317,7 +317,7 @@ class ServiceOrderControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(patch("/api/admin/itens-ordem-servico/{id}/iniciar", itemId))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.status").value(422))
                 .andExpect(jsonPath("$.message").value("Servico da ordem ja se encontra no status EM_EXECUCAO"));
     }
