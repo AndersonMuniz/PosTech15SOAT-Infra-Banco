@@ -65,7 +65,7 @@ class CustomerControllerIntegrationTest {
         when(customerService.create(any(Customer.class))).thenReturn(createdCustomer);
 
         // Act & Assert
-        mockMvc.perform(post("/api/customers")
+        mockMvc.perform(post("/api/admin/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -79,7 +79,7 @@ class CustomerControllerIntegrationTest {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/api/customers/" + customerId))
+                .andExpect(header().string("Location", "http://localhost/api/admin/clientes/" + customerId))
                 .andExpect(jsonPath("$.id").value(customerId.toString()))
                 .andExpect(jsonPath("$.nome").value("Maria da Silva"))
                 .andExpect(jsonPath("$.tipoDocumento").value("PESSOA_FISICA"))
@@ -102,7 +102,7 @@ class CustomerControllerIntegrationTest {
                 """;
 
         // Act & Assert
-        mockMvc.perform(post("/api/customers")
+        mockMvc.perform(post("/api/admin/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -119,7 +119,7 @@ class CustomerControllerIntegrationTest {
                 .thenThrow(new CustomerDocumentException("CPF invalido"));
 
         // Act & Assert
-        mockMvc.perform(post("/api/customers")
+        mockMvc.perform(post("/api/admin/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -144,7 +144,7 @@ class CustomerControllerIntegrationTest {
         when(customerService.findById(customerId)).thenReturn(customer(customerId, "Maria da Silva", "52998224725"));
 
         // Act & Assert
-        mockMvc.perform(get("/api/customers/{id}", customerId))
+        mockMvc.perform(get("/api/admin/clientes/{id}", customerId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(customerId.toString()))
                 .andExpect(jsonPath("$.nome").value("Maria da Silva"));
@@ -158,7 +158,7 @@ class CustomerControllerIntegrationTest {
                 .thenThrow(new CustomerNotFoundException("Cliente nao encontrado para o id: " + customerId));
 
         // Act & Assert
-        mockMvc.perform(get("/api/customers/{id}", customerId))
+        mockMvc.perform(get("/api/admin/clientes/{id}", customerId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("Cliente nao encontrado para o id: " + customerId));
@@ -172,7 +172,7 @@ class CustomerControllerIntegrationTest {
         when(customerService.findAll()).thenReturn(List.of(firstCustomer, secondCustomer));
 
         // Act & Assert
-        mockMvc.perform(get("/api/customers"))
+        mockMvc.perform(get("/api/admin/clientes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].nome").value("Maria da Silva"))
                 .andExpect(jsonPath("$[1].nome").value("Joao da Silva"));
@@ -186,7 +186,7 @@ class CustomerControllerIntegrationTest {
         when(customerService.update(any(UUID.class), any(Customer.class))).thenReturn(updatedCustomer);
 
         // Act & Assert
-        mockMvc.perform(put("/api/customers/{id}", customerId)
+        mockMvc.perform(put("/api/admin/clientes/{id}", customerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -210,7 +210,7 @@ class CustomerControllerIntegrationTest {
         UUID customerId = UUID.randomUUID();
 
         // Act & Assert
-        mockMvc.perform(delete("/api/customers/{id}", customerId))
+        mockMvc.perform(delete("/api/admin/clientes/{id}", customerId))
                 .andExpect(status().isNoContent());
 
         verify(customerService).delete(customerId);

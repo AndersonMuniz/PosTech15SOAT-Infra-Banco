@@ -64,7 +64,7 @@ class VehicleControllerIntegrationTest {
         when(vehicleService.create(any(Vehicle.class))).thenReturn(vehicle(vehicleId, "ABC1D23", customerId));
 
         // Act & Assert
-        mockMvc.perform(post("/api/vehicles")
+        mockMvc.perform(post("/api/admin/veiculos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -76,7 +76,7 @@ class VehicleControllerIntegrationTest {
                                 }
                                 """.formatted(customerId)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/api/vehicles/" + vehicleId))
+                .andExpect(header().string("Location", "http://localhost/api/admin/veiculos/" + vehicleId))
                 .andExpect(jsonPath("$.id").value(vehicleId.toString()))
                 .andExpect(jsonPath("$.placa").value("ABC1D23"))
                 .andExpect(jsonPath("$.marca").value("Fiat"))
@@ -98,7 +98,7 @@ class VehicleControllerIntegrationTest {
                 """;
 
         // Act & Assert
-        mockMvc.perform(post("/api/vehicles")
+        mockMvc.perform(post("/api/admin/veiculos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -116,7 +116,7 @@ class VehicleControllerIntegrationTest {
                 .thenThrow(new VehicleLicensePlateAlreadyExistsException("Ja existe um veiculo com a placa informada"));
 
         // Act & Assert
-        mockMvc.perform(post("/api/vehicles")
+        mockMvc.perform(post("/api/admin/veiculos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -140,7 +140,7 @@ class VehicleControllerIntegrationTest {
                 .thenThrow(new VehicleCustomerNotFoundException("Cliente nao encontrado para o id: " + customerId));
 
         // Act & Assert
-        mockMvc.perform(post("/api/vehicles")
+        mockMvc.perform(post("/api/admin/veiculos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -164,7 +164,7 @@ class VehicleControllerIntegrationTest {
         when(vehicleService.findById(vehicleId)).thenReturn(vehicle(vehicleId, "ABC1D23", customerId));
 
         // Act & Assert
-        mockMvc.perform(get("/api/vehicles/{id}", vehicleId))
+        mockMvc.perform(get("/api/admin/veiculos/{id}", vehicleId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(vehicleId.toString()))
                 .andExpect(jsonPath("$.placa").value("ABC1D23"));
@@ -178,7 +178,7 @@ class VehicleControllerIntegrationTest {
                 .thenThrow(new VehicleNotFoundException("Veiculo nao encontrado para o id: " + vehicleId));
 
         // Act & Assert
-        mockMvc.perform(get("/api/vehicles/{id}", vehicleId))
+        mockMvc.perform(get("/api/admin/veiculos/{id}", vehicleId))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("Veiculo nao encontrado para o id: " + vehicleId));
@@ -192,7 +192,7 @@ class VehicleControllerIntegrationTest {
         when(vehicleService.findAll()).thenReturn(List.of(firstVehicle, secondVehicle));
 
         // Act & Assert
-        mockMvc.perform(get("/api/vehicles"))
+        mockMvc.perform(get("/api/admin/veiculos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].placa").value("ABC1D23"))
                 .andExpect(jsonPath("$[1].placa").value("DEF2G34"));
@@ -206,7 +206,7 @@ class VehicleControllerIntegrationTest {
         when(vehicleService.update(any(UUID.class), any(Vehicle.class))).thenReturn(vehicle(vehicleId, "ABC1D23", customerId));
 
         // Act & Assert
-        mockMvc.perform(put("/api/vehicles/{id}", vehicleId)
+        mockMvc.perform(put("/api/admin/veiculos/{id}", vehicleId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -228,7 +228,7 @@ class VehicleControllerIntegrationTest {
         UUID vehicleId = UUID.randomUUID();
 
         // Act & Assert
-        mockMvc.perform(delete("/api/vehicles/{id}", vehicleId))
+        mockMvc.perform(delete("/api/admin/veiculos/{id}", vehicleId))
                 .andExpect(status().isNoContent());
 
         verify(vehicleService).delete(vehicleId);
