@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.domain.references;
 
-import br.com.fiap.numberone.client.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.custumer.domain.enums.TipoDocumento;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,3 +23,5 @@ public class Customer {
     private String address;
     private Boolean active;
 }
+
+

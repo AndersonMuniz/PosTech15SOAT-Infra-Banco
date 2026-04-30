@@ -10,11 +10,11 @@ public class VehicleEntityMapper {
     public VehicleEntity toEntity(Vehicle domain) {
         return VehicleEntity.builder()
                 .id(domain.getId())
-                .licensePlate(domain.getPlaca())
-                .brand(domain.getMarca())
-                .model(domain.getModelo())
-                .year(domain.getAno())
-                .customerId(domain.getIdClient())
+                .licensePlate(domain.getLicensePlate())
+                .brand(domain.getBrand())
+                .model(domain.getModel())
+                .year(domain.getYear())
+                .customerId(domain.getCustomerId())
                 .createdAt(domain.getCreatedAt())
                 .updatedAt(domain.getUpdatedAt())
                 .build();
@@ -23,11 +23,11 @@ public class VehicleEntityMapper {
     public Vehicle toDomain(VehicleEntity entity) {
         return Vehicle.builder()
                 .id(entity.getId())
-                .placa(entity.getLicensePlate())
-                .marca(entity.getBrand())
-                .modelo(entity.getModel())
-                .ano(entity.getYear())
-                .idClient(entity.getCustomerId())
+                .licensePlate(entity.getLicensePlate())
+                .brand(entity.getBrand())
+                .model(entity.getModel())
+                .year(entity.getYear())
+                .customerId(entity.getCustomerId())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .build();

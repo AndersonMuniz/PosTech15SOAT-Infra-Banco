@@ -15,24 +15,37 @@ import java.util.UUID;
 public class Vehicle {
 
     private UUID id;
-    private String placa;
-    private String marca;
-    private String modelo;
-    private Integer ano;
-    private UUID idClient;
+    private String licensePlate;
+    private String brand;
+    private String model;
+    private Integer year;
+    private UUID customerId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Vehicle updateFrom(Vehicle novoVeiculo) {
+    public Vehicle updateFrom(Vehicle newVehicle) {
         return Vehicle.builder()
                 .id(this.id)
-                .placa(novoVeiculo.placa)
-                .marca(novoVeiculo.marca)
-                .modelo(novoVeiculo.modelo)
-                .ano(novoVeiculo.ano)
-                .idClient(novoVeiculo.idClient)
+                .licensePlate(newVehicle.licensePlate)
+                .brand(newVehicle.brand)
+                .model(newVehicle.model)
+                .year(newVehicle.year)
+                .customerId(newVehicle.customerId)
                 .createdAt(this.createdAt)
                 .updatedAt(LocalDateTime.now())
+                .build();
+    }
+
+    public Vehicle withNormalizedLicensePlate(String normalizedLicensePlate) {
+        return Vehicle.builder()
+                .id(this.id)
+                .licensePlate(normalizedLicensePlate)
+                .brand(this.brand)
+                .model(this.model)
+                .year(this.year)
+                .customerId(this.customerId)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
                 .build();
     }
 }

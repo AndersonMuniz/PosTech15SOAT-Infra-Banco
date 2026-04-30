@@ -1,6 +1,5 @@
 package br.com.fiap.numberone.shared.api.exception;
 
-import br.com.fiap.numberone.client.domain.exceptions.DocumentoException;
 import br.com.fiap.numberone.shared.security.domain.exceptions.InvalidCredentialsException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
@@ -135,18 +134,6 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
-
-    @ExceptionHandler(DocumentoException.class)
-    public ResponseEntity<ErrorResponse> handleDocumentoException(DocumentoException ex) {
-        ErrorResponse response = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                List.of()
-        );
-
-        return ResponseEntity.badRequest().body(response);
-    }
-
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex) {
         ErrorResponse response = new ErrorResponse(

@@ -3,25 +3,22 @@ package br.com.fiap.numberone.serviceorder.api.mappers;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderStatusResponse;
 import br.com.fiap.numberone.serviceorder.domain.enums.ServiceOrderStatus;
 import org.mapstruct.Mapper;
+import org.mapstruct.ValueMapping;
+import org.mapstruct.ValueMappings;
 
 @Mapper(componentModel = "spring")
 public interface ServiceOrderStatusApiMapper {
 
-    default ServiceOrderStatusResponse toResponse(ServiceOrderStatus status) {
-        if (status == null) {
-            return null;
-        }
-
-        return switch (status) {
-            case RECEIVED -> ServiceOrderStatusResponse.RECEBIDA;
-            case IN_DIAGNOSIS -> ServiceOrderStatusResponse.EM_DIAGNOSTICO;
-            case WAITING_APPROVAL -> ServiceOrderStatusResponse.AGUARDANDO_APROVACAO;
-            case APPROVED -> ServiceOrderStatusResponse.APROVADA;
-            case REJECTED -> ServiceOrderStatusResponse.REJEITADA;
-            case IN_PROGRESS -> ServiceOrderStatusResponse.EM_EXECUCAO;
-            case COMPLETED -> ServiceOrderStatusResponse.FINALIZADA;
-            case CANCELLED -> ServiceOrderStatusResponse.CANCELADA;
-            case DELIVERED -> ServiceOrderStatusResponse.ENTREGUE;
-        };
-    }
+    @ValueMappings({
+            @ValueMapping(source = "RECEIVED", target = "RECEBIDA"),
+            @ValueMapping(source = "IN_DIAGNOSIS", target = "EM_DIAGNOSTICO"),
+            @ValueMapping(source = "WAITING_APPROVAL", target = "AGUARDANDO_APROVACAO"),
+            @ValueMapping(source = "APPROVED", target = "APROVADA"),
+            @ValueMapping(source = "REJECTED", target = "REJEITADA"),
+            @ValueMapping(source = "IN_PROGRESS", target = "EM_EXECUCAO"),
+            @ValueMapping(source = "COMPLETED", target = "FINALIZADA"),
+            @ValueMapping(source = "CANCELLED", target = "CANCELADA"),
+            @ValueMapping(source = "DELIVERED", target = "ENTREGUE")
+    })
+    ServiceOrderStatusResponse toResponse(ServiceOrderStatus status);
 }
