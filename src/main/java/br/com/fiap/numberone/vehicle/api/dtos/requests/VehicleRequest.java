@@ -1,24 +1,30 @@
 package br.com.fiap.numberone.vehicle.api.dtos.requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
 public record VehicleRequest(
-        @NotBlank(message = "Placa é obrigatória")
-        String placa,
+        @JsonProperty("placa")
+        @NotBlank(message = "Placa e obrigatoria")
+        String licensePlate,
 
-        @NotBlank(message = "Marca é obrigatória")
-        String marca,
+        @JsonProperty("marca")
+        @NotBlank(message = "Marca e obrigatoria")
+        String brand,
 
-        @NotBlank(message = "Modelo é obrigatório")
-        String modelo,
+        @JsonProperty("modelo")
+        @NotBlank(message = "Modelo e obrigatorio")
+        String model,
 
-        @NotNull(message = "Ano é obrigatório")
-        Integer ano,
+        @JsonProperty("ano")
+        @NotNull(message = "Ano e obrigatorio")
+        Integer year,
 
-        @NotNull(message = "idClient é obrigatório")
-        UUID idClient
+        @JsonProperty("idCliente")
+        @NotNull(message = "idCliente e obrigatorio")
+        UUID customerId
 ) {
 }

@@ -3,7 +3,9 @@ package br.com.fiap.numberone.serviceorder.api.controllers;
 import br.com.fiap.numberone.serviceorder.api.exceptions.ServiceOrderExceptionHandler;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderApiMapperImpl;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderBudgetApiMapperImpl;
+import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderBudgetStatusApiMapperImpl;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderItemApiMapperImpl;
+import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderItemStatusApiMapperImpl;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderItemSupplyApiMapperImpl;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderStatusApiMapperImpl;
 import br.com.fiap.numberone.serviceorder.api.mappers.ServiceOrderTrackingApiMapperImpl;
@@ -72,7 +74,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({
         ServiceOrderApiMapperImpl.class,
         ServiceOrderBudgetApiMapperImpl.class,
+        ServiceOrderBudgetStatusApiMapperImpl.class,
         ServiceOrderItemApiMapperImpl.class,
+        ServiceOrderItemStatusApiMapperImpl.class,
         ServiceOrderItemSupplyApiMapperImpl.class,
         ServiceOrderStatusApiMapperImpl.class,
         ServiceOrderTrackingApiMapperImpl.class,
@@ -221,7 +225,7 @@ class ServiceOrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").value(budgetId.toString()))
                 .andExpect(jsonPath("$.idOrdemServico").value(serviceOrderId.toString()))
                 .andExpect(jsonPath("$.valorProposto").value(450.00))
-                .andExpect(jsonPath("$.status").value("DRAFT"));
+                .andExpect(jsonPath("$.status").value("RASCUNHO"));
 
         ArgumentCaptor<ServiceOrderBudget> budgetCaptor = ArgumentCaptor.forClass(ServiceOrderBudget.class);
         verify(budgetService).createDraftBudget(budgetCaptor.capture());
@@ -294,7 +298,7 @@ class ServiceOrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.id").value(itemId.toString()))
                 .andExpect(jsonPath("$.idOrdemServico").value(serviceOrderId.toString()))
                 .andExpect(jsonPath("$.servicoAutomotivo.id").value(serviceId.toString()))
-                .andExpect(jsonPath("$.status").value("PENDING"));
+                .andExpect(jsonPath("$.status").value("PENDENTE"));
 
         ArgumentCaptor<ServiceOrderItem> itemCaptor = ArgumentCaptor.forClass(ServiceOrderItem.class);
         verify(itemService).createServiceOrderItem(itemCaptor.capture());
@@ -313,7 +317,7 @@ class ServiceOrderControllerIntegrationTest {
 
         // Act & Assert
         mockMvc.perform(patch("/api/admin/itens-ordem-servico/{id}/iniciar", itemId))
-                .andExpect(status().isUnprocessableEntity())
+                .andExpect(status().isUnprocessableContent())
                 .andExpect(jsonPath("$.status").value(422))
                 .andExpect(jsonPath("$.message").value("Servico da ordem ja se encontra no status EM_EXECUCAO"));
     }
@@ -460,9 +464,9 @@ class ServiceOrderControllerIntegrationTest {
                 .andExpect(jsonPath("$.veiculo.placa").value("ABC1D23"))
                 .andExpect(jsonPath("$.orcamento.valorProposto").value(250.00))
                 .andExpect(jsonPath("$.orcamento.valorAprovado").value(250.00))
-                .andExpect(jsonPath("$.orcamento.status").value("APPROVED"))
+                .andExpect(jsonPath("$.orcamento.status").value("APROVADO"))
                 .andExpect(jsonPath("$.itensServico[0].id").value(serviceOrderItemId.toString()))
                 .andExpect(jsonPath("$.itensServico[0].nomeServico").value("Troca de oleo"))
-                .andExpect(jsonPath("$.itensServico[0].status").value("IN_PROGRESS"));
+                .andExpect(jsonPath("$.itensServico[0].status").value("EM_EXECUCAO"));
     }
 }
