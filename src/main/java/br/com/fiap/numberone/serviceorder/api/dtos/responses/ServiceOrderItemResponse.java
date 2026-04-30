@@ -1,7 +1,6 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import br.com.fiap.numberone.serviceorder.domain.enums.OrderItemStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ public record ServiceOrderItemResponse(
         @JsonProperty("valor")
         BigDecimal value,
         @JsonProperty("status")
-        OrderItemStatus status,
+        ServiceOrderItemStatusResponse status,
         @JsonProperty("opcional")
         Boolean optional,
         @JsonProperty("insumos")

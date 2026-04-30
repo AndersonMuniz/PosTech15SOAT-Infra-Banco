@@ -16,7 +16,11 @@ import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderValue;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = ServiceOrderStatusApiMapper.class)
+@Mapper(componentModel = "spring", uses = {
+        ServiceOrderStatusApiMapper.class,
+        ServiceOrderItemStatusApiMapper.class,
+        ServiceOrderBudgetStatusApiMapper.class
+})
 public interface ServiceOrderApiMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -41,6 +45,11 @@ public interface ServiceOrderApiMapper {
 
     ServiceOrderResponse.CustomerResponse toResponse(Customer customer);
 
+    @Mapping(target = "licensePlate", source = "licensePlate")
+    @Mapping(target = "brand", source = "brand")
+    @Mapping(target = "model", source = "model")
+    @Mapping(target = "year", source = "year")
+    @Mapping(target = "customerId", source = "customerId")
     ServiceOrderResponse.VehicleResponse toResponse(Vehicle vehicle);
 
     @Mapping(target = "serviceOrderId", source = "serviceOrder.id")
