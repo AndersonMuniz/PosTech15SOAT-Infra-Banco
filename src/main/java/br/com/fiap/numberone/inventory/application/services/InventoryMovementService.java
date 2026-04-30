@@ -73,12 +73,14 @@ public class InventoryMovementService {
 
         item.removeInventoryQuantity(quantity);
 
+        itemGateway.save(item);
+        InventoryMovement inventoryMovementResponse =  movementGateway.save(movement);
+
         if (item.isBelowMinimumInventory()) {
             // TODO: Implementar notificação de estoque baixo
         }
 
-        itemGateway.save(item);
-        return movementGateway.save(movement);
+        return inventoryMovementResponse;
     }
 
     public InventoryMovement registerAdjustment(
@@ -106,7 +108,13 @@ public class InventoryMovementService {
         item.adjustInventoryQuantity(finalQuantity);
 
         itemGateway.save(item);
-        return movementGateway.save(movement);
+        InventoryMovement inventoryMovementResponse =  movementGateway.save(movement);
+
+        if (item.isBelowMinimumInventory()) {
+            // TODO: Implementar notificação de estoque baixo
+        }
+
+        return inventoryMovementResponse;
     }
 
     public List<InventoryMovement> findByInventoryItemId(UUID inventoryItemId) {

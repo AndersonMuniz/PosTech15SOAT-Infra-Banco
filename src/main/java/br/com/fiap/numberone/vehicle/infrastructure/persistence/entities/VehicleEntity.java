@@ -1,4 +1,4 @@
-package br.com.fiap.numberone.vehicle.domain.entities;
+package br.com.fiap.numberone.vehicle.infrastructure.persistence.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

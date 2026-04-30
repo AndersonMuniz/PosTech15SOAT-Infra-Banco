@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.vehicle.infrastructure.persistence.mappers;
 
 import br.com.fiap.numberone.vehicle.domain.entities.Vehicle;
-import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
+import br.com.fiap.numberone.vehicle.infrastructure.persistence.entities.VehicleEntity;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.vehicle.infrastructure.repositories;
 
-import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
+import br.com.fiap.numberone.vehicle.infrastructure.persistence.entities.VehicleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

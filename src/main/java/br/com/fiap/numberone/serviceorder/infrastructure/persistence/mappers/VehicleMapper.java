@@ -1,7 +1,7 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers;
 
 import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
-import br.com.fiap.numberone.vehicle.domain.entities.VehicleEntity;
+import br.com.fiap.numberone.vehicle.infrastructure.persistence.entities.VehicleEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
