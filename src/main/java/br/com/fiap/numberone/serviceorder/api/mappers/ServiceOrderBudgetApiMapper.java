@@ -6,7 +6,7 @@ import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderBudget;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ServiceOrderBudgetStatusApiMapper.class)
 public interface ServiceOrderBudgetApiMapper {
 
     @Mapping(target = "id", ignore = true)

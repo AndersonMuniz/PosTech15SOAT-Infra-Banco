@@ -109,13 +109,13 @@ public class VehicleService {
     }
 
     private void validatePlateDoesNotExist(String placa) {
-        if (vehicleRepository.existsByPlacaIgnoreCase(placa)) {
+        if (vehicleRepository.existsByLicensePlateIgnoreCase(placa)) {
             throw new IllegalArgumentException("Já existe um veículo com a placa informada");
         }
     }
 
     private void validatePlateDoesNotExistForOtherVehicle(String placa, UUID vehicleId) {
-        if (vehicleRepository.existsByPlacaIgnoreCaseAndIdNot(placa, vehicleId)) {
+        if (vehicleRepository.existsByLicensePlateIgnoreCaseAndIdNot(placa, vehicleId)) {
             throw new IllegalArgumentException("Já existe outro veículo com a placa informada");
         }
     }

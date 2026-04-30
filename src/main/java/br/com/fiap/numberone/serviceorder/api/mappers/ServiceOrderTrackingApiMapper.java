@@ -11,12 +11,20 @@ import org.mapstruct.Mapping;
 import java.util.Comparator;
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = ServiceOrderStatusApiMapper.class)
+@Mapper(componentModel = "spring", uses = {
+        ServiceOrderStatusApiMapper.class,
+        ServiceOrderItemStatusApiMapper.class,
+        ServiceOrderBudgetStatusApiMapper.class
+})
 public interface ServiceOrderTrackingApiMapper {
 
     @Mapping(target = "budget", expression = "java(getLatestBudgetResponse(entity.getBudgets()))")
     ServiceOrderTrackingResponse toResponse(ServiceOrder entity);
 
+    @Mapping(target = "licensePlate", source = "licensePlate")
+    @Mapping(target = "brand", source = "brand")
+    @Mapping(target = "model", source = "model")
+    @Mapping(target = "year", source = "year")
     ServiceOrderTrackingResponse.VehicleResponse toResponse(Vehicle vehicle);
 
     @Mapping(target = "serviceName", source = "automotiveService.name")

@@ -30,20 +30,20 @@ public class VehicleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(nullable = false, length = 10)
-    private String placa;
+    @Column(name = "placa", nullable = false, length = 10)
+    private String licensePlate;
 
-    @Column(nullable = false, length = 100)
-    private String marca;
+    @Column(name = "marca", nullable = false, length = 100)
+    private String brand;
 
-    @Column(nullable = false, length = 100)
-    private String modelo;
+    @Column(name = "modelo", nullable = false, length = 100)
+    private String model;
 
-    @Column(nullable = false)
-    private Integer ano;
+    @Column(name = "ano", nullable = false)
+    private Integer year;
 
     @Column(name = "id_cliente", nullable = false)
-    private UUID idClient;
+    private UUID customerId;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

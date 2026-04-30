@@ -6,7 +6,7 @@ import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ServiceOrderItemStatusApiMapper.class)
 public interface ServiceOrderItemApiMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "serviceOrder.id", source = "serviceOrderId")

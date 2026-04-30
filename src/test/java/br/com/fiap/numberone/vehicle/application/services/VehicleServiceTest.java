@@ -59,7 +59,7 @@ class VehicleServiceTest {
         VehicleRequest request = new VehicleRequest("ABC1D23", "Fiat", "Argo", 2023, idClient);
 
         when(clientRepository.existsById(idClient)).thenReturn(true);
-        when(vehicleRepository.existsByPlacaIgnoreCase("ABC1D23")).thenReturn(true);
+        when(vehicleRepository.existsByLicensePlateIgnoreCase("ABC1D23")).thenReturn(true);
 
         // Act + Assert
         assertThrows(IllegalArgumentException.class, () -> vehicleService.create(request));
@@ -85,7 +85,7 @@ class VehicleServiceTest {
 
         when(clientRepository.existsById(idClient)).thenReturn(true);
         when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(entity));
-        when(vehicleRepository.existsByPlacaIgnoreCaseAndIdNot("ABC1D23", vehicleId)).thenReturn(true);
+        when(vehicleRepository.existsByLicensePlateIgnoreCaseAndIdNot("ABC1D23", vehicleId)).thenReturn(true);
 
         // Act + Assert
         assertThrows(IllegalArgumentException.class, () -> vehicleService.update(vehicleId, request));
