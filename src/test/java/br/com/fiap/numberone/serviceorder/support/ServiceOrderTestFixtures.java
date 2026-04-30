@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.support;
 
-import br.com.fiap.numberone.custumer.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.customer.domain.enums.TipoDocumento;
 import br.com.fiap.numberone.inventory.domain.enums.ItemType;
 import br.com.fiap.numberone.inventory.domain.enums.UnitOfMeasure;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;

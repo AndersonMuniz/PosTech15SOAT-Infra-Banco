@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.api.dtos.responses;
 
-import br.com.fiap.numberone.custumer.domain.enums.TipoDocumento;
+import br.com.fiap.numberone.customer.domain.enums.TipoDocumento;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;

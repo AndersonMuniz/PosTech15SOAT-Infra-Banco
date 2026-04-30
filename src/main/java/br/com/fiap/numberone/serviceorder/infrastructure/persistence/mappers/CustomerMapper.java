@@ -1,6 +1,6 @@
 package br.com.fiap.numberone.serviceorder.infrastructure.persistence.mappers;
 
-import br.com.fiap.numberone.custumer.infrastructure.persistence.entities.CustomerEntity;
+import br.com.fiap.numberone.customer.infrastructure.persistence.entities.CustomerEntity;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
