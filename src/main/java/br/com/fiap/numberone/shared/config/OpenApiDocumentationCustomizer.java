@@ -8,13 +8,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -41,6 +45,7 @@ public class OpenApiDocumentationCustomizer {
     @Bean
     OpenApiCustomizer numberOneOperationDocumentation() {
         return openApi -> {
+            registerErrorResponseSchema(openApi);
             configureTags(openApi);
 
             if (openApi.getPaths() == null) {
@@ -51,6 +56,29 @@ public class OpenApiDocumentationCustomizer {
                     pathItem.readOperationsMap().forEach((method, operation) ->
                             customizeOperation(path, method, operation)));
         };
+    }
+
+    private static void registerErrorResponseSchema(OpenAPI openApi) {
+        if (openApi.getComponents() == null) {
+            openApi.setComponents(new Components());
+        }
+
+        Schema<?> schema = new Schema<>()
+                .type("object")
+                .description("Formato padrao retornado pela API em erros de validacao, autenticacao, regra de negocio e falhas internas.");
+
+        schema.addProperty("status", new IntegerSchema()
+                .format("int32")
+                .description("Codigo HTTP do erro.")
+                .example(400));
+        schema.addProperty("message", new StringSchema()
+                .description("Mensagem principal do erro.")
+                .example("Erro de validacao"));
+        schema.addProperty("errors", new ArraySchema()
+                .description("Lista de detalhes adicionais do erro.")
+                .items(new StringSchema().example("nome: Nome e obrigatorio")));
+
+        openApi.getComponents().addSchemas("ErrorResponse", schema);
     }
 
     private static void configureTags(OpenAPI openApi) {
