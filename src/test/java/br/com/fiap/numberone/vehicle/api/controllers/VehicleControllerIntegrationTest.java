@@ -68,6 +68,36 @@ class VehicleControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "placa": "AAA-1234",
+                                  "marca": "Fiat",
+                                  "modelo": "Argo",
+                                  "ano": 2023,
+                                  "idCliente": "%s"
+                                }
+                                """.formatted(customerId)))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "http://localhost/api/admin/veiculos/" + vehicleId))
+                .andExpect(jsonPath("$.id").value(vehicleId.toString()))
+                .andExpect(jsonPath("$.placa").value("ABC1D23"))
+                .andExpect(jsonPath("$.marca").value("Fiat"))
+                .andExpect(jsonPath("$.modelo").value("Argo"))
+                .andExpect(jsonPath("$.ano").value(2023))
+                .andExpect(jsonPath("$.idCliente").value(customerId.toString()))
+                .andExpect(jsonPath("$.criadoEm").exists());
+    }
+
+    @Test
+    void shouldCreateVehicleMercosul() throws Exception {
+        // Arrange
+        UUID vehicleId = UUID.randomUUID();
+        UUID customerId = UUID.randomUUID();
+        when(vehicleService.create(any(Vehicle.class))).thenReturn(vehicle(vehicleId, "ABC1D23", customerId));
+
+        // Act & Assert
+        mockMvc.perform(post("/api/admin/veiculos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
                                   "placa": "abc1d23",
                                   "marca": "Fiat",
                                   "modelo": "Argo",
