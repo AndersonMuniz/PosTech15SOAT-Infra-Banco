@@ -108,6 +108,31 @@ class VehicleControllerIntegrationTest {
         verify(vehicleService, never()).create(any(Vehicle.class));
     }
 
+
+    @Test
+    void shouldReturnValidationErrorWhenLicensePlateFormatIsInvalid() throws Exception {
+        // Arrange
+        UUID customerId = UUID.randomUUID();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/admin/veiculos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "placa": "AB12345",
+                                  "marca": "Fiat",
+                                  "modelo": "Argo",
+                                  "ano": 2023,
+                                  "idCliente": "%s"
+                                }
+                                """.formatted(customerId)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors").isArray());
+
+        verify(vehicleService, never()).create(any(Vehicle.class));
+    }
+
     @Test
     void shouldReturnBusinessErrorWhenLicensePlateAlreadyExists() throws Exception {
         // Arrange
