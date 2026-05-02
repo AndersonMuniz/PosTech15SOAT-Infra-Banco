@@ -275,31 +275,6 @@
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.version}</version>
-				<configuration>
-					<excludes>
-						<exclude>**/api/dto/**</exclude>
-						<exclude>**/api/dtos/**</exclude>
-						<exclude>**/application/commands/**</exclude>
-						<exclude>**/application/gateways/**</exclude>
-						<exclude>**/domain/enums/**</exclude>
-						<exclude>**/domain/exceptions/**</exclude>
-						<exclude>**/domain/references/**</exclude>
-						<exclude>**/config/**</exclude>
-						<exclude>**/infrastructure/persistence/entities/**</exclude>
-						<exclude>**/infrastructure/config/**</exclude>
-						<exclude>**/automotiveservice/infrastructure/config/**</exclude>
-						<exclude>**/customer/infrastructure/config/**</exclude>
-						<exclude>**/inventory/infrastructure/config/**</exclude>
-						<exclude>**/serviceorder/infrastructure/config/**</exclude>
-						<exclude>**/vehicle/infrastructure/config/**</exclude>
-						<exclude>**/shared/config/**</exclude>
-						<exclude>**/shared/infrastructure/config/**</exclude>
-						<exclude>**/shared/security/infrastructure/config/**</exclude>
-						<exclude>**/shared/api/exception/ErrorResponse.class</exclude>
-						<exclude>**/shared/api/exception/ResourceNotFoundException.class</exclude>
-						<exclude>**/*Application.class</exclude>
-					</excludes>
-				</configuration>
 				<executions>
 					<execution>
 						<id>prepare-agent-unit</id>
@@ -322,6 +297,15 @@
 							<skip>${skipUnitTests}</skip>
 							<dataFile>${project.build.directory}/jacoco-unit.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-unit</outputDirectory>
+							<excludes>
+								<exclude>**/api/controllers/**</exclude>
+								<exclude>**/api/dto/**</exclude>
+								<exclude>**/api/dtos/**</exclude>
+								<exclude>**/api/exceptions/**</exclude>
+								<exclude>**/domain/exceptions/**</exclude>
+								<exclude>**/infrastructure/**</exclude>
+								<exclude>**/*Application.class</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 					<execution>
@@ -344,6 +328,14 @@
 						<configuration>
 							<dataFile>${project.build.directory}/jacoco-integration.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-integration</outputDirectory>
+							<excludes>
+								<exclude>**/api/dto/**</exclude>
+								<exclude>**/api/dtos/**</exclude>
+								<exclude>**/domain/exceptions/**</exclude>
+								<exclude>**/infrastructure/persistence/entities/**</exclude>
+								<exclude>**/infrastructure/config/**</exclude>
+								<exclude>**/*Application.class</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 					<execution>
@@ -376,6 +368,16 @@
 							<skip>${skipMergedReport}</skip>
 							<dataFile>${project.build.directory}/jacoco-merged.exec</dataFile>
 							<outputDirectory>${project.reporting.outputDirectory}/jacoco-merged</outputDirectory>
+							<excludes>
+								<exclude>**/api/dto/**</exclude>
+								<exclude>**/api/dtos/**</exclude>
+								<exclude>**/application/gateways/**</exclude>
+								<exclude>**/domain/enums/**</exclude>
+								<exclude>**/domain/exceptions/**</exclude>
+								<exclude>**/infrastructure/persistence/entities/**</exclude>
+								<exclude>**/infrastructure/config/**</exclude>
+								<exclude>**/*Application.class</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 				</executions>
@@ -426,7 +428,7 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+        </plugins>
 	</build>
 
 	<profiles>
