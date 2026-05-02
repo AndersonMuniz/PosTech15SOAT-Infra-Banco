@@ -170,3 +170,36 @@ Esta base foi preparada para receber os modulos do time:
 - ordem de servico e orcamento
 
 Ou seja, a parte de infraestrutura e seguranca ja fica pronta para a evolucao dos modulos de negocio.
+
+## Analise de Seguranca com SonarQube
+
+A documentacao completa para executar a analise local de qualidade e seguranca com SonarQube esta em `doc/security/README.md`.
+
+Fluxo resumido:
+
+```bash
+./scripts/sonar-up.sh
+```
+
+Depois:
+
+```text
+Acessar http://localhost:9000
+Login inicial: admin/admin
+Criar token em My Account > Security
+```
+
+Depois:
+
+```bash
+export SONAR_TOKEN=seu_token_aqui
+./scripts/sonar-scan.sh
+```
+
+Depois:
+
+```bash
+./scripts/security-evidence.sh
+```
+
+Salve as evidencias em `docs/security/evidencias/` e preencha o relatorio final em `docs/security/relatorio-vulnerabilidades.md`.
