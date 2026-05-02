@@ -39,8 +39,8 @@ Pacotes principais:
 Suba um PostgreSQL local com:
 
 - database: `numberone`
-- username: `postgres`
-- password: `postgres`
+- username: `admin`
+- password: `admin`
 
 Ou sobrescreva por variavel de ambiente:
 
@@ -51,10 +51,18 @@ Ou sobrescreva por variavel de ambiente:
 ### 2. Rodar a aplicacao
 
 ```bash
-./mvnw spring-boot:run
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-Por padrao, o profile `dev` sera usado.
+O profile `local` carrega `src/main/resources/application-local.properties`, com defaults para banco local, Mailpit, JWT e usuario admin de desenvolvimento.
+
+Sem profile ativo, a aplicacao usa `src/main/resources/application.properties`, que e a configuracao produtiva empacotada na imagem Docker. Nesse modo, valores sensiveis e dependentes do ambiente devem ser informados por variaveis de ambiente.
+
+Alternativa:
+
+```bash
+SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
+```
 
 ### 3. Mailpit para emails locais
 
@@ -162,4 +170,3 @@ Esta base foi preparada para receber os modulos do time:
 - ordem de servico e orcamento
 
 Ou seja, a parte de infraestrutura e seguranca ja fica pronta para a evolucao dos modulos de negocio.
-
