@@ -203,3 +203,22 @@ Depois:
 ```
 
 Salve as evidencias em `docs/security/evidencias/` e preencha o relatorio final em `docs/security/relatorio-vulnerabilidades.md`.
+
+## Justificativa do banco de dados relacional e da escolha do PostgreSQL
+
+A escolha por um **banco de dados relacional** neste projeto foi feita para garantir consistencia e confiabilidade no tratamento dos dados de negocio, especialmente porque o dominio possui entidades com relacionamentos claros (como clientes, veiculos, servicos, itens, estoque e ordens de servico). Nesse contexto, o modelo relacional oferece:
+
+- **Integridade referencial nativa** por meio de chaves primarias e estrangeiras, reduzindo risco de inconsistencias entre tabelas.
+- **Transacoes ACID**, importantes para operacoes criticas (por exemplo: abertura de ordem, atualizacao de estoque e faturamento), evitando estados parciais em caso de falha.
+- **Consultas estruturadas com SQL**, facilitando filtros, agregacoes e relatorios operacionais sem perda de legibilidade.
+- **Evolucao controlada do schema**, alinhada ao uso de migrations com Flyway ja adotado no projeto.
+
+Dentro desse contexto, o **PostgreSQL** foi escolhido por combinar robustez, maturidade e excelente integracao com o ecossistema Java/Spring:
+
+- **Confiabilidade e estabilidade em producao**, sendo amplamente utilizado em sistemas corporativos.
+- **Aderencia completa ao SQL e recursos avancados** (indices, constraints, views, funcoes e tipos customizados), permitindo crescimento tecnico sem trocar de tecnologia.
+- **Otima integracao com Spring Data JPA e Flyway**, simplificando mapeamento de entidades, versionamento de banco e deploy continuo.
+- **Bom desempenho para cargas transacionais** e capacidade de escalar verticalmente e horizontalmente conforme a necessidade do projeto.
+- **Software livre e comunidade ativa**, reduzindo custo de licenciamento e facilitando suporte de longo prazo.
+
+Em resumo, a combinacao **modelo relacional + PostgreSQL** atende tanto aos requisitos atuais de consistencia e seguranca dos dados quanto a evolucao futura da aplicacao.
