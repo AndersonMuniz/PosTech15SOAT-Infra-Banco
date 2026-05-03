@@ -67,7 +67,7 @@ class InventoryMovementControllerIT {
         )).thenReturn(entryMovement());
 
         // When / Then
-        mockMvc.perform(post("/api/estoque/entrada")
+        mockMvc.perform(post("/api/admin/estoque/entrada")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(entryRequest()))
                 .andExpect(status().isCreated())
@@ -88,7 +88,7 @@ class InventoryMovementControllerIT {
         )).thenReturn(withdrawalMovement());
 
         // When / Then
-        mockMvc.perform(post("/api/estoque/baixa")
+        mockMvc.perform(post("/api/admin/estoque/baixa")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -128,7 +128,7 @@ class InventoryMovementControllerIT {
         )).thenReturn(adjustment);
 
         // When / Then
-        mockMvc.perform(post("/api/estoque/ajuste")
+        mockMvc.perform(post("/api/admin/estoque/ajuste")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -149,7 +149,7 @@ class InventoryMovementControllerIT {
     @Test
     void shouldReturnValidationErrorsWhenEntryRequestIsInvalid() throws Exception {
         // Given / When / Then
-        mockMvc.perform(post("/api/estoque/entrada")
+        mockMvc.perform(post("/api/admin/estoque/entrada")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -181,7 +181,7 @@ class InventoryMovementControllerIT {
         )).thenThrow(new InventoryBusinessException("Item de estoque inativo não pode receber movimentação"));
 
         // When / Then
-        mockMvc.perform(post("/api/estoque/entrada")
+        mockMvc.perform(post("/api/admin/estoque/entrada")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(entryRequest()))
                 .andExpect(status().isUnprocessableContent())
@@ -196,7 +196,7 @@ class InventoryMovementControllerIT {
                 .thenReturn(List.of(entryMovement(), withdrawalMovement()));
 
         // When / Then
-        mockMvc.perform(get("/api/estoque/itens/{itemId}/movimentacoes", ITEM_ID))
+        mockMvc.perform(get("/api/admin/estoque/itens/{itemId}/movimentacoes", ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tipoMovimentacao").value("ENTRADA"))
                 .andExpect(jsonPath("$[1].tipoMovimentacao").value("BAIXA"));

@@ -7,6 +7,7 @@ import br.com.fiap.numberone.inventory.api.dto.responses.InventoryMovementRespon
 import br.com.fiap.numberone.inventory.api.mappers.InventoryMovementApiMapper;
 import br.com.fiap.numberone.inventory.application.services.InventoryMovementService;
 import br.com.fiap.numberone.inventory.domain.entities.InventoryMovement;
+import br.com.fiap.numberone.shared.api.ApiPaths;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/estoque")
+@RequestMapping(ApiPaths.ADMIN + "/estoque")
 public class InventoryMovementController {
 
     private final InventoryMovementService inventoryMovementService;

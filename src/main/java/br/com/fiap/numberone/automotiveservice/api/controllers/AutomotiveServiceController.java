@@ -5,6 +5,7 @@ import br.com.fiap.numberone.automotiveservice.api.dto.responses.AutomotiveServi
 import br.com.fiap.numberone.automotiveservice.api.mappers.AutomotiveServiceApiMapper;
 import br.com.fiap.numberone.automotiveservice.application.services.AutomotiveServiceService;
 import br.com.fiap.numberone.automotiveservice.domain.entities.AutomotiveService;
+import br.com.fiap.numberone.shared.api.ApiPaths;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/servicos")
+@RequestMapping(ApiPaths.ADMIN + "/servicos")
 public class AutomotiveServiceController {
 
     private final AutomotiveServiceService autoServiceService;

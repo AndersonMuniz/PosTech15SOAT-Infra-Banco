@@ -67,7 +67,7 @@ class AutomotiveServiceControllerIT {
                 .thenReturn(automotiveService(id, "REV-001", true));
 
         // When / Then
-        mockMvc.perform(post("/api/servicos")
+        mockMvc.perform(post("/api/admin/servicos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -80,7 +80,7 @@ class AutomotiveServiceControllerIT {
                                 }
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/api/servicos/" + id))
+                .andExpect(header().string("Location", "http://localhost/api/admin/servicos/" + id))
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.code").value("REV-001"))
                 .andExpect(jsonPath("$.name").value("Revisao completa"))
@@ -105,7 +105,7 @@ class AutomotiveServiceControllerIT {
                 """;
 
         // When / Then
-        mockMvc.perform(post("/api/servicos")
+        mockMvc.perform(post("/api/admin/servicos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -119,7 +119,7 @@ class AutomotiveServiceControllerIT {
     @Test
     void shouldReturnValidationErrorWhenServiceTypeIsInvalid() throws Exception {
         // Given / When / Then
-        mockMvc.perform(post("/api/servicos")
+        mockMvc.perform(post("/api/admin/servicos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -144,7 +144,7 @@ class AutomotiveServiceControllerIT {
                 .thenThrow(new AutomotiveServiceBusinessException("Já existe um serviço automotivo com o código informado"));
 
         // When / Then
-        mockMvc.perform(post("/api/servicos")
+        mockMvc.perform(post("/api/admin/servicos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -168,7 +168,7 @@ class AutomotiveServiceControllerIT {
         when(automotiveServiceService.findById(id)).thenReturn(automotiveService(id, "REV-001", true));
 
         // When / Then
-        mockMvc.perform(get("/api/servicos/{id}", id))
+        mockMvc.perform(get("/api/admin/servicos/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.code").value("REV-001"));
@@ -182,7 +182,7 @@ class AutomotiveServiceControllerIT {
                 .thenThrow(new AutoServiceNotFoundException("Serviço automotivo não encontrado"));
 
         // When / Then
-        mockMvc.perform(get("/api/servicos/{id}", id))
+        mockMvc.perform(get("/api/admin/servicos/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("Serviço automotivo não encontrado"));
@@ -197,7 +197,7 @@ class AutomotiveServiceControllerIT {
         ));
 
         // When / Then
-        mockMvc.perform(get("/api/servicos"))
+        mockMvc.perform(get("/api/admin/servicos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].code").value("REV-001"))
                 .andExpect(jsonPath("$[1].code").value("ALI-001"));
@@ -211,7 +211,7 @@ class AutomotiveServiceControllerIT {
                 .thenReturn(automotiveService(id, "ALI-001", true));
 
         // When / Then
-        mockMvc.perform(put("/api/servicos/{id}", id)
+        mockMvc.perform(put("/api/admin/servicos/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -234,7 +234,7 @@ class AutomotiveServiceControllerIT {
         UUID id = UUID.randomUUID();
 
         // When / Then
-        mockMvc.perform(patch("/api/servicos/{id}/inativar", id))
+        mockMvc.perform(patch("/api/admin/servicos/{id}/inativar", id))
                 .andExpect(status().isNoContent());
 
         verify(automotiveServiceService).inactivate(id);
@@ -246,7 +246,7 @@ class AutomotiveServiceControllerIT {
         UUID id = UUID.randomUUID();
 
         // When / Then
-        mockMvc.perform(patch("/api/servicos/{id}/ativar", id))
+        mockMvc.perform(patch("/api/admin/servicos/{id}/ativar", id))
                 .andExpect(status().isNoContent());
 
         verify(automotiveServiceService).activate(id);

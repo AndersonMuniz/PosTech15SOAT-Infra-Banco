@@ -5,6 +5,7 @@ import br.com.fiap.numberone.inventory.api.dto.responses.InventoryItemResponse;
 import br.com.fiap.numberone.inventory.api.mappers.InventoryItemApiMapper;
 import br.com.fiap.numberone.inventory.application.services.InventoryItemService;
 import br.com.fiap.numberone.inventory.domain.entities.InventoryItem;
+import br.com.fiap.numberone.shared.api.ApiPaths;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/itens")
+@RequestMapping(ApiPaths.ADMIN + "/itens")
 public class InventoryItemController {
 
     private final InventoryItemService inventoryItemService;
