@@ -67,11 +67,11 @@ class InventoryItemControllerIT {
                 .thenReturn(inventoryItem(id, "OLEO-001", true, 10));
 
         // When / Then
-        mockMvc.perform(post("/api/itens")
+        mockMvc.perform(post("/api/admin/itens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validItemRequest()))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "http://localhost/api/itens/" + id))
+                .andExpect(header().string("Location", "http://localhost/api/admin/itens/" + id))
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.codigo").value("OLEO-001"))
                 .andExpect(jsonPath("$.nome").value("Oleo de motor"))
@@ -84,7 +84,7 @@ class InventoryItemControllerIT {
     @Test
     void shouldReturnValidationErrorsWhenCreatingInvalidInventoryItem() throws Exception {
         // Given / When / Then
-        mockMvc.perform(post("/api/itens")
+        mockMvc.perform(post("/api/admin/itens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -109,7 +109,7 @@ class InventoryItemControllerIT {
     @Test
     void shouldReturnValidationErrorWhenItemTypeIsInvalid() throws Exception {
         // Given / When / Then
-        mockMvc.perform(post("/api/itens")
+        mockMvc.perform(post("/api/admin/itens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -137,7 +137,7 @@ class InventoryItemControllerIT {
                 .thenThrow(new InventoryItemBusinessException("Já existe um item de estoque com o código informado"));
 
         // When / Then
-        mockMvc.perform(post("/api/itens")
+        mockMvc.perform(post("/api/admin/itens")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validItemRequest()))
                 .andExpect(status().isUnprocessableContent())
@@ -152,7 +152,7 @@ class InventoryItemControllerIT {
         when(inventoryItemService.findById(id)).thenReturn(inventoryItem(id, "OLEO-001", true, 10));
 
         // When / Then
-        mockMvc.perform(get("/api/itens/{id}", id))
+        mockMvc.perform(get("/api/admin/itens/{id}", id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id.toString()))
                 .andExpect(jsonPath("$.codigo").value("OLEO-001"));
@@ -166,7 +166,7 @@ class InventoryItemControllerIT {
                 .thenThrow(new InventoryItemNotFoundException("Item de estoque não encontrado"));
 
         // When / Then
-        mockMvc.perform(get("/api/itens/{id}", id))
+        mockMvc.perform(get("/api/admin/itens/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("Item de estoque não encontrado"));
@@ -181,7 +181,7 @@ class InventoryItemControllerIT {
         ));
 
         // When / Then
-        mockMvc.perform(get("/api/itens"))
+        mockMvc.perform(get("/api/admin/itens"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].codigo").value("OLEO-001"))
                 .andExpect(jsonPath("$[1].codigo").value("FILTRO-001"));
@@ -195,7 +195,7 @@ class InventoryItemControllerIT {
                 .thenReturn(inventoryItem(id, "FILTRO-001", true, 7));
 
         // When / Then
-        mockMvc.perform(put("/api/itens/{id}", id)
+        mockMvc.perform(put("/api/admin/itens/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(validItemRequest().replace("OLEO-001", "FILTRO-001")))
                 .andExpect(status().isOk())
@@ -209,7 +209,7 @@ class InventoryItemControllerIT {
         UUID id = UUID.randomUUID();
 
         // When / Then
-        mockMvc.perform(patch("/api/itens/{id}/inativar", id))
+        mockMvc.perform(patch("/api/admin/itens/{id}/inativar", id))
                 .andExpect(status().isNoContent());
 
         verify(inventoryItemService).inactivate(id);
@@ -221,7 +221,7 @@ class InventoryItemControllerIT {
         UUID id = UUID.randomUUID();
 
         // When / Then
-        mockMvc.perform(patch("/api/itens/{id}/ativar", id))
+        mockMvc.perform(patch("/api/admin/itens/{id}/ativar", id))
                 .andExpect(status().isNoContent());
 
         verify(inventoryItemService).activate(id);
