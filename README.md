@@ -194,15 +194,55 @@ O Flyway roda automaticamente na subida da aplicacao e cria/atualiza as tabelas 
 
 ## Testes
 
+A documentacao completa do teste em [doc/testes/README.md](doc/testes/README.md).
+
+Fluxo resumido:
+
+Use `./mvnw` como comando recomendado. `mvn` também funciona quando o Maven estiver instalado localmente.
+
+### Somente unitários
+
 ```bash
-./mvnw test
+./mvnw clean test
+# ou
+mvn clean test
 ```
 
-O projeto possui testes unitarios, testes de integracao e documentacao complementar em `doc/testes/README.md`.
+Executa `*Test.java`, não executa `*IT.java` e não executa Cucumber.
+
+### Unitários + integração
+
+```bash
+./mvnw clean verify
+# ou
+mvn clean verify
+```
+
+Executa unitários e integração. O Cucumber não roda nesse comando.
+
+### Somente integração
+
+```bash
+./mvnw clean verify -DskipUnitTests=true -DskipMergedReport=true
+# ou
+mvn clean verify -DskipUnitTests=true -DskipMergedReport=true
+```
+
+Executa somente integração e não executa unitários.
+
+### Cucumber/E2E
+
+```bash
+./mvnw clean verify -Pcucumber
+# ou
+mvn clean verify -Pcucumber
+```
+
+Executa somente Cucumber/E2E. Não executa unitários nem a suíte de integração padrão.
 
 ## Analise de Seguranca com SonarQube
 
-A documentacao completa para executar a analise local de qualidade e seguranca com SonarQube esta em `doc/security/README.md`.
+A documentacao completa para executar a analise local de qualidade e seguranca com SonarQube esta em [doc/security/README.md](doc/security/README.md).
 
 Fluxo resumido:
 
