@@ -1,17 +1,6 @@
-# PosTech15SOAT
+# PosTech15SOAT - NumberOne
 
-Base tecnica inicial do back-end do Tech Challenge da oficina.
-
-Neste momento, o projeto ja possui:
-
-- estrutura base em Spring Boot 4
-- configuracao de Flyway
-- autenticacao JWT para APIs administrativas
-- bootstrap automatico de usuario admin local
-- padrao de tratamento de erros
-- documentacao OpenAPI via Swagger
-- Dockerfile e docker-compose
-- testes de integracao iniciais para seguranca
+API REST do Tech Challenge Fase 1 para gerenciamento de uma oficina mecanica. O projeto cobre cadastro de clientes e veiculos, catalogo de servicos automotivos, estoque de pecas e insumos, ordem de servico, orcamento, acompanhamento, seguranca JWT, Swagger e execucao com Docker.
 
 ## Stack
 
@@ -22,33 +11,80 @@ Neste momento, o projeto ja possui:
 - Spring Data JPA
 - Flyway
 - PostgreSQL
+- Mailpit
+- Docker e Docker Compose
 - H2 para testes
+- SonarQube para analise local de qualidade e seguranca
 
-## Estrutura inicial implementada
+## Modulos
 
-Pacotes principais:
+- `customer`: cadastro de clientes, documento, tipo de documento e validacoes.
+- `vehicle`: cadastro de veiculos, placa, marca, modelo, ano e vinculo com cliente.
+- `automotiveservice`: catalogo de servicos automotivos, valor base e tempo estimado.
+- `inventory`: cadastro de itens de estoque e movimentacoes de entrada, baixa e ajuste.
+- `serviceorder`: ordem de servico, diagnostico, orcamento, itens, insumos, status e acompanhamento.
+- `shared`: seguranca JWT, tratamento global de erros, Swagger, email e configuracoes comuns.
 
-- `shared/api`: health check e padrao de erro
-- `shared/config`: configuracao de OpenAPI
-- `shared/security`: JWT, login, bootstrap do admin e seguranca da API
+## Como Rodar com Um Comando
 
-## Subida local sem Docker
+Pre-requisitos:
 
-### 1. Banco
+- Docker instalado
+- Docker Compose instalado
 
-Suba um PostgreSQL local com:
+Na raiz do projeto:
 
-- database: `numberone`
-- username: `admin`
-- password: `admin`
+```bash
+./executar-projeto.sh
+```
 
-Ou sobrescreva por variavel de ambiente:
+Esse comando executa `docker compose up --build` e sobe a aplicacao, o banco PostgreSQL e o Mailpit.
 
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
+Se aparecer erro de permissao no Docker, execute com `sudo` ou adicione seu usuario ao grupo `docker`:
 
-### 2. Rodar a aplicacao
+```bash
+sudo usermod -aG docker $USER
+```
+
+Depois faca logout/login ou reinicie o terminal.
+
+## Como Rodar Manualmente com Docker
+
+```bash
+docker compose up --build
+```
+
+Servicos:
+
+- API: `http://localhost:8080`
+- Swagger: `http://localhost:8080/swagger-ui.html`
+- PostgreSQL: `localhost:5432`
+- Mailpit SMTP: `localhost:1025`
+- Mailpit Web: `http://localhost:8025`
+
+Para parar:
+
+```bash
+docker compose down
+```
+
+Para parar e apagar o volume do banco:
+
+```bash
+docker compose down -v
+```
+
+Mais detalhes em `doc/execucao-local.md`.
+
+## Como Rodar Sem Docker para a Aplicacao
+
+Suba apenas infraestrutura:
+
+```bash
+docker compose up -d postgres mailpit
+```
+
+Rode a aplicacao localmente:
 
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
@@ -64,45 +100,29 @@ Alternativa:
 SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
 ```
 
-### 3. Mailpit para emails locais
+Configuracao local padrao:
 
-Suba o Mailpit com:
+- database: `numberone`
+- username: `admin`
+- password: `admin`
+- JDBC: `jdbc:postgresql://localhost:5432/numberone`
 
-```bash
-docker compose up -d mailpit
-```
+## Autenticacao JWT
 
-Com a configuracao atual da aplicacao, ele ficara disponivel em:
+Ao subir a aplicacao, um usuario administrativo e criado automaticamente caso a tabela `admin_users` esteja vazia.
 
-- SMTP: `localhost:1025`
-- inbox web: `http://localhost:8025`
-
-Assim, os emails enviados pela aplicacao ficarao visiveis na interface web do Mailpit.
-
-## Usuario admin local
-
-Ao subir a aplicacao pela primeira vez, um usuario admin e criado automaticamente se a tabela `admin_users` estiver vazia.
-
-Credenciais locais padrao:
+Credenciais locais:
 
 - usuario: `admin`
 - senha: `admin123456`
 
-Esses valores podem ser sobrescritos por:
-
-- `BOOTSTRAP_ADMIN_USERNAME`
-- `BOOTSTRAP_ADMIN_PASSWORD`
-- `BOOTSTRAP_ADMIN_ROLE`
-
-## JWT
-
-O login administrativo pode ser feito em:
+Login:
 
 ```text
 POST /api/public/auth/login
 ```
 
-Exemplo:
+Body:
 
 ```json
 {
@@ -111,22 +131,11 @@ Exemplo:
 }
 ```
 
-O token retornado deve ser enviado como:
+Use o token retornado nas rotas administrativas:
 
 ```text
 Authorization: Bearer <token>
 ```
-
-## Endpoints iniciais
-
-Publicos:
-
-- `GET /api/public/health`
-- `POST /api/public/auth/login`
-
-Administrativos protegidos:
-
-- `GET /api/admin/session`
 
 ## Swagger
 
@@ -136,40 +145,60 @@ Com a aplicacao rodando:
 http://localhost:8080/swagger-ui.html
 ```
 
+O Swagger usa o esquema `bearerAuth`. Para testar rotas administrativas, faca login, copie o `accessToken`, clique em `Authorize` e informe:
+
+```text
+Bearer <token>
+```
+
+## Endpoints Principais
+
+Publicos:
+
+- `GET /api/public/health`
+- `POST /api/public/auth/login`
+- `GET /api/public/ordens-servico/{id}/acompanhamento`
+- `GET /api/public/orcamentos-ordem-servico/{id}/aprovacao/aprovar`
+- `GET /api/public/orcamentos-ordem-servico/{id}/aprovacao/rejeitar`
+
+Administrativos:
+
+- `GET /api/admin/session`
+- `POST /api/admin/clientes`
+- `GET /api/admin/clientes`
+- `POST /api/admin/veiculos`
+- `GET /api/admin/veiculos`
+- `POST /api/admin/servicos`
+- `GET /api/admin/servicos`
+- `POST /api/admin/itens`
+- `GET /api/admin/itens`
+- `POST /api/admin/estoque/entrada`
+- `POST /api/admin/estoque/baixa`
+- `POST /api/admin/estoque/ajuste`
+- `POST /api/admin/ordens-servico`
+- `GET /api/admin/ordens-servico`
+- `POST /api/admin/itens-ordem-servico`
+- `POST /api/admin/itens-ordem-servico/{serviceOrderItemId}/insumos`
+- `POST /api/admin/ordens-servico/{serviceOrderId}/orcamentos`
+- `PATCH /api/admin/orcamentos-ordem-servico/{id}/solicitar-aprovacao`
+
 ## Flyway
 
-Migrations atuais:
+As migrations ficam em:
 
-- `V1__create_admin_users_table.sql`
+```text
+src/main/resources/db/migrations
+```
 
-## Rodando os testes
+O Flyway roda automaticamente na subida da aplicacao e cria/atualiza as tabelas no PostgreSQL.
+
+## Testes
 
 ```bash
 ./mvnw test
 ```
 
-## Subida com Docker
-
-```bash
-docker compose up --build
-```
-
-Servicos:
-
-- app: `http://localhost:8080`
-- postgres: `localhost:5432`
-- mailpit smtp: `localhost:1025`
-- mailpit web: `http://localhost:8025`
-
-## Proximos passos do dominio
-
-Esta base foi preparada para receber os modulos do time:
-
-- client e vehicle
-- servico, item e estoque
-- ordem de servico e orcamento
-
-Ou seja, a parte de infraestrutura e seguranca ja fica pronta para a evolucao dos modulos de negocio.
+O projeto possui testes unitarios, testes de integracao e documentacao complementar em `doc/testes/README.md`.
 
 ## Analise de Seguranca com SonarQube
 
@@ -202,7 +231,7 @@ Depois:
 ./scripts/security-evidence.sh
 ```
 
-Salve as evidencias em `docs/security/evidencias/` e preencha o relatorio final em `docs/security/relatorio-vulnerabilidades.md`.
+Salve as evidencias em `doc/security/evidencias/` e preencha o relatorio final em `doc/security/relatorio-vulnerabilidades.md`.
 
 ## Justificativa do banco de dados relacional e da escolha do PostgreSQL
 
@@ -222,3 +251,16 @@ Dentro desse contexto, o **PostgreSQL** foi escolhido por combinar robustez, mat
 - **Software livre e comunidade ativa**, reduzindo custo de licenciamento e facilitando suporte de longo prazo.
 
 Em resumo, a combinacao **modelo relacional + PostgreSQL** atende tanto aos requisitos atuais de consistencia e seguranca dos dados quanto a evolucao futura da aplicacao.
+
+## Documentacao do Projeto
+
+- `doc/README.md`: indice geral de documentacao.
+- `doc/equipe/modelagem-banco-aprovada.md`: decisoes de modelagem do banco.
+- `doc/equipe/documentacao_final_grupo_numbeone.pdf`: documento final do grupo.
+- `doc/linguagem_ubiqua/linguagem-ubiqua.md`: linguagem ubiqua do dominio.
+- `doc/equipe/*.md`: divisao de tarefas por integrante.
+- `doc/modulos/*.md`: documentacao dos modulos de estoque, servicos e ordem de servico.
+- `doc/execucao-local.md`: passo a passo de execucao automatica e manual.
+- `doc/padroes-java-25.md`: padroes de codigo Java definidos pelo grupo.
+- `doc/security/README.md`: execucao do SonarQube e evidencias de seguranca.
+- `doc/testes/README.md`: estrategia e evidencias de testes.
