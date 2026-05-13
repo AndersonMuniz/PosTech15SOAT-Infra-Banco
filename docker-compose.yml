@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:latest
+    image: postgres:17-alpine
     container_name: numberone-db
     environment:
       POSTGRES_DB: numberone
@@ -10,6 +10,18 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d numberone"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: numberone-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
   app:
     build:
@@ -17,7 +29,10 @@ services:
       dockerfile: Dockerfile
     container_name: numberone-app
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/numberone
       DB_USERNAME: admin
@@ -26,6 +41,10 @@ services:
       BOOTSTRAP_ADMIN_USERNAME: admin
       BOOTSTRAP_ADMIN_PASSWORD: admin123456
       BOOTSTRAP_ADMIN_ROLE: ADMIN
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      APP_MAIL_FROM: no-reply@numberone.local
+      SERVICE_ORDER_APPROVAL_BASE_URL: http://localhost:8080
     ports:
       - "8080:8080"
 
