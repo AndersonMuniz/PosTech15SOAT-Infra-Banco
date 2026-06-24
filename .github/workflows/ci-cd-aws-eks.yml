@@ -1,4 +1,4 @@
-name: CI/CD AWS EKS
+name: CI/CD Local Docker
 
 on:
   push:
@@ -10,21 +10,12 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  AWS_REGION: us-east-1
-  AWS_ROLE_TO_ASSUME: arn:aws:iam::019238780706:role/LabRole
-  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY || 'numberone' }}
-  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME || 'numberone-eks' }}
-  K8S_NAMESPACE: ${{ vars.K8S_NAMESPACE || 'numberone' }}
-  IMAGE_TAG: ${{ github.sha }}
-
 permissions:
   contents: read
-  id-token: write
 
 jobs:
-  build-and-test:
-    name: Build da aplicação e testes automáticos
+  unit-tests:
+    name: Testes unitários
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
@@ -37,123 +28,41 @@ jobs:
           java-version: '25'
           cache: maven
 
-      - name: Build da aplicação com testes
-        run: ./mvnw clean verify
+      - name: Executar testes unitários
+        run: ./mvnw clean test
 
-      - name: Publicar artefato da aplicação
+      - name: Publicar relatórios dos testes unitários
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: numberone-jar
-          path: target/*.jar
-          if-no-files-found: error
+          name: relatorios-testes-unitarios
+          path: |
+            target/surefire-reports/unit
+            target/site/jacoco-unit
+          if-no-files-found: warn
 
-  docker-build-push:
-    name: Build e push da imagem Docker
+  local-docker-deploy:
+    name: Deploy local com Docker Compose
     runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.event_name != 'pull_request'
-    outputs:
-      image_uri: ${{ steps.image.outputs.image_uri }}
+    needs: unit-tests
+    if: github.event_name != 'pull_request' && needs.unit-tests.result == 'success'
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Configurar credenciais AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-${{ github.run_id }}
+      - name: Build da imagem Docker local
+        run: docker compose build app
 
-      - name: Login no Amazon ECR
-        id: ecr
-        uses: aws-actions/amazon-ecr-login@v2
+      - name: Deploy local da aplicação
+        run: docker compose up -d postgres mailpit app
 
-      - name: Garantir repositório ECR
-        run: |
-          aws ecr describe-repositories --repository-names "$ECR_REPOSITORY" >/dev/null 2>&1 || \
-          aws ecr create-repository --repository-name "$ECR_REPOSITORY" --image-scanning-configuration scanOnPush=true
+      - name: Validar containers locais
+        run: docker compose ps
 
-      - name: Definir URI da imagem
-        id: image
-        run: echo "image_uri=${{ steps.ecr.outputs.registry }}/${ECR_REPOSITORY}:${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+      - name: Exibir logs em caso de falha
+        if: failure()
+        run: docker compose logs --no-color --tail=200
 
-      - name: Build da imagem Docker
-        run: docker build -t "${{ steps.image.outputs.image_uri }}" .
-
-      - name: Push da imagem Docker
-        run: docker push "${{ steps.image.outputs.image_uri }}"
-
-  deploy-rds:
-    name: Deploy da infraestrutura do banco RDS
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.event_name != 'pull_request'
-    defaults:
-      run:
-        working-directory: infraestrutura/terraform/rds
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Configurar credenciais AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-${{ github.run_id }}
-
-      - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform init
-        run: terraform init
-
-      - name: Terraform validate
-        run: terraform validate
-
-      - name: Terraform apply RDS
-        run: |
-          terraform apply -auto-approve \
-            -var="aws_region=${AWS_REGION}" \
-            -var="db_username=${{ secrets.RDS_USERNAME }}" \
-            -var="db_password=${{ secrets.RDS_PASSWORD }}" \
-            -var="vpc_id=${{ secrets.AWS_VPC_ID }}" \
-            -var='subnet_ids=${{ secrets.AWS_PRIVATE_SUBNET_IDS_JSON }}' \
-            -var='allowed_security_group_ids=${{ secrets.EKS_NODE_SECURITY_GROUP_IDS_JSON }}'
-
-  deploy-eks:
-    name: Deploy Kubernetes no EKS
-    runs-on: ubuntu-latest
-    needs:
-      - docker-build-push
-      - deploy-rds
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Configurar credenciais AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
-          role-session-name: GitHubActions-${{ github.run_id }}
-
-      - name: Atualizar kubeconfig do EKS
-        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
-
-      - name: Criar/atualizar segredo de conexão com RDS
-        run: |
-          kubectl create namespace "$K8S_NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
-          kubectl -n "$K8S_NAMESPACE" create secret generic numberone-db \
-            --from-literal=SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
-            --from-literal=SPRING_DATASOURCE_USERNAME="${{ secrets.RDS_USERNAME }}" \
-            --from-literal=SPRING_DATASOURCE_PASSWORD="${{ secrets.RDS_PASSWORD }}" \
-            --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Aplicar manifests da aplicação
-        run: |
-          sed "s|__IMAGE_URI__|${{ needs.docker-build-push.outputs.image_uri }}|g; s|__K8S_NAMESPACE__|${K8S_NAMESPACE}|g" \
-            infraestrutura/kubernetes/application.yaml | kubectl apply -f -
-          kubectl -n "$K8S_NAMESPACE" rollout status deployment/numberone --timeout=300s
+      - name: Encerrar ambiente local
+        if: always()
+        run: docker compose down
