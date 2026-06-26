@@ -1,4 +1,4 @@
-name: CI/CD Local Docker
+name: CI Gratuito GitHub Actions
 
 on:
   push:
@@ -13,10 +13,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   unit-tests:
     name: Testes unitários
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -41,9 +45,9 @@ jobs:
             target/site/jacoco-unit
           if-no-files-found: warn
 
-  local-docker-deploy:
-    name: Deploy local com Docker Compose
-    runs-on: ubuntu-latest
+  docker-build:
+    name: Validar build Docker
+    runs-on: ubuntu-24.04
     needs: unit-tests
     if: github.event_name != 'pull_request' && needs.unit-tests.result == 'success'
     steps:
@@ -52,17 +56,3 @@ jobs:
 
       - name: Build da imagem Docker local
         run: docker compose build app
-
-      - name: Deploy local da aplicação
-        run: docker compose up -d postgres mailpit app
-
-      - name: Validar containers locais
-        run: docker compose ps
-
-      - name: Exibir logs em caso de falha
-        if: failure()
-        run: docker compose logs --no-color --tail=200
-
-      - name: Encerrar ambiente local
-        if: always()
-        run: docker compose down
