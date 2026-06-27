@@ -19,8 +19,19 @@ public class ServiceOrderInventoryItemGatewayImpl implements InventoryItemGatewa
     }
 
     @Override
+    public InventoryItem save(InventoryItem inventoryItem) {
+        return mapper.toDomain(repository.save(mapper.toEntity(inventoryItem)));
+    }
+
+    @Override
     public Optional<InventoryItem> findById(UUID id) {
         return repository.findById(id)
+                .map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<InventoryItem> findByCode(String code) {
+        return repository.findByCode(code)
                 .map(mapper::toDomain);
     }
 }

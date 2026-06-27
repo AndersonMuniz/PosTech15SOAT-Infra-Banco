@@ -21,6 +21,12 @@ public class CustomerService {
         return customerGateway.save(customer);
     }
 
+    public Customer findOrCreateByDocument(Customer customer) {
+        validateDocument(customer);
+        return customerGateway.findByDocumentAndDocumentType(customer.getDocument(), customer.getDocumentType())
+                .orElseGet(() -> customerGateway.save(customer));
+    }
+
     public Customer update(UUID id, Customer newData) {
         validateDocument(newData);
 

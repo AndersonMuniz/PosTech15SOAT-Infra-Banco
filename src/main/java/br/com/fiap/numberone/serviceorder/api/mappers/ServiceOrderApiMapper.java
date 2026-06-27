@@ -6,9 +6,11 @@ import br.com.fiap.numberone.serviceorder.api.dtos.responses.*;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderBudget;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItem;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrderItemSupply;
+import br.com.fiap.numberone.serviceorder.domain.references.AutomotiveService;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.Diagnosis;
 import br.com.fiap.numberone.serviceorder.domain.entities.ServiceOrder;
 import br.com.fiap.numberone.serviceorder.domain.references.Customer;
+import br.com.fiap.numberone.serviceorder.domain.references.InventoryItem;
 import br.com.fiap.numberone.serviceorder.domain.references.Vehicle;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderAverageExecutionTime;
 import br.com.fiap.numberone.serviceorder.domain.valueobjects.ServiceOrderEstimatedTime;
@@ -29,9 +31,85 @@ public interface ServiceOrderApiMapper {
     @Mapping(target = "expectedDateTime", ignore = true)
     @Mapping(target = "deliveryDateTime", ignore = true)
     @Mapping(target = "finalDiagnosisDescription", ignore = true)
-    @Mapping(target = "customer.id", source = "customerId")
-    @Mapping(target = "vehicle.id", source = "vehicleId")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "customer", expression = "java(toCustomerReference(dto))")
+    @Mapping(target = "vehicle", expression = "java(toVehicleReference(dto))")
+    @Mapping(target = "serviceItems", source = "serviceItems")
     ServiceOrder toDomain(CreateServiceOrderRequest dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "serviceOrder", ignore = true)
+    @Mapping(target = "automotiveService", expression = "java(toAutomotiveServiceReference(dto))")
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "startDateTime", ignore = true)
+    @Mapping(target = "endDateTime", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "supplies", source = "supplies")
+    ServiceOrderItem toDomain(CreateServiceOrderRequest.ServiceItemData dto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "serviceOrderItem", ignore = true)
+    @Mapping(target = "inventoryItem", expression = "java(toInventoryItemReference(dto))")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    ServiceOrderItemSupply toDomain(CreateServiceOrderRequest.SupplyData dto);
+
+    default Customer toCustomerReference(CreateServiceOrderRequest dto) {
+        CreateServiceOrderRequest.CustomerData customer = dto.customer();
+        return Customer.builder()
+                .id(dto.customerId())
+                .name(customer != null ? customer.name() : null)
+                .documentType(customer != null ? customer.documentType() : null)
+                .document(customer != null ? customer.document() : null)
+                .email(customer != null ? customer.email() : null)
+                .phone(customer != null ? customer.phone() : null)
+                .address(customer != null ? customer.address() : null)
+                .active(customer == null || customer.active() == null ? Boolean.TRUE : customer.active())
+                .build();
+    }
+
+    default Vehicle toVehicleReference(CreateServiceOrderRequest dto) {
+        CreateServiceOrderRequest.VehicleData vehicle = dto.vehicle();
+        return Vehicle.builder()
+                .id(dto.vehicleId())
+                .licensePlate(vehicle != null ? vehicle.licensePlate() : null)
+                .brand(vehicle != null ? vehicle.brand() : null)
+                .model(vehicle != null ? vehicle.model() : null)
+                .year(vehicle != null ? vehicle.year() : null)
+                .build();
+    }
+
+    default AutomotiveService toAutomotiveServiceReference(CreateServiceOrderRequest.ServiceItemData dto) {
+        return AutomotiveService.builder()
+                .id(dto.serviceId())
+                .code(dto.code())
+                .name(dto.name())
+                .description(dto.description())
+                .serviceType(dto.serviceType() != null ? dto.serviceType().name() : null)
+                .baseValue(dto.baseValue())
+                .estimatedTimeMinutes(dto.estimatedTimeMinutes())
+                .active(Boolean.TRUE)
+                .build();
+    }
+
+    default InventoryItem toInventoryItemReference(CreateServiceOrderRequest.SupplyData dto) {
+        return InventoryItem.builder()
+                .id(dto.inventoryItemId())
+                .code(dto.code())
+                .name(dto.name())
+                .description(dto.description())
+                .itemType(dto.itemType())
+                .unitOfMeasure(dto.unitOfMeasure())
+                .costPerUnit(dto.costPerUnit())
+                .salePrice(dto.salePrice())
+                .inventoryQuantity(dto.inventoryQuantity())
+                .minimumInventoryQuantity(dto.minimumInventoryQuantity())
+                .brand(dto.brand())
+                .applicableVehicle(dto.applicableVehicle())
+                .active(Boolean.TRUE)
+                .build();
+    }
 
     Diagnosis toDomain(FinalDiagnosisRequest dto);
 
