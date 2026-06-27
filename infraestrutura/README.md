@@ -1,32 +1,41 @@
 # Infraestrutura e CI/CD
 
-Esta pasta contém a automação da esteira de CI/CD para AWS EKS e os artefatos de infraestrutura usados pelo pipeline.
+Esta pasta contém os manifests Kubernetes usados pela esteira de CI/CD para publicar a aplicação em um cluster Kubernetes local disponível no runner self-hosted `runner-windows-0002`.
 
 ## GitHub Actions
 
-O workflow `.github/workflows/ci-cd-aws-eks.yml` executa:
+O workflow `.github/workflows/ci-cd-kubernetes-local.yml` executa:
 
-1. Build da aplicação Java com `./mvnw clean verify`.
-2. Execução automática dos testes no build Maven.
-3. Build da imagem Docker.
-4. Push da imagem para o Amazon ECR.
-5. Deploy da infraestrutura do banco PostgreSQL no Amazon RDS via Terraform.
-6. Aplicação dos manifests Kubernetes no cluster EKS.
+1. Testes unitários da aplicação Java com `./mvnw clean test` em runner Ubuntu hospedado pelo GitHub.
+2. Build da imagem Docker no runner self-hosted `runner-windows-0002`.
+3. Validação do acesso ao cluster Kubernetes local com `kubectl cluster-info`.
+4. Aplicação dos manifests Kubernetes locais em `infraestrutura/kubernetes/application.yaml`.
+5. Acompanhamento do rollout do deployment `numberone`.
 
-## Secrets e variáveis esperados
+O deploy não usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem é construída localmente no runner e referenciada diretamente pelo Kubernetes local.
 
-Configure no GitHub:
+## Pré-requisitos do runner `runner-windows-0002`
 
-- `AWS_ROLE_TO_ASSUME`: role IAM usada pelo GitHub OIDC.
-- `RDS_USERNAME` e `RDS_PASSWORD`: credenciais do PostgreSQL.
-- `AWS_VPC_ID`: VPC compartilhada entre EKS e RDS.
-- `AWS_PRIVATE_SUBNET_IDS_JSON`: lista JSON de subnets privadas, por exemplo `["subnet-1","subnet-2"]`.
-- `EKS_NODE_SECURITY_GROUP_IDS_JSON`: lista JSON dos security groups autorizados no RDS.
-- `SPRING_DATASOURCE_URL`: URL JDBC do RDS, por exemplo `jdbc:postgresql://host:5432/numberone`.
+Configure o runner self-hosted com:
 
-Variáveis opcionais:
+- Docker disponível no PATH.
+- `kubectl` disponível no PATH.
+- Acesso já configurado ao cluster Kubernetes local no contexto padrão do usuário que executa o serviço do runner.
+- Label customizada `runner-windows-0002` no runner, usada em `runs-on: [self-hosted, runner-windows-0002]`.
 
-- `AWS_REGION` (padrão `us-east-1`).
-- `ECR_REPOSITORY` (padrão `numberone`).
-- `EKS_CLUSTER_NAME` (padrão `numberone-eks`).
+## Recursos Kubernetes locais
+
+O manifest cria no namespace `numberone`:
+
+- Secret e ConfigMap com as configurações locais da aplicação.
+- PostgreSQL local com PVC de 1 GiB.
+- Mailpit local para SMTP.
+- Deployment da aplicação `numberone` com 1 réplica.
+- Service `NodePort` expondo a API em `http://localhost:30080` no nó local.
+
+## Variáveis opcionais do workflow
+
+As variáveis abaixo ficam definidas no próprio workflow e podem ser alteradas se necessário:
+
+- `IMAGE_NAME` (padrão `numberone`).
 - `K8S_NAMESPACE` (padrão `numberone`).
