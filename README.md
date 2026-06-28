@@ -76,6 +76,12 @@ docker compose down -v
 
 Mais detalhes em `doc/execucao-local.md`.
 
+## Como Rodar com Kubernetes
+
+Os manifests Kubernetes ficam em `.k8s/` e contemplam API, PostgreSQL, Mailpit, ConfigMaps, Secrets, Services, PVC, Deployment e HPA.
+
+O passo a passo para executar com Minikube esta em `.k8s/README.md`.
+
 ## Como Rodar Sem Docker para a Aplicacao
 
 Suba apenas infraestrutura:
