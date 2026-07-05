@@ -1,0 +1,82 @@
+name: CI Local - Validacao
+
+on:
+  push:
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-local-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  K8S_NAMESPACE: numberone
+
+jobs:
+  validate-application:
+    name: Validacao, build e testes unitarios da aplicacao
+    runs-on: [self-hosted, runner-windows-0002]
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 25 com cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Validar estrutura do projeto Maven
+        shell: pwsh
+        run: .\mvnw.cmd -B validate
+
+      - name: Build da aplicacao Java sem executar testes
+        shell: pwsh
+        run: .\mvnw.cmd -B clean package -DskipTests
+
+      - name: Executar testes unitarios
+        shell: pwsh
+        run: .\mvnw.cmd -B test
+
+      - name: Publicar relatorios dos testes unitarios
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-testes-unitarios
+          path: |
+            target/surefire-reports
+            target/site/jacoco-unit
+          if-no-files-found: warn
+
+  validate-kubernetes-manifests:
+    name: Validacao dos manifestos Kubernetes
+    runs-on: [self-hosted, runner-windows-0002]
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+
+      - name: Validar disponibilidade do kubectl
+        shell: pwsh
+        run: |
+          kubectl version --client
+          kubectl config current-context
+
+      - name: Validar manifestos YAML sem aplicar no cluster
+        shell: pwsh
+        run: |
+          kubectl apply -f .k8s --recursive --dry-run=client --validate=false
+
+      - name: Evidenciar manifestos Kubernetes validados
+        shell: pwsh
+        run: |
+          Get-ChildItem .k8s -Recurse -File -Include *.yaml,*.yml |
+            Sort-Object FullName |
+            ForEach-Object { $_.FullName.Replace((Get-Location).Path + "\", "") }

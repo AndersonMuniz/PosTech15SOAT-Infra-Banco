@@ -1,21 +1,18 @@
 name: CI/CD Local - Banco de Dados
 
 on:
-  push:
-    branches:
-      - main
-      - feature/automacao
-      - develop
-  pull_request:
-    branches:
-      - develop
+  workflow_run:
+    workflows:
+      - CI Local - Validacao
+    types:
+      - completed
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-cd-local-database-${{ github.ref }}
+  group: ci-cd-local-database-${{ github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -25,10 +22,13 @@ jobs:
   deploy-database:
     name: Deploy do banco no Kubernetes local
     runs-on: [self-hosted, runner-windows-0002]
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validar acesso ao cluster Kubernetes local
         shell: pwsh
