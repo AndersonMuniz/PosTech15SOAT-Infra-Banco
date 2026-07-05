@@ -31,19 +31,19 @@ jobs:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validar acesso ao cluster Kubernetes local
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl version --client
           kubectl cluster-info
           kubectl config current-context
 
       - name: Aplicar manifesto YAML do namespace
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s/namespace.yaml
 
       - name: Aplicar ConfigMap, Secret, PVC e Service do banco
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s/db/configmap.yaml
           kubectl apply -f .k8s/db/secret.yaml
@@ -51,32 +51,32 @@ jobs:
           kubectl apply -f .k8s/db/service.yaml
 
       - name: Deploy do banco de dados PostgreSQL
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s/db/deployment.yaml
 
       - name: Aguardar rollout do banco de dados PostgreSQL
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl rollout status deployment/numberone-postgres --namespace $env:K8S_NAMESPACE --timeout=180s
 
       - name: Aplicar Service do Mailpit
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s/mailpit/service.yaml
 
       - name: Deploy do Mailpit para suporte aos testes de e-mail
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s/mailpit/deployment.yaml
 
       - name: Aguardar rollout do Mailpit
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl rollout status deployment/mailpit --namespace $env:K8S_NAMESPACE --timeout=180s
 
       - name: Evidenciar recursos do banco aplicados no cluster
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl get configmap,secret,pvc,deployment,service --namespace $env:K8S_NAMESPACE
           kubectl get pods --namespace $env:K8S_NAMESPACE -o wide

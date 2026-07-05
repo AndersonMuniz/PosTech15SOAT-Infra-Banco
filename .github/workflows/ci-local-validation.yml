@@ -34,15 +34,15 @@ jobs:
           cache: maven
 
       - name: Validar estrutura do projeto Maven
-        shell: pwsh
+        shell: powershell
         run: .\mvnw.cmd -B validate
 
       - name: Build da aplicacao Java sem executar testes
-        shell: pwsh
+        shell: powershell
         run: .\mvnw.cmd -B clean package -DskipTests
 
       - name: Executar testes unitarios
-        shell: pwsh
+        shell: powershell
         run: .\mvnw.cmd -B test
 
       - name: Publicar relatorios dos testes unitarios
@@ -64,18 +64,18 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validar disponibilidade do kubectl
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl version --client
           kubectl config current-context
 
       - name: Validar manifestos YAML sem aplicar no cluster
-        shell: pwsh
+        shell: powershell
         run: |
           kubectl apply -f .k8s --recursive --dry-run=client --validate=false
 
       - name: Evidenciar manifestos Kubernetes validados
-        shell: pwsh
+        shell: powershell
         run: |
           Get-ChildItem .k8s -Recurse -File -Include *.yaml,*.yml |
             Sort-Object FullName |

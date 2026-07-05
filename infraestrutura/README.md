@@ -7,7 +7,7 @@ Esta pasta documenta a infraestrutura de apoio do projeto.
 A esteira local usa tres workflows:
 
 1. `.github/workflows/ci-local-validation.yml`
-   - E disparado em commits para `main`, `develop` e `feature/automacao`.
+   - E disparado em qualquer commit enviado ao repositorio.
    - Tambem roda em pull requests para `develop`.
    - Valida a estrutura Maven do projeto.
    - Executa build da aplicacao.
