@@ -8,7 +8,6 @@ on:
 
 permissions:
   contents: read
-  actions: write
 
 concurrency:
   group: cd-local-database-${{ github.ref }}
@@ -76,10 +75,3 @@ jobs:
         run: |
           kubectl get configmap,secret,pvc,deployment,service --namespace %K8S_NAMESPACE%
           kubectl get pods --namespace %K8S_NAMESPACE% -o wide
-
-      - name: Disparar workflow de deploy da API
-        shell: cmd
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          curl.exe --fail-with-body -L -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %GITHUB_TOKEN%" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/%GITHUB_REPOSITORY%/actions/workflows/cd-local-api.yml/dispatches -d "{\"ref\":\"develop\",\"inputs\":{\"image_tag\":\"%GITHUB_SHA%\"}}"
