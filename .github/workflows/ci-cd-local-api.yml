@@ -1,0 +1,136 @@
+name: CI/CD Local - API
+
+on:
+  workflow_run:
+    workflows:
+      - CI/CD Local - Banco de Dados
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-cd-local-api-${{ github.event.workflow_run.head_branch || github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: numberone-api
+  IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
+  K8S_NAMESPACE: numberone
+
+jobs:
+  build-and-test:
+    name: Build da aplicacao e testes automatizados
+    runs-on: [self-hosted, runner-windows-0002]
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Configurar Java 25 com cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+
+      - name: Build da aplicacao Java sem executar testes
+        shell: pwsh
+        run: .\mvnw.cmd -B clean package -DskipTests
+
+      - name: Executar testes automatizados
+        shell: pwsh
+        run: .\mvnw.cmd -B verify
+
+      - name: Publicar relatorios dos testes automatizados
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorios-testes-automatizados
+          path: |
+            target/surefire-reports
+            target/failsafe-reports
+            target/site
+          if-no-files-found: warn
+
+  docker-and-deploy-api:
+    name: Build da imagem Docker e deploy da API
+    runs-on: [self-hosted, runner-windows-0002]
+    needs: build-and-test
+    if: needs.build-and-test.result == 'success'
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Validar acesso ao cluster Kubernetes local
+        shell: pwsh
+        run: |
+          kubectl version --client
+          kubectl cluster-info
+          kubectl config current-context
+
+      - name: Configurar Docker do Minikube quando disponivel
+        shell: pwsh
+        run: |
+          if (Get-Command minikube -ErrorAction SilentlyContinue) {
+            & minikube -p minikube docker-env --shell powershell | Invoke-Expression
+            minikube status
+            "DOCKER_TLS_VERIFY=$env:DOCKER_TLS_VERIFY" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DOCKER_HOST=$env:DOCKER_HOST" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "DOCKER_CERT_PATH=$env:DOCKER_CERT_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
+            "MINIKUBE_ACTIVE_DOCKERD=$env:MINIKUBE_ACTIVE_DOCKERD" | Out-File -FilePath $env:GITHUB_ENV -Append
+          } else {
+            Write-Host "Minikube nao encontrado no PATH. O build usara o Docker configurado no runner."
+          }
+
+      - name: Build da imagem Docker da API
+        shell: pwsh
+        run: |
+          $imageUri = "${env:IMAGE_NAME}:${env:IMAGE_TAG}"
+          docker build --tag $imageUri --tag "${env:IMAGE_NAME}:latest" .
+
+      - name: Aplicar ConfigMap e Secret da API no cluster
+        shell: pwsh
+        run: |
+          kubectl apply -f .k8s/app/configmap.yaml
+          kubectl apply -f .k8s/app/secret.yaml
+
+      - name: Aplicar Service da API no cluster
+        shell: pwsh
+        run: |
+          kubectl apply -f .k8s/app/service.yaml
+
+      - name: Aplicar Deployment da API no cluster
+        shell: pwsh
+        run: |
+          kubectl apply -f .k8s/app/deployment.yaml
+
+      - name: Atualizar deployment da API com a imagem Docker gerada
+        shell: pwsh
+        run: |
+          $imageUri = "${env:IMAGE_NAME}:${env:IMAGE_TAG}"
+          kubectl set image deployment/numberone-api numberone-api=$imageUri --namespace $env:K8S_NAMESPACE
+
+      - name: Aplicar HPA da API no cluster
+        shell: pwsh
+        run: |
+          kubectl apply -f .k8s/app/hpa.yaml
+
+      - name: Deploy da API no cluster Kubernetes local
+        shell: pwsh
+        run: |
+          kubectl rollout status deployment/numberone-api --namespace $env:K8S_NAMESPACE --timeout=240s
+
+      - name: Evidenciar recursos da API aplicados no cluster
+        shell: pwsh
+        run: |
+          kubectl get deployment,service,hpa --namespace $env:K8S_NAMESPACE
+          kubectl get pods --namespace $env:K8S_NAMESPACE -o wide

@@ -118,19 +118,54 @@ class ServiceOrderControllerIT {
     void shouldCreateServiceOrder() throws Exception {
         // Arrange
         UUID serviceOrderId = UUID.randomUUID();
-        UUID customerId = UUID.randomUUID();
-        UUID vehicleId = UUID.randomUUID();
         ServiceOrder createdOrder = serviceOrder(serviceOrderId, ServiceOrderStatus.RECEIVED);
         String requestBody = """
                 {
                   "descricaoInicial": "Barulho no motor",
                   "descricaoDiagnostico": "Diagnostico inicial",
                   "observacao": "Cliente aguardando retorno",
-                  "idCliente": "%s",
-                  "idVeiculo": "%s",
+                  "cliente": {
+                    "nome": "Ana Silva",
+                    "tipoDocumento": "PESSOA_FISICA",
+                    "documento": "52998224725",
+                    "email": "ana@email.com",
+                    "telefone": "11999999999",
+                    "endereco": "Rua A"
+                  },
+                  "veiculo": {
+                    "placa": "ABC1D23",
+                    "marca": "Fiat",
+                    "modelo": "Argo",
+                    "ano": 2023
+                  },
+                  "servicos": [
+                    {
+                      "codigo": "SRV-001",
+                      "nome": "Troca de oleo",
+                      "descricao": "Troca de oleo do motor",
+                      "tipoServico": "MAINTENANCE",
+                      "valorBase": 170.00,
+                      "tempoEstimadoMinutos": 60,
+                      "opcional": false,
+                      "pecas": [
+                        {
+                          "codigo": "PEC-001",
+                          "nome": "Filtro de oleo",
+                          "descricao": "Filtro de oleo do motor",
+                          "tipoItem": "PECA",
+                          "unidadeMedida": "UNIDADE",
+                          "custoUnitario": 20.00,
+                          "precoVenda": 35.00,
+                          "quantidadeEstoque": 10,
+                          "estoqueMinimo": 2,
+                          "quantidadeUsada": 2
+                        }
+                      ]
+                    }
+                  ],
                   "dataHoraEntrada": "2026-04-28T10:15:00"
                 }
-                """.formatted(customerId, vehicleId);
+                """;
 
         when(serviceOrderService.createServiceOrder(any(ServiceOrder.class))).thenReturn(createdOrder);
 
@@ -140,14 +175,17 @@ class ServiceOrderControllerIT {
                         .content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", containsString("/api/admin/ordens-servico/" + serviceOrderId)))
-                .andExpect(jsonPath("$.id").value(serviceOrderId.toString()))
-                .andExpect(jsonPath("$.descricaoInicial").value("Barulho ao ligar"))
-                .andExpect(jsonPath("$.status").value("RECEBIDA"));
+                .andExpect(jsonPath("$.id").value(serviceOrderId.toString()));
 
         ArgumentCaptor<ServiceOrder> orderCaptor = ArgumentCaptor.forClass(ServiceOrder.class);
         verify(serviceOrderService).createServiceOrder(orderCaptor.capture());
-        assertThat(orderCaptor.getValue().getCustomer().getId()).isEqualTo(customerId);
-        assertThat(orderCaptor.getValue().getVehicle().getId()).isEqualTo(vehicleId);
+        assertThat(orderCaptor.getValue().getCustomer().getDocument()).isEqualTo("52998224725");
+        assertThat(orderCaptor.getValue().getVehicle().getLicensePlate()).isEqualTo("ABC1D23");
+        assertThat(orderCaptor.getValue().getServiceItems()).hasSize(1);
+        assertThat(orderCaptor.getValue().getServiceItems().getFirst().getAutomotiveService().getCode()).isEqualTo("SRV-001");
+        assertThat(orderCaptor.getValue().getServiceItems().getFirst().getSupplies()).hasSize(1);
+        assertThat(orderCaptor.getValue().getServiceItems().getFirst().getSupplies().getFirst().getInventoryItem().getCode())
+                .isEqualTo("PEC-001");
     }
 
     @Test
@@ -473,5 +511,23 @@ class ServiceOrderControllerIT {
                 .andExpect(jsonPath("$.itensServico[0].id").value(serviceOrderItemId.toString()))
                 .andExpect(jsonPath("$.itensServico[0].nomeServico").value("Troca de oleo"))
                 .andExpect(jsonPath("$.itensServico[0].status").value("EM_EXECUCAO"));
+    }
+
+    @Test
+    void shouldReturnPublicServiceOrderStatus() throws Exception {
+        // Arrange
+        UUID serviceOrderId = UUID.randomUUID();
+        ServiceOrder trackingOrder = ServiceOrder.builder()
+                .id(serviceOrderId)
+                .status(ServiceOrderStatus.WAITING_APPROVAL)
+                .build();
+
+        when(trackingService.getTracking(serviceOrderId)).thenReturn(trackingOrder);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/public/ordens-servico/{id}/status", serviceOrderId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(serviceOrderId.toString()))
+                .andExpect(jsonPath("$.status").value("AGUARDANDO_APROVACAO"));
     }
 }

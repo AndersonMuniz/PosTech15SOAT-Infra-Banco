@@ -73,12 +73,16 @@ public class ServiceOrderBeansConfig {
     public ServiceOrderService serviceOrderService(
             ServiceOrderGateway serviceOrderGateway,
             CustomerGateway customerGateway,
-            VehicleGateway vehicleGateway
+            VehicleGateway vehicleGateway,
+            AutomotiveServiceGateway automotiveServiceGateway,
+            InventoryItemGateway serviceOrderInventoryItemGateway
     ) {
         return new ServiceOrderService(
                 serviceOrderGateway,
                 customerGateway,
-                vehicleGateway
+                vehicleGateway,
+                automotiveServiceGateway,
+                serviceOrderInventoryItemGateway
         );
     }
 
