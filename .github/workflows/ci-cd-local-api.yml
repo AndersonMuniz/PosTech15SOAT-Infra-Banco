@@ -81,11 +81,20 @@ jobs:
       - name: Validar estrategia de build da imagem Docker
         shell: cmd
         run: |
+          docker version
+          kubectl config current-context > k8s-context.txt
+          set /p K8S_CONTEXT=<k8s-context.txt
+          echo Contexto Kubernetes: %K8S_CONTEXT%
           where minikube >nul 2>nul
           if errorlevel 1 (
-            echo Minikube nao encontrado no PATH. O build usara o Docker configurado no runner.
+            if "%K8S_CONTEXT%"=="minikube" (
+              echo O contexto atual e minikube, mas o comando minikube nao esta no PATH do runner.
+              echo Configure o Minikube no PATH do runner ou a imagem nao sera carregada no cluster.
+              exit /b 1
+            )
+            echo Minikube nao encontrado no PATH. A imagem sera criada apenas no Docker configurado no runner.
           ) else (
-            echo Minikube encontrado. A imagem sera criada com minikube image build.
+            echo Minikube encontrado. A imagem sera criada no Docker e carregada no Minikube.
             minikube status
           )
 
@@ -93,11 +102,19 @@ jobs:
         shell: cmd
         run: |
           set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
+          docker build --tag %IMAGE_URI% --tag %IMAGE_NAME%:latest .
+
+      - name: Carregar imagem Docker no Minikube quando disponivel
+        shell: cmd
+        run: |
+          set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
           where minikube >nul 2>nul
           if errorlevel 1 (
-            docker build --tag %IMAGE_URI% --tag %IMAGE_NAME%:latest .
+            echo Minikube nao encontrado. Pulando carga local da imagem.
           ) else (
-            minikube image build -t %IMAGE_URI% -t %IMAGE_NAME%:latest .
+            minikube image load %IMAGE_URI%
+            minikube image load %IMAGE_NAME%:latest
+            minikube image ls | findstr /C:"%IMAGE_NAME%"
           )
 
       - name: Aplicar ConfigMap e Secret da API no cluster
@@ -121,6 +138,8 @@ jobs:
         run: |
           set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
           kubectl set image deployment/numberone-api numberone-api=%IMAGE_URI% --namespace %K8S_NAMESPACE%
+          kubectl get deployment numberone-api --namespace %K8S_NAMESPACE% -o=jsonpath="{.spec.template.spec.containers[0].image}"
+          echo.
 
       - name: Aplicar HPA da API no cluster
         shell: cmd
