@@ -1,36 +1,39 @@
 name: CI/CD Local - API
 
 on:
-  workflow_run:
-    workflows:
-      - CI/CD Local - Banco de Dados
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      image_tag:
+        description: Tag da imagem Docker que sera gerada.
+        required: false
+        type: string
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Tag opcional da imagem Docker.
+        required: false
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: ci-cd-local-api-${{ github.event.workflow_run.head_branch || github.ref }}
+  group: ci-cd-local-api-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   IMAGE_NAME: numberone-api
-  IMAGE_TAG: ${{ github.event.workflow_run.head_sha || github.sha }}
+  IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
   K8S_NAMESPACE: numberone
 
 jobs:
   build-and-test:
     name: Build da aplicacao e testes automatizados completos
     runs-on: [self-hosted, runner-windows-0002]
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Configurar Java 25 com cache Maven
         uses: actions/setup-java@v4
@@ -67,8 +70,6 @@ jobs:
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validar acesso ao cluster Kubernetes local
         shell: cmd

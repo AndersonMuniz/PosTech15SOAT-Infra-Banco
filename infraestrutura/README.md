@@ -4,31 +4,46 @@ Esta pasta documenta a infraestrutura de apoio do projeto.
 
 ## GitHub Actions local
 
-A esteira local usa tres workflows:
+A esteira local usa um workflow orquestrador e dois workflows reutilizaveis:
 
 1. `.github/workflows/ci-local-validation.yml`
+   - Workflow principal da esteira local.
    - E disparado em qualquer commit enviado ao repositorio.
    - Tambem roda em pull requests para `develop`.
    - Valida a estrutura Maven do projeto.
    - Executa build da aplicacao.
    - Executa testes unitarios.
    - Valida os manifestos YAML do Kubernetes em modo dry-run.
+   - Depois chama o workflow do banco.
+   - Depois chama o workflow da API.
 
 2. `.github/workflows/ci-cd-local-database.yml`
-   - E disparado automaticamente quando o workflow de validacao termina com sucesso.
+   - Workflow reutilizavel chamado pelo workflow principal.
+   - Tambem pode ser executado manualmente.
    - Aplica o namespace.
    - Faz deploy do PostgreSQL no Kubernetes local.
    - Faz deploy do Mailpit.
    - Aguarda os rollouts e evidencia os recursos criados.
 
 3. `.github/workflows/ci-cd-local-api.yml`
-   - E disparado automaticamente quando o workflow do banco termina com sucesso.
+   - Workflow reutilizavel chamado pelo workflow principal depois do banco.
+   - Tambem pode ser executado manualmente.
    - Executa build da aplicacao.
    - Executa testes automatizados completos.
    - Faz build da imagem Docker.
    - Aplica os manifestos YAML da API.
    - Atualiza o deployment com a imagem gerada.
    - Aguarda o rollout da API.
+
+Fluxo da esteira:
+
+```text
+CI/CD Local - Pipeline
+  -> validacao da aplicacao
+  -> validacao dos manifests
+  -> CI/CD Local - Banco de Dados
+  -> CI/CD Local - API
+```
 
 O deploy local nao usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem e construida no runner self-hosted e referenciada diretamente pelo Kubernetes local.
 

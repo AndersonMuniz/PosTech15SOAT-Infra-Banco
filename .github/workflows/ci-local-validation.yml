@@ -1,4 +1,4 @@
-name: CI Local - Validacao
+name: CI/CD Local - Pipeline
 
 on:
   push:
@@ -78,3 +78,18 @@ jobs:
         shell: cmd
         run: |
           for /r .k8s %%f in (*.yaml *.yml) do echo %%f
+
+  deploy-database:
+    name: Deploy do banco de dados
+    needs:
+      - validate-application
+      - validate-kubernetes-manifests
+    uses: ./.github/workflows/ci-cd-local-database.yml
+
+  deploy-api:
+    name: Deploy da API
+    needs:
+      - deploy-database
+    uses: ./.github/workflows/ci-cd-local-api.yml
+    with:
+      image_tag: ${{ github.sha }}
