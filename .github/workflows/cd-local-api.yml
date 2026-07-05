@@ -1,13 +1,6 @@
 name: CD Local - API
 
 on:
-  workflow_run:
-    workflows:
-      - CD Local - Banco de Dados
-    types:
-      - completed
-    branches:
-      - develop
   workflow_dispatch:
     inputs:
       image_tag:
@@ -19,25 +12,22 @@ permissions:
   contents: read
 
 concurrency:
-  group: cd-local-api-${{ github.event.workflow_run.head_branch || github.ref }}
+  group: cd-local-api-${{ github.ref }}
   cancel-in-progress: true
 
 env:
   IMAGE_NAME: numberone-api
-  IMAGE_TAG: ${{ github.event.inputs.image_tag || github.event.workflow_run.head_sha || github.sha }}
+  IMAGE_TAG: ${{ github.event.inputs.image_tag || github.sha }}
   K8S_NAMESPACE: numberone
 
 jobs:
   build-and-load-image:
     name: Build e carga da imagem Docker
     runs-on: [self-hosted, runner-windows-0002]
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
 
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validar Docker e estrategia de imagem local
         shell: cmd
@@ -87,8 +77,6 @@ jobs:
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Validar acesso ao cluster Kubernetes local
         shell: cmd

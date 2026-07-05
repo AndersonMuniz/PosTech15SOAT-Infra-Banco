@@ -16,13 +16,14 @@ A esteira local usa tres workflows:
    - Nao faz deploy.
 
 2. `.github/workflows/cd-local-database.yml`
-   - Roda depois que o workflow `CI` termina com sucesso em `develop`.
+   - Roda em push para `develop`.
    - Tambem pode ser executado manualmente.
    - Faz deploy do PostgreSQL local no Kubernetes.
    - Faz deploy do Mailpit local.
+   - Ao finalizar com sucesso, dispara o workflow da API.
 
 3. `.github/workflows/cd-local-api.yml`
-   - Roda depois que o workflow `CD Local - Banco de Dados` termina com sucesso em `develop`.
+   - Roda quando o workflow `CD Local - Banco de Dados` dispara sua execucao.
    - Tambem pode ser executado manualmente.
    - Faz build da imagem Docker da API.
    - Carrega a imagem no Minikube quando ele esta disponivel.
@@ -44,6 +45,8 @@ Push em develop
   -> CD Local - Banco de Dados
   -> CD Local - API
 ```
+
+Para garantir que o deploy local so aconteca com codigo validado, configure a branch `develop` no GitHub como branch protegida exigindo sucesso do workflow `CI` antes do merge do pull request.
 
 O deploy local nao usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem e construida no runner self-hosted e referenciada diretamente pelo Kubernetes local.
 
