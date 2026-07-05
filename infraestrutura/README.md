@@ -4,7 +4,7 @@ Esta pasta documenta a infraestrutura de apoio do projeto.
 
 ## GitHub Actions local
 
-A esteira local usa dois workflows:
+A esteira local usa tres workflows:
 
 1. `.github/workflows/ci.yml`
    - Roda em pull requests para `develop`.
@@ -15,11 +15,15 @@ A esteira local usa dois workflows:
    - Valida os manifestos YAML do Kubernetes em modo dry-run.
    - Nao faz deploy.
 
-2. `.github/workflows/cd-local-dev.yml`
-   - Roda em push para `develop`.
+2. `.github/workflows/cd-local-database.yml`
+   - Roda depois que o workflow `CI` termina com sucesso em `develop`.
    - Tambem pode ser executado manualmente.
    - Faz deploy do PostgreSQL local no Kubernetes.
    - Faz deploy do Mailpit local.
+
+3. `.github/workflows/cd-local-api.yml`
+   - Roda depois que o workflow `CD Local - Banco de Dados` termina com sucesso em `develop`.
+   - Tambem pode ser executado manualmente.
    - Faz build da imagem Docker da API.
    - Carrega a imagem no Minikube quando ele esta disponivel.
    - Aplica os manifestos YAML da API.
@@ -37,7 +41,8 @@ Push em qualquer branch
 
 Push em develop
   -> CI
-  -> CD Local - Desenvolvimento
+  -> CD Local - Banco de Dados
+  -> CD Local - API
 ```
 
 O deploy local nao usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem e construida no runner self-hosted e referenciada diretamente pelo Kubernetes local.
