@@ -1,4 +1,4 @@
-name: CI/CD Local - Pipeline
+name: CI
 
 on:
   push:
@@ -11,15 +11,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-local-validation-${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  K8S_NAMESPACE: numberone
-
 jobs:
-  validate-application:
-    name: Validacao, build e testes unitarios da aplicacao
+  build-and-unit-tests:
+    name: Build e testes unitarios
     runs-on: [self-hosted, runner-windows-0002]
 
     steps:
@@ -37,7 +34,7 @@ jobs:
         shell: cmd
         run: .\mvnw.cmd -B validate
 
-      - name: Build da aplicacao Java sem executar testes
+      - name: Build da aplicacao sem executar testes
         shell: cmd
         run: .\mvnw.cmd -B clean package -DskipTests
 
@@ -56,18 +53,17 @@ jobs:
           if-no-files-found: warn
 
   validate-kubernetes-manifests:
-    name: Validacao dos manifestos Kubernetes
+    name: Validar manifestos Kubernetes
     runs-on: [self-hosted, runner-windows-0002]
 
     steps:
       - name: Checkout do codigo fonte
         uses: actions/checkout@v4
 
-      - name: Validar disponibilidade do kubectl
+      - name: Validar disponibilidade local do kubectl
         shell: cmd
         run: |
           kubectl version --client
-          kubectl config current-context
 
       - name: Validar manifestos YAML sem aplicar no cluster
         shell: cmd
@@ -78,18 +74,3 @@ jobs:
         shell: cmd
         run: |
           for /r .k8s %%f in (*.yaml *.yml) do echo %%f
-
-  deploy-database:
-    name: Deploy do banco de dados
-    needs:
-      - validate-application
-      - validate-kubernetes-manifests
-    uses: ./.github/workflows/ci-cd-local-database.yml
-
-  deploy-api:
-    name: Deploy da API
-    needs:
-      - deploy-database
-    uses: ./.github/workflows/ci-cd-local-api.yml
-    with:
-      image_tag: ${{ github.sha }}
