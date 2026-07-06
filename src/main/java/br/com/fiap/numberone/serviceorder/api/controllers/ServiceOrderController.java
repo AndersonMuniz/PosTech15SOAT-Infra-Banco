@@ -3,6 +3,7 @@ package br.com.fiap.numberone.serviceorder.api.controllers;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.CreateServiceOrderRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.requests.FinalDiagnosisRequest;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderAverageExecutionTimeResponse;
+import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderCreatedResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderEstimatedTimeResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderResponse;
 import br.com.fiap.numberone.serviceorder.api.dtos.responses.ServiceOrderValueResponse;
@@ -50,7 +51,7 @@ public class ServiceOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ServiceOrderResponse> createServiceOrder(
+    public ResponseEntity<ServiceOrderCreatedResponse> createServiceOrder(
             @Valid @RequestBody CreateServiceOrderRequest createServiceOrderRequest
     ) {
         ServiceOrder serviceOrder = serviceOrderService.createServiceOrder(orderApiMapper.toDomain(createServiceOrderRequest));
@@ -59,7 +60,7 @@ public class ServiceOrderController {
                 .path("/{id}")
                 .buildAndExpand(serviceOrder.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(orderApiMapper.toResponse(serviceOrder));
+        return ResponseEntity.created(location).body(new ServiceOrderCreatedResponse(serviceOrder.getId()));
     }
 
     @PatchMapping("/{id}/iniciar-diagnostico")

@@ -7,5 +7,7 @@ import java.util.UUID;
 
 public interface InventoryItemGateway {
 
+    InventoryItem save(InventoryItem inventoryItem);
     Optional<InventoryItem> findById(UUID id);
+    Optional<InventoryItem> findByCode(String code);
 }

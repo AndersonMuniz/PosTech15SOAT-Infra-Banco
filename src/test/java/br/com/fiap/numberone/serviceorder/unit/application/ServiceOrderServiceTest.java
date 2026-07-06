@@ -2,7 +2,9 @@ package br.com.fiap.numberone.serviceorder.unit.application;
 
 import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderDeliveryUpdate;
 import br.com.fiap.numberone.serviceorder.application.commands.ServiceOrderFinalDiagnosisUpdate;
+import br.com.fiap.numberone.serviceorder.application.gateways.AutomotiveServiceGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.CustomerGateway;
+import br.com.fiap.numberone.serviceorder.application.gateways.InventoryItemGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.ServiceOrderGateway;
 import br.com.fiap.numberone.serviceorder.application.gateways.VehicleGateway;
 import br.com.fiap.numberone.serviceorder.application.services.ServiceOrderService;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static br.com.fiap.numberone.customer.domain.enums.TipoDocumento.PESSOA_FISICA;
 import static br.com.fiap.numberone.serviceorder.support.ServiceOrderTestFixtures.activeAutomotiveService;
 import static br.com.fiap.numberone.serviceorder.support.ServiceOrderTestFixtures.activeCustomer;
 import static br.com.fiap.numberone.serviceorder.support.ServiceOrderTestFixtures.inventoryItem;
@@ -62,25 +65,48 @@ class ServiceOrderServiceTest {
     @Mock
     private VehicleGateway vehicleGateway;
 
+    @Mock
+    private AutomotiveServiceGateway automotiveServiceGateway;
+
+    @Mock
+    private InventoryItemGateway inventoryItemGateway;
+
     private ServiceOrderService service;
 
     @BeforeEach
     void setUp() {
-        service = new ServiceOrderService(serviceOrderGateway, customerGateway, vehicleGateway);
+        service = new ServiceOrderService(
+                serviceOrderGateway,
+                customerGateway,
+                vehicleGateway,
+                automotiveServiceGateway,
+                inventoryItemGateway
+        );
     }
 
     @Test
-    void shouldReturnAllServiceOrders() {
+    void shouldReturnVisibleServiceOrdersSortedByStatusAndAge() {
         // Arrange
-        ServiceOrder firstOrder = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.RECEIVED);
-        ServiceOrder secondOrder = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.IN_DIAGNOSIS);
-        when(serviceOrderGateway.findAll()).thenReturn(List.of(firstOrder, secondOrder));
+        ServiceOrder received = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.RECEIVED);
+        ServiceOrder diagnosis = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.IN_DIAGNOSIS);
+        ServiceOrder waitingApproval = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.WAITING_APPROVAL);
+        ServiceOrder inProgress = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.IN_PROGRESS);
+        ServiceOrder completed = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.COMPLETED);
+        ServiceOrder delivered = serviceOrder(UUID.randomUUID(), ServiceOrderStatus.DELIVERED);
+        when(serviceOrderGateway.findAll()).thenReturn(List.of(
+                completed,
+                received,
+                delivered,
+                diagnosis,
+                inProgress,
+                waitingApproval
+        ));
 
         // Act
         List<ServiceOrder> result = service.getServiceOrders();
 
         // Assert
-        assertThat(result).containsExactly(firstOrder, secondOrder);
+        assertThat(result).containsExactly(inProgress, waitingApproval, diagnosis, received);
         verify(serviceOrderGateway).findAll();
     }
 
@@ -96,6 +122,7 @@ class ServiceOrderServiceTest {
                 .diagnosisDescription("Diagnostico inicial")
                 .customer(Customer.builder().id(customerId).build())
                 .vehicle(Vehicle.builder().id(vehicleId).build())
+                .serviceItems(List.of())
                 .build();
 
         when(customerGateway.findById(customerId)).thenReturn(Optional.of(validatedCustomer));
@@ -108,7 +135,141 @@ class ServiceOrderServiceTest {
         // Assert
         assertThat(result.getCustomer()).isSameAs(validatedCustomer);
         assertThat(result.getVehicle()).isSameAs(validatedVehicle);
+        assertThat(result.getStatus()).isEqualTo(ServiceOrderStatus.RECEIVED);
         verify(serviceOrderGateway).save(newOrder);
+    }
+
+    @Test
+    void shouldCreateServiceOrderWithServicesAndSupplies() {
+        // Arrange
+        UUID customerId = UUID.randomUUID();
+        UUID vehicleId = UUID.randomUUID();
+        UUID automotiveServiceId = UUID.randomUUID();
+        UUID inventoryItemId = UUID.randomUUID();
+        Customer validatedCustomer = activeCustomer(customerId);
+        Vehicle validatedVehicle = vehicle(vehicleId, customerId);
+        AutomotiveService validatedAutomotiveService = activeAutomotiveService(automotiveServiceId);
+        InventoryItem validatedInventoryItem = inventoryItem(inventoryItemId, new BigDecimal("35.00"));
+        ServiceOrder newOrder = ServiceOrder.builder()
+                .initialDescription("Barulho no motor")
+                .customer(Customer.builder().id(customerId).build())
+                .vehicle(Vehicle.builder().id(vehicleId).build())
+                .serviceItems(List.of(ServiceOrderItem.builder()
+                        .automotiveService(AutomotiveService.builder().id(automotiveServiceId).build())
+                        .value(new BigDecimal("150.00"))
+                        .optional(false)
+                        .supplies(List.of(ServiceOrderItemSupply.builder()
+                                .inventoryItem(InventoryItem.builder().id(inventoryItemId).build())
+                                .quantityUsed(2)
+                                .build()))
+                        .build()))
+                .build();
+
+        when(customerGateway.findById(customerId)).thenReturn(Optional.of(validatedCustomer));
+        when(vehicleGateway.findById(vehicleId)).thenReturn(Optional.of(validatedVehicle));
+        when(automotiveServiceGateway.findById(automotiveServiceId)).thenReturn(Optional.of(validatedAutomotiveService));
+        when(inventoryItemGateway.findById(inventoryItemId)).thenReturn(Optional.of(validatedInventoryItem));
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        ServiceOrder result = service.createServiceOrder(newOrder);
+
+        // Assert
+        ServiceOrderItem resultItem = result.getServiceItems().getFirst();
+        ServiceOrderItemSupply resultSupply = resultItem.getSupplies().getFirst();
+        assertThat(resultItem.getServiceOrder()).isSameAs(result);
+        assertThat(resultItem.getAutomotiveService()).isSameAs(validatedAutomotiveService);
+        assertThat(resultItem.getStatus()).isEqualTo(OrderItemStatus.PENDING);
+        assertThat(resultSupply.getServiceOrderItem()).isSameAs(resultItem);
+        assertThat(resultSupply.getInventoryItem()).isSameAs(validatedInventoryItem);
+        verify(serviceOrderGateway).save(newOrder);
+    }
+
+    @Test
+    void shouldCreateMissingEntitiesWhenOpeningServiceOrderWithStrongKeys() {
+        // Arrange
+        UUID customerId = UUID.randomUUID();
+        UUID vehicleId = UUID.randomUUID();
+        UUID serviceId = UUID.randomUUID();
+        UUID inventoryItemId = UUID.randomUUID();
+        Customer customerData = Customer.builder()
+                .name("Ana Silva")
+                .documentType(PESSOA_FISICA)
+                .document("52998224725")
+                .email("ana@email.com")
+                .phone("11999999999")
+                .address("Rua A")
+                .active(true)
+                .build();
+        Vehicle vehicleData = Vehicle.builder()
+                .licensePlate("abc1d23")
+                .brand("Fiat")
+                .model("Argo")
+                .year(2023)
+                .build();
+        AutomotiveService serviceData = AutomotiveService.builder()
+                .code("srv-001")
+                .name("Troca de oleo")
+                .description("Troca de oleo do motor")
+                .serviceType("MAINTENANCE")
+                .baseValue(new BigDecimal("120.00"))
+                .estimatedTimeMinutes(60)
+                .active(true)
+                .build();
+        InventoryItem inventoryData = InventoryItem.builder()
+                .code("peca-001")
+                .name("Filtro de oleo")
+                .description("Filtro de oleo do motor")
+                .itemType(br.com.fiap.numberone.inventory.domain.enums.ItemType.PECA)
+                .unitOfMeasure(br.com.fiap.numberone.inventory.domain.enums.UnitOfMeasure.UNIDADE)
+                .costPerUnit(new BigDecimal("20.00"))
+                .salePrice(new BigDecimal("35.00"))
+                .inventoryQuantity(10)
+                .minimumInventoryQuantity(2)
+                .active(true)
+                .build();
+        ServiceOrder newOrder = ServiceOrder.builder()
+                .initialDescription("Barulho no motor")
+                .customer(customerData)
+                .vehicle(vehicleData)
+                .serviceItems(List.of(ServiceOrderItem.builder()
+                        .automotiveService(serviceData)
+                        .optional(false)
+                        .supplies(List.of(ServiceOrderItemSupply.builder()
+                                .inventoryItem(inventoryData)
+                                .quantityUsed(2)
+                                .build()))
+                        .build()))
+                .build();
+        Customer savedCustomer = activeCustomer(customerId);
+        Vehicle savedVehicle = vehicle(vehicleId, customerId);
+        AutomotiveService savedService = activeAutomotiveService(serviceId);
+        InventoryItem savedInventoryItem = inventoryItem(inventoryItemId, new BigDecimal("35.00"));
+
+        when(customerGateway.findOrCreateByDocument(any(Customer.class))).thenReturn(savedCustomer);
+        when(vehicleGateway.findByLicensePlate("ABC1D23")).thenReturn(Optional.empty());
+        when(vehicleGateway.save(any(Vehicle.class))).thenReturn(savedVehicle);
+        when(automotiveServiceGateway.findByCode("SRV-001")).thenReturn(Optional.empty());
+        when(automotiveServiceGateway.save(any(AutomotiveService.class))).thenReturn(savedService);
+        when(inventoryItemGateway.findByCode("PECA-001")).thenReturn(Optional.empty());
+        when(inventoryItemGateway.save(any(InventoryItem.class))).thenReturn(savedInventoryItem);
+        when(serviceOrderGateway.save(any(ServiceOrder.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // Act
+        ServiceOrder result = service.createServiceOrder(newOrder);
+
+        // Assert
+        ServiceOrderItem resultItem = result.getServiceItems().getFirst();
+        ServiceOrderItemSupply resultSupply = resultItem.getSupplies().getFirst();
+        assertThat(result.getCustomer()).isSameAs(savedCustomer);
+        assertThat(result.getVehicle()).isSameAs(savedVehicle);
+        assertThat(resultItem.getAutomotiveService()).isSameAs(savedService);
+        assertThat(resultItem.getValue()).isEqualByComparingTo(new BigDecimal("120.00"));
+        assertThat(resultSupply.getInventoryItem()).isSameAs(savedInventoryItem);
+        verify(customerGateway).findOrCreateByDocument(any(Customer.class));
+        verify(vehicleGateway).save(any(Vehicle.class));
+        verify(automotiveServiceGateway).save(any(AutomotiveService.class));
+        verify(inventoryItemGateway).save(any(InventoryItem.class));
     }
 
     @Test
@@ -124,7 +285,7 @@ class ServiceOrderServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> service.createServiceOrder(newOrder))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Customer not found");
+                .hasMessage("Cliente nao encontrado");
         verify(vehicleGateway, never()).findById(any());
         verify(serviceOrderGateway, never()).save(any());
     }

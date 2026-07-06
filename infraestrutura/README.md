@@ -1,41 +1,45 @@
 # Infraestrutura e CI/CD
 
-Esta pasta contém os manifests Kubernetes usados pela esteira de CI/CD para publicar a aplicação em um cluster Kubernetes local disponível no runner self-hosted `runner-windows-0002`.
+Esta pasta documenta a infraestrutura de apoio do projeto.
 
-## GitHub Actions
+## GitHub Actions local
 
-O workflow `.github/workflows/ci-cd-kubernetes-local.yml` executa:
+A esteira local usa dois workflows:
 
-1. Testes unitários da aplicação Java com `./mvnw clean test` em runner Ubuntu hospedado pelo GitHub.
-2. Build da imagem Docker no runner self-hosted `runner-windows-0002`.
-3. Validação do acesso ao cluster Kubernetes local com `kubectl cluster-info`.
-4. Aplicação dos manifests Kubernetes locais em `infraestrutura/kubernetes/application.yaml`.
-5. Acompanhamento do rollout do deployment `numberone`.
+1. `.github/workflows/ci-cd-local-database.yml`
+   - Aplica o namespace.
+   - Faz deploy do PostgreSQL no Kubernetes local.
+   - Faz deploy do Mailpit.
+   - Aguarda os rollouts e evidencia os recursos criados.
 
-O deploy não usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem é construída localmente no runner e referenciada diretamente pelo Kubernetes local.
+2. `.github/workflows/ci-cd-local-api.yml`
+   - E disparado automaticamente quando o workflow do banco termina com sucesso.
+   - Executa build da aplicacao.
+   - Executa testes automatizados.
+   - Faz build da imagem Docker.
+   - Aplica os manifestos YAML da API.
+   - Atualiza o deployment com a imagem gerada.
+   - Aguarda o rollout da API.
 
-## Pré-requisitos do runner `runner-windows-0002`
+O deploy local nao usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem e construida no runner self-hosted e referenciada diretamente pelo Kubernetes local.
+
+## Pre-requisitos do runner `runner-windows-0002`
 
 Configure o runner self-hosted com:
 
-- Docker disponível no PATH.
-- `kubectl` disponível no PATH.
-- Acesso já configurado ao cluster Kubernetes local no contexto padrão do usuário que executa o serviço do runner.
+- Docker disponivel no PATH.
+- `kubectl` disponivel no PATH.
+- Acesso configurado ao cluster Kubernetes local no contexto padrao do usuario que executa o servico do runner.
+- Opcionalmente, Minikube disponivel no PATH. Quando encontrado, o workflow configura o Docker do Minikube antes do build da imagem.
 - Label customizada `runner-windows-0002` no runner, usada em `runs-on: [self-hosted, runner-windows-0002]`.
 
-## Recursos Kubernetes locais
+## Manifests Kubernetes locais
 
-O manifest cria no namespace `numberone`:
+Os workflows locais usam os manifests separados em `.k8s/`:
 
-- Secret e ConfigMap com as configurações locais da aplicação.
-- PostgreSQL local com PVC de 1 GiB.
-- Mailpit local para SMTP.
-- Deployment da aplicação `numberone` com 1 réplica.
-- Service `NodePort` expondo a API em `http://localhost:30080` no nó local.
+- `.k8s/namespace.yaml`
+- `.k8s/db`
+- `.k8s/mailpit`
+- `.k8s/app`
 
-## Variáveis opcionais do workflow
-
-As variáveis abaixo ficam definidas no próprio workflow e podem ser alteradas se necessário:
-
-- `IMAGE_NAME` (padrão `numberone`).
-- `K8S_NAMESPACE` (padrão `numberone`).
+O manifesto legado `infraestrutura/kubernetes/application.yaml` foi mantido apenas como referencia historica da primeira versao da esteira local.

@@ -65,6 +65,40 @@ class CustomerServiceTest {
     }
 
     @Test
+    void shouldReturnExistingCustomerWhenFindingOrCreatingByDocument() {
+        // Arrange
+        Customer incomingCustomer = customer(null, "Maria", "52998224725");
+        Customer existingCustomer = customer(UUID.randomUUID(), "Maria", "52998224725");
+        when(customerGateway.findByDocumentAndDocumentType("52998224725", TipoDocumento.PESSOA_FISICA))
+                .thenReturn(Optional.of(existingCustomer));
+
+        // Act
+        Customer result = service.findOrCreateByDocument(incomingCustomer);
+
+        // Assert
+        assertThat(result).isSameAs(existingCustomer);
+        verify(customerGateway).findByDocumentAndDocumentType("52998224725", TipoDocumento.PESSOA_FISICA);
+        verify(customerGateway, never()).save(any());
+    }
+
+    @Test
+    void shouldCreateCustomerWhenFindingOrCreatingAndDocumentDoesNotExist() {
+        // Arrange
+        Customer incomingCustomer = customer(null, "Maria", "52998224725");
+        Customer savedCustomer = customer(UUID.randomUUID(), "Maria", "52998224725");
+        when(customerGateway.findByDocumentAndDocumentType("52998224725", TipoDocumento.PESSOA_FISICA))
+                .thenReturn(Optional.empty());
+        when(customerGateway.save(incomingCustomer)).thenReturn(savedCustomer);
+
+        // Act
+        Customer result = service.findOrCreateByDocument(incomingCustomer);
+
+        // Assert
+        assertThat(result).isSameAs(savedCustomer);
+        verify(customerGateway).save(incomingCustomer);
+    }
+
+    @Test
     void shouldUpdateExistingCustomer() {
         // Arrange
         UUID customerId = UUID.randomUUID();

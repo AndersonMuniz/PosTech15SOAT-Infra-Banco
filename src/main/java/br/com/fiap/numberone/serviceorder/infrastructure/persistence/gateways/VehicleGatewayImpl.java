@@ -21,8 +21,19 @@ public class VehicleGatewayImpl implements VehicleGateway {
     }
 
     @Override
+    public Vehicle save(Vehicle vehicle) {
+        return mapper.toDomain(repository.save(mapper.toEntity(vehicle)));
+    }
+
+    @Override
     public Optional<Vehicle> findById(UUID id) {
         return repository.findById(id)
+                .map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Vehicle> findByLicensePlate(String licensePlate) {
+        return repository.findByLicensePlateIgnoreCase(licensePlate)
                 .map(mapper::toDomain);
     }
 }
