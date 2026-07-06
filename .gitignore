@@ -34,3 +34,11 @@ build/
 
 .m2/
 .m2-local/
+
+#### Terraform ###
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+.idea/
+.env
