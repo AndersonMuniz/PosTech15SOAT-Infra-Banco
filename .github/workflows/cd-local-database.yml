@@ -1,12 +1,7 @@
-name: CI/CD Local - Banco de Dados
+name: CD Local - Banco de Dados
 
 on:
   push:
-    branches:
-      - main
-      - feature/automacao
-      - develop
-  pull_request:
     branches:
       - develop
   workflow_dispatch:
@@ -15,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-cd-local-database-${{ github.ref }}
+  group: cd-local-database-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -23,7 +18,7 @@ env:
 
 jobs:
   deploy-database:
-    name: Deploy do banco no Kubernetes local
+    name: Deploy do banco local
     runs-on: [self-hosted, runner-windows-0002]
 
     steps:
@@ -31,52 +26,52 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validar acesso ao cluster Kubernetes local
-        shell: pwsh
+        shell: cmd
         run: |
           kubectl version --client
           kubectl cluster-info
           kubectl config current-context
 
       - name: Aplicar manifesto YAML do namespace
-        shell: pwsh
+        shell: cmd
         run: |
           kubectl apply -f .k8s/namespace.yaml
 
       - name: Aplicar ConfigMap, Secret, PVC e Service do banco
-        shell: pwsh
+        shell: cmd
         run: |
           kubectl apply -f .k8s/db/configmap.yaml
           kubectl apply -f .k8s/db/secret.yaml
           kubectl apply -f .k8s/db/pvc.yaml
           kubectl apply -f .k8s/db/service.yaml
 
-      - name: Deploy do banco de dados PostgreSQL
-        shell: pwsh
+      - name: Deploy do PostgreSQL local
+        shell: cmd
         run: |
           kubectl apply -f .k8s/db/deployment.yaml
 
-      - name: Aguardar rollout do banco de dados PostgreSQL
-        shell: pwsh
+      - name: Aguardar rollout do PostgreSQL local
+        shell: cmd
         run: |
-          kubectl rollout status deployment/numberone-postgres --namespace $env:K8S_NAMESPACE --timeout=180s
+          kubectl rollout status deployment/numberone-postgres --namespace %K8S_NAMESPACE% --timeout=180s
 
       - name: Aplicar Service do Mailpit
-        shell: pwsh
+        shell: cmd
         run: |
           kubectl apply -f .k8s/mailpit/service.yaml
 
-      - name: Deploy do Mailpit para suporte aos testes de e-mail
-        shell: pwsh
+      - name: Deploy do Mailpit local
+        shell: cmd
         run: |
           kubectl apply -f .k8s/mailpit/deployment.yaml
 
-      - name: Aguardar rollout do Mailpit
-        shell: pwsh
+      - name: Aguardar rollout do Mailpit local
+        shell: cmd
         run: |
-          kubectl rollout status deployment/mailpit --namespace $env:K8S_NAMESPACE --timeout=180s
+          kubectl rollout status deployment/mailpit --namespace %K8S_NAMESPACE% --timeout=180s
 
-      - name: Evidenciar recursos do banco aplicados no cluster
-        shell: pwsh
+      - name: Evidenciar recursos locais de banco e suporte
+        shell: cmd
         run: |
-          kubectl get configmap,secret,pvc,deployment,service --namespace $env:K8S_NAMESPACE
-          kubectl get pods --namespace $env:K8S_NAMESPACE -o wide
+          kubectl get configmap,secret,pvc,deployment,service --namespace %K8S_NAMESPACE%
+          kubectl get pods --namespace %K8S_NAMESPACE% -o wide
