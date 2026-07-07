@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: numberone-api-service
+  namespace: numberone
+spec:
+  selector:
+    app: numberone-api
+  type: LoadBalancer
+
+  ports:
+    - port: 80
+      targetPort: http

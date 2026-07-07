@@ -211,7 +211,7 @@ class ServiceOrderServiceTest {
                 .code("srv-001")
                 .name("Troca de oleo")
                 .description("Troca de oleo do motor")
-                .serviceType("MAINTENANCE")
+                .serviceType("REVISAO")
                 .baseValue(new BigDecimal("120.00"))
                 .estimatedTimeMinutes(60)
                 .active(true)

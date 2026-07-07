@@ -4,8 +4,8 @@ metadata:
   name: numberone-api-config
   namespace: numberone
 data:
-  SPRING_PROFILES_ACTIVE: k8s
-  DB_URL: jdbc:postgresql://numberone-postgres-service:5432/numberone
+  SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+  DB_URL: ${DB_URL}
   JWT_ISSUER: numberone-api
   JWT_ACCESS_TOKEN_EXPIRATION: 1h
 

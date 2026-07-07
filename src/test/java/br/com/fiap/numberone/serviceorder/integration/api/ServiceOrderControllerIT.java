@@ -143,7 +143,7 @@ class ServiceOrderControllerIT {
                       "codigo": "SRV-001",
                       "nome": "Troca de oleo",
                       "descricao": "Troca de oleo do motor",
-                      "tipoServico": "MAINTENANCE",
+                      "tipoServico": "REVISAO",
                       "valorBase": 170.00,
                       "tempoEstimadoMinutos": 60,
                       "opcional": false,

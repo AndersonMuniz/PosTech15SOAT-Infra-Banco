@@ -4,22 +4,49 @@ Esta pasta documenta a infraestrutura de apoio do projeto.
 
 ## GitHub Actions local
 
-A esteira local usa dois workflows:
+A esteira local usa tres workflows:
 
-1. `.github/workflows/ci-cd-local-database.yml`
-   - Aplica o namespace.
-   - Faz deploy do PostgreSQL no Kubernetes local.
-   - Faz deploy do Mailpit.
-   - Aguarda os rollouts e evidencia os recursos criados.
-
-2. `.github/workflows/ci-cd-local-api.yml`
-   - E disparado automaticamente quando o workflow do banco termina com sucesso.
+1. `.github/workflows/ci.yml`
+   - Roda em pull requests para `develop`.
+   - Roda em qualquer push.
+   - Valida a estrutura Maven do projeto.
    - Executa build da aplicacao.
-   - Executa testes automatizados.
-   - Faz build da imagem Docker.
+   - Executa testes unitarios.
+   - Valida os manifestos YAML do Kubernetes em modo dry-run.
+   - Nao faz deploy.
+
+2. `.github/workflows/cd-local-database.yml`
+   - Roda em push para `develop`.
+   - Tambem pode ser executado manualmente.
+   - Faz deploy do PostgreSQL local no Kubernetes.
+   - Faz deploy do Mailpit local.
+
+3. `.github/workflows/cd-local-api.yml`
+   - Roda em push para `develop`.
+   - Tambem pode ser executado manualmente.
+   - Faz build da imagem Docker da API.
+   - Carrega a imagem no Minikube quando ele esta disponivel.
+   - Aguarda o rollout do PostgreSQL antes do deploy da API.
    - Aplica os manifestos YAML da API.
    - Atualiza o deployment com a imagem gerada.
    - Aguarda o rollout da API.
+
+Fluxos da esteira:
+
+```text
+Pull request para develop
+  -> CI
+
+Push em qualquer branch
+  -> CI
+
+Push em develop
+  -> CI
+  -> CD Local - Banco de Dados
+  -> CD Local - API
+```
+
+Como os workflows de banco e API sao esteiras separadas, o GitHub pode iniciar os dois a partir do mesmo push em `develop`. A API trata essa dependencia aguardando o rollout do PostgreSQL antes de aplicar seus manifests. Para garantir que o deploy local so aconteca com codigo validado, configure a branch `develop` no GitHub como branch protegida exigindo sucesso do workflow `CI` antes do merge do pull request.
 
 O deploy local nao usa Amazon EKS, ECR, RDS, Terraform ou credenciais AWS. A imagem e construida no runner self-hosted e referenciada diretamente pelo Kubernetes local.
 
@@ -30,7 +57,7 @@ Configure o runner self-hosted com:
 - Docker disponivel no PATH.
 - `kubectl` disponivel no PATH.
 - Acesso configurado ao cluster Kubernetes local no contexto padrao do usuario que executa o servico do runner.
-- Opcionalmente, Minikube disponivel no PATH. Quando encontrado, o workflow configura o Docker do Minikube antes do build da imagem.
+- Opcionalmente, Minikube disponivel no PATH. Quando encontrado, o workflow carrega no Minikube a imagem criada pelo Docker do runner.
 - Label customizada `runner-windows-0002` no runner, usada em `runs-on: [self-hosted, runner-windows-0002]`.
 
 ## Manifests Kubernetes locais
