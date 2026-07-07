@@ -15,4 +15,8 @@ resource "aws_eks_node_group" "default" {
   }
 
   tags = local.common_tags
+
+  remote_access {
+    # removeremos depois se não for usar SSH
+  }
 }

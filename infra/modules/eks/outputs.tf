@@ -9,3 +9,9 @@ output "cluster_endpoint" {
 output "cluster_certificate_authority" {
   value = aws_eks_cluster.this.certificate_authority[0].data
 }
+
+output "node_security_group_id" {
+  description = "Security Group do Node Group."
+
+  value = aws_security_group.node.id
+}

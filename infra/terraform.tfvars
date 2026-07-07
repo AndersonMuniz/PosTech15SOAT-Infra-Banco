@@ -32,3 +32,10 @@ node_group = {
 cluster_role_name = "c213429a5396203l15765906t1w949294-LabEksClusterRole-aql9Zb50CHUM"
 node_role_name = "c213429a5396203l15765906t1w949294083-LabEksNodeRole-gyTcZ1PhKaKc"
 kubernetes_version = "1.36"
+
+#RDS
+db_name = "numberone"
+db_username = "numberone"
+db_password = "SenhaMuitoSegura123!"
+db_instance_class = "db.t3.micro"
+db_allocated_storage = 20

@@ -76,3 +76,30 @@ variable "node_role_name" {
   description = "Nome da IAM Role dos Nodes."
   type        = string
 }
+
+#RDS
+variable "db_name" {
+  description = "Nome do banco."
+  type        = string
+}
+
+variable "db_username" {
+  description = "Usuário administrador."
+  type        = string
+}
+
+variable "db_password" {
+  description = "Senha do banco."
+  type        = string
+  sensitive   = true
+}
+
+variable "db_instance_class" {
+  description = "Classe da instância."
+  type        = string
+}
+
+variable "db_allocated_storage" {
+  description = "Espaço em disco."
+  type        = number
+}

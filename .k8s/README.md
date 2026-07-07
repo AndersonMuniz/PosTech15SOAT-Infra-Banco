@@ -1,18 +1,113 @@
-10# Kubernetes - NumberOne
+# Kubernetes - NumberOne
 
-Este guia mostra como subir a aplicacao NumberOne em Kubernetes usando Minikube.
+Este guia mostra como subir a aplicacao NumberOne em Kubernetes nos modos LOCAL e AWS.
 
-Os manifests ficam em:
+## Estrutura
 
 ```text
 .k8s/
-  namespace.yaml
-  app/
-  db/
-  mailpit/
+├── namespace.yaml
+├── app/
+│   ├── configmap.yaml
+│   ├── deployment.yaml
+│   ├── hpa.yaml
+│   ├── secret.yaml
+│   ├── service.yaml
+│   └── service-aws.yaml
+├── db/
+│   ├── configmap.yaml
+│   ├── deployment.yaml
+│   ├── pvc.yaml
+│   ├── secret.yaml
+│   └── service.yaml
+├── env/
+│   ├── aws.env
+│   └── local.env
+├── mailpit/
+│   ├── deployment.yaml
+│   └── service.yaml
+└── scripts/
+    ├── deploy-aws.sh
+    └── deploy-local.sh
 ```
 
-## O que Sobe no Cluster
+## Arquitetura
+
+| Modo | Componentes |
+|---|---|
+| LOCAL | Docker, Minikube, PostgreSQL Container, Mailpit, Imagem Local |
+| AWS | EKS, RDS, ECR, ELB, Imagem no ECR |
+
+### LOCAL
+
+```text
+Docker
+↓
+Minikube
+↓
+Imagem Local
+↓
+PostgreSQL Container
+↓
+Mailpit
+↓
+Service ClusterIP
+```
+
+Arquivos usados:
+
+- `.k8s/env/local.env`
+- `.k8s/app/service.yaml`
+- `.k8s/db/*`
+- `.k8s/mailpit/*`
+- `.k8s/app/*`
+
+### AWS
+
+```text
+Amazon ECR
+↓
+Amazon EKS
+↓
+Amazon RDS PostgreSQL
+↓
+Service LoadBalancer
+↓
+ELB AWS
+```
+
+Arquivos usados:
+
+- `.k8s/env/aws.env`
+- `.k8s/app/service-aws.yaml`
+- `.k8s/app/configmap.yaml`
+- `.k8s/app/secret.yaml`
+- `.k8s/app/deployment.yaml`
+- `.k8s/app/hpa.yaml`
+
+## Fluxo de Deploy
+
+```text
+Terraform
+↓
+Docker
+↓
+ECR
+↓
+Kubernetes
+↓
+Pods
+↓
+Service
+↓
+LoadBalancer
+↓
+Aplicação
+```
+
+## Execução Local
+
+### O que Sobe no Cluster
 
 - `numberone-api`: API Spring Boot.
 - `numberone-postgres`: banco PostgreSQL.
@@ -22,7 +117,7 @@ Os manifests ficam em:
 - `numberone-api-hpa`: autoscaling horizontal da API.
 - `numberone-postgres-data`: volume persistente do PostgreSQL.
 
-## Pre-requisitos
+### Pre-requisitos
 
 - Docker Desktop rodando.
 - Minikube instalado.
@@ -37,7 +132,7 @@ minikube version
 kubectl version --client
 ```
 
-## 1. Iniciar o Minikube
+### 1. Iniciar o Minikube
 
 ```powershell
 minikube start --driver=docker
@@ -51,12 +146,12 @@ minikube status
 kubectl get nodes
 ```
 
-## 2. Buildar a Imagem da API
+### 2. Buildar a Imagem da API
 
-Como o manifest da API usa a imagem local:
+Como o ambiente LOCAL usa:
 
-```yaml
-image: numberone-api:latest
+```text
+APP_IMAGE=numberone-api:latest
 ```
 
 o build precisa acontecer dentro do ambiente Docker do Minikube.
@@ -80,7 +175,7 @@ Para voltar o terminal para o Docker Desktop depois:
 & minikube -p minikube docker-env --shell powershell --unset | Invoke-Expression
 ```
 
-## 3. Aplicar os Manifests
+### 3. Aplicar os Manifests Locais
 
 Crie primeiro o namespace:
 
@@ -102,7 +197,13 @@ Tambem pode usar o modo recursivo depois que o namespace ja existe:
 kubectl apply -f .k8s --recursive
 ```
 
-## 4. Acompanhar a Subida dos Pods
+Script local existente:
+
+```bash
+.k8s/scripts/deploy-local.sh
+```
+
+### 4. Acompanhar a Subida dos Pods
 
 ```powershell
 kubectl get pods -n numberone -w
@@ -125,17 +226,11 @@ Ctrl + C
 
 Esse comando para apenas o acompanhamento no terminal. Ele nao derruba os pods.
 
-## 5. Entender o Init Container da API
+### 5. Entender o Init Container da API
 
 A API possui um `initContainer` chamado `wait-for-postgres`.
 
-Ele espera o Postgres responder na porta `5432` antes de iniciar o Spring Boot:
-
-```text
-numberone-api   0/1   Init:0/1
-numberone-api   0/1   PodInitializing
-numberone-api   1/1   Running
-```
+Ele espera o Postgres responder na porta `5432` antes de iniciar o Spring Boot.
 
 Para ver o log do init container:
 
@@ -143,7 +238,7 @@ Para ver o log do init container:
 kubectl logs -n numberone <nome-do-pod-api> -c wait-for-postgres
 ```
 
-## 6. Validar ConfigMap e Secret
+### 6. Validar ConfigMap e Secret
 
 Ver o ConfigMap da API:
 
@@ -160,7 +255,7 @@ kubectl exec -n numberone deploy/numberone-api -- printenv MAIL_HOST
 
 Nao imprima secrets sensiveis em ambientes compartilhados.
 
-## 7. Testar a API Localmente
+### 7. Testar a API Localmente
 
 Abra um terminal e rode:
 
@@ -187,7 +282,7 @@ Resposta esperada:
 }
 ```
 
-## 8. Autenticacao
+### 8. Autenticacao
 
 Login:
 
@@ -213,7 +308,7 @@ Use o `accessToken` nas rotas administrativas:
 Authorization: Bearer <accessToken>
 ```
 
-## 9. Criar e Consultar Cliente
+### 9. Criar e Consultar Cliente
 
 Criar cliente:
 
@@ -238,7 +333,122 @@ curl http://localhost:8080/api/admin/clientes `
   -H "Authorization: Bearer <accessToken>"
 ```
 
-## 10. Logs e Diagnostico
+## Execução AWS
+
+### Ambiente AWS
+
+Arquivo:
+
+```text
+.k8s/env/aws.env
+```
+
+Valores atuais:
+
+```text
+APP_IMAGE=949294083326.dkr.ecr.us-east-1.amazonaws.com/numberone-api:1.0.0
+SPRING_PROFILES_ACTIVE=prod
+DB_HOST=numberone-postgres.cktotuxmsm2b.us-east-1.rds.amazonaws.com
+DB_URL=jdbc:postgresql://numberone-postgres.cktotuxmsm2b.us-east-1.rds.amazonaws.com:5432/numberone
+DB_USERNAME=numberone
+```
+
+Service AWS:
+
+```text
+.k8s/app/service-aws.yaml
+```
+
+Tipo:
+
+```text
+LoadBalancer
+```
+
+### Deploy AWS
+
+Fluxo validado:
+
+```text
+Docker Build
+↓
+Login no ECR
+↓
+Docker Push
+↓
+aws eks update-kubeconfig
+↓
+kubectl apply
+↓
+Pods
+↓
+Service
+↓
+Acesso público
+```
+
+1. Docker build
+
+```bash
+docker build -t 949294083326.dkr.ecr.us-east-1.amazonaws.com/numberone-api:1.0.0 .
+```
+
+2. Login no ECR
+
+```bash
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 949294083326.dkr.ecr.us-east-1.amazonaws.com
+```
+
+3. Docker push
+
+```bash
+docker push 949294083326.dkr.ecr.us-east-1.amazonaws.com/numberone-api:1.0.0
+```
+
+4. Atualizar kubeconfig
+
+```bash
+aws eks update-kubeconfig --region us-east-1 --name numberone-eks
+```
+
+5. Aplicar manifests
+
+Script AWS existente:
+
+```bash
+.k8s/scripts/deploy-aws.sh
+```
+
+Comandos executados pelo script:
+
+```bash
+kubectl apply -f .k8s/namespace.yaml
+envsubst < .k8s/app/configmap.yaml | kubectl apply -f -
+envsubst < .k8s/app/secret.yaml | kubectl apply -f -
+kubectl apply -f .k8s/app/service-aws.yaml
+envsubst < .k8s/app/deployment.yaml | kubectl apply -f -
+kubectl apply -f .k8s/app/hpa.yaml
+```
+
+6. Verificar pods
+
+```bash
+kubectl get pods -n numberone -w
+```
+
+7. Verificar service
+
+```bash
+kubectl get service -n numberone
+```
+
+8. Acessar aplicação
+
+```bash
+curl http://<load-balancer>/api/public/health
+```
+
+## Logs e Diagnostico
 
 Logs da API:
 
@@ -265,7 +475,7 @@ Eventos do namespace:
 kubectl get events -n numberone --sort-by=.lastTimestamp
 ```
 
-## 11. HPA
+## HPA
 
 O HPA esta configurado para escalar a API por CPU e memoria.
 
@@ -284,9 +494,9 @@ kubectl top pods -n numberone
 
 Se `kubectl top` ainda nao funcionar imediatamente, aguarde alguns segundos e tente novamente.
 
-## 12. Atualizar a Aplicacao Depois de Alterar Codigo
+## Atualizar a Aplicacao Depois de Alterar Codigo
 
-Buildar nova imagem:
+Buildar nova imagem LOCAL:
 
 ```powershell
 & minikube -p minikube docker-env --shell powershell | Invoke-Expression
@@ -306,7 +516,7 @@ Acompanhar:
 kubectl get pods -n numberone -w
 ```
 
-## 13. Reaplicar Manifests
+## Reaplicar Manifests
 
 Validar sem alterar o cluster:
 
@@ -326,7 +536,7 @@ Aplicar somente a API:
 kubectl apply -f .k8s/app
 ```
 
-## 14. Acessar o Mailpit
+## Acessar o Mailpit
 
 Encaminhe a porta web do Mailpit:
 
@@ -340,7 +550,7 @@ Acesse:
 http://localhost:8025
 ```
 
-## 15. Parar e Remover Ambiente
+## Parar e Remover Ambiente
 
 Remover os recursos do projeto:
 
