@@ -33,3 +33,11 @@ output "ecr_repository_url" {
 output "ecr_repository_name" {
   value = module.ecr.repository_name
 }
+
+output "cluster_name" {
+  value = module.eks.cluster_name
+}
+
+output "aws_region" {
+  value = var.aws_region
+}
