@@ -6,6 +6,7 @@ Esta pasta concentra os acordos tecnicos iniciais do projeto.
 
 - `padroes-java-25.md`: padroes de codigo, organizacao de pacotes e convencoes para Java 25 com Spring Boot 4.
 - `dependencias.md`: dependencias atuais do projeto, seus escopos e o motivo de uso.
+- `arquitetura/componentes.md`: diagramas de componentes do projeto em Mermaid flowchart e C4 Component.
 - `equipe/modelagem-banco-aprovada.md`: modelagem de banco aprovada para o MVP.
 - `equipe/anderson.md`: escopo de desenvolvimento do Anderson.
 - `equipe/julio.md`: escopo de desenvolvimento do Julio.
