@@ -10,7 +10,7 @@ resource "aws_subnet" "public" {
   tags = merge(
     local.common_tags,
     {
-      Name = "${var.project_name}-${each.key}-public"
+      Name = "${var.project_name}-public-${each.value.az}"
       Type = "public"
     }
   )
@@ -28,7 +28,7 @@ resource "aws_subnet" "private" {
   tags = merge(
     local.common_tags,
     {
-      Name = "${var.project_name}-${each.key}-private"
+      Name = "${var.project_name}-private-${each.value.az}"
       Type = "private"
     }
   )
