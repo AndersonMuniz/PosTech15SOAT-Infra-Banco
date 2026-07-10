@@ -25,6 +25,10 @@ API REST do Tech Challenge Fase 1 para gerenciamento de uma oficina mecanica. O 
 - `serviceorder`: ordem de servico, diagnostico, orcamento, itens, insumos, status e acompanhamento.
 - `shared`: seguranca JWT, tratamento global de erros, Swagger, email e configuracoes comuns.
 
+## Arquitetura
+
+Os diagramas de componentes do projeto estao documentados em `doc/arquitetura/componentes.md`, com uma versao Mermaid flowchart e uma versao C4 Component.
+
 ## Como Rodar com Um Comando
 
 Pre-requisitos:
