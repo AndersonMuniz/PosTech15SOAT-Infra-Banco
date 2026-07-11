@@ -317,4 +317,4 @@ Em resumo, a combinacao **modelo relacional + PostgreSQL** atende tanto aos requ
 
 ## Desenho com o fluxo de deploy 
 
-- Aqui você verá o fluxo completo do deploy da aplicação [doc/fluxo-github-actions.md] (doc/fluxo-github-actions.md).
+- Aqui você verá o fluxo completo do deploy da aplicação [doc/fluxo-github-actions.md](doc/fluxo-github-actions.md).
