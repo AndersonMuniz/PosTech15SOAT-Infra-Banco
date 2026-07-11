@@ -1,58 +1,100 @@
 # Módulo VPC
 
-## Objetivo
+Responsável por provisionar toda a infraestrutura de rede utilizada pelo projeto NumberOne na AWS.
 
-Provisionar a rede AWS usada pelo projeto.
+## Arquitetura
 
-## Entradas
+![Arquitetura VPC](../../diagrams/numberone-vpc.drawio.png)
 
-| Variável | Origem |
-|---|---|
-| `project_name` | `variables.tf` |
-| `vpc_cidr` | `variables.tf` |
-| `availability_zones` | `variables.tf` |
-| `enable_nat_gateway` | `variables.tf` |
-| `public_subnets` | `variables.tf` |
-| `private_subnets` | `variables.tf` |
+## Recursos Criados
 
-## Saídas
+O módulo cria os seguintes recursos:
 
-| Output | Origem |
-|---|---|
-| `vpc_id` | `outputs.tf` |
-| `public_subnet_ids` | `outputs.tf` |
-| `private_subnet_ids` | `outputs.tf` |
+- VPC
+- Subnets Públicas
+- Subnets Privadas
+- Internet Gateway
+- Route Tables
+- Route Table Associations
 
-## Recursos AWS Criados
+> Atualmente o projeto utiliza apenas Internet Gateway. O uso de NAT Gateway pode ser habilitado futuramente através da variável `enable_nat_gateway`.
 
-- `aws_vpc`
-- `aws_subnet` públicas
-- `aws_subnet` privadas
-- `aws_internet_gateway`
-- `aws_route_table` pública
-- `aws_route_table` privada
-- `aws_route_table_association` públicas
-- `aws_route_table_association` privadas
+---
 
-## Dependências
+## Estrutura
 
-- Provider AWS do projeto raiz
-- Variáveis do projeto raiz
+```text
+modules/vpc/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── README.md
+```
 
-## Fluxo Resumido
+---
+
+## Variáveis
+
+| Variável | Descrição |
+|----------|-----------|
+| `project_name` | Nome do projeto utilizado nos recursos |
+| `vpc_cidr` | CIDR da VPC |
+| `availability_zones` | Zonas de disponibilidade utilizadas |
+| `public_subnets` | Lista de CIDRs das subnets públicas |
+| `private_subnets` | Lista de CIDRs das subnets privadas |
+| `enable_nat_gateway` | Habilita ou não NAT Gateway |
+
+---
+
+## Outputs
+
+| Output | Descrição |
+|----------|-----------|
+| `vpc_id` | ID da VPC |
+| `public_subnet_ids` | IDs das subnets públicas |
+| `private_subnet_ids` | IDs das subnets privadas |
+
+---
+
+## Fluxo
 
 ```text
 VPC
-↓
-Subnets públicas
-↓
-Subnets privadas
-↓
-Internet Gateway
-↓
-Route Tables
-↓
-Associations
-↓
-Outputs
+        │
+        ├──────────────┐
+        │              │
+ Public Subnets   Private Subnets
+        │              │
+        └──────┬───────┘
+               │
+        Route Tables
+               │
+       Internet Gateway
 ```
+
+---
+
+## Exemplo de Utilização
+
+```hcl
+module "vpc" {
+  source = "./modules/vpc"
+
+  project_name       = var.project_name
+  vpc_cidr           = var.vpc_cidr
+  availability_zones = var.availability_zones
+
+  public_subnets     = var.public_subnets
+  private_subnets    = var.private_subnets
+
+  enable_nat_gateway = var.enable_nat_gateway
+}
+```
+
+---
+
+## Observações
+
+- As subnets públicas são utilizadas pelos Load Balancers e Nodes do EKS.
+- As subnets privadas são utilizadas pelo Amazon RDS.
+- O módulo foi desenvolvido para ser reutilizável em diferentes projetos apenas alterando as variáveis de entrada.
