@@ -1,40 +1,71 @@
 # Módulo ECR
 
-## Objetivo
+Responsável por provisionar o repositório Docker utilizado pela aplicação.
 
-Provisionar o repositório Amazon ECR usado pela imagem Docker da aplicação.
+## Recursos Criados
 
-## Entradas
+O módulo cria os seguintes recursos:
 
-| Variável | Origem |
-|---|---|
-| `project_name` | `variables.tf` |
+- Amazon ECR Repository
+- Lifecycle Policy
 
-## Saídas
+---
 
-| Output | Origem |
-|---|---|
-| `repository_url` | `outputs.tf` |
-| `repository_name` | `outputs.tf` |
-
-## Recursos AWS Criados
-
-- `aws_ecr_repository`
-- `aws_ecr_lifecycle_policy`
-
-## Dependências
-
-- Provider AWS do projeto raiz
-- `project_name`
-
-## Fluxo Resumido
+## Estrutura
 
 ```text
-project_name
-↓
-ECR Repository
-↓
-Lifecycle Policy
-↓
-Outputs
+modules/ecr/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── README.md
 ```
+
+---
+
+## Variáveis
+
+| Variável | Descrição |
+|----------|-----------|
+| `project_name` | Nome do projeto |
+
+---
+
+## Outputs
+
+| Output | Descrição |
+|----------|-----------|
+| `repository_name` | Nome do repositório |
+| `repository_url` | URL do repositório |
+
+---
+
+## Fluxo
+
+```text
+Project Name
+      │
+Amazon ECR
+      │
+Repository URL
+```
+
+---
+
+## Exemplo de Utilização
+
+```hcl
+module "ecr" {
+  source = "./modules/ecr"
+
+  project_name = var.project_name
+}
+```
+
+---
+
+## Observações
+
+- O repositório é utilizado pelo pipeline de deploy da aplicação.
+- As imagens são enviadas utilizando tags baseadas em timestamp.
+- Uma Lifecycle Policy remove imagens antigas automaticamente conforme configurado no módulo.

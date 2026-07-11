@@ -1,59 +1,94 @@
 # Módulo RDS
 
-## Objetivo
+Responsável por provisionar o banco de dados PostgreSQL utilizado pela aplicação.
 
-Provisionar o Amazon RDS PostgreSQL usado pela aplicação.
+## Recursos Criados
 
-## Entradas
+O módulo cria os seguintes recursos:
 
-| Variável | Origem |
-|---|---|
-| `project_name` | `variables.tf` |
-| `vpc_id` | `variables.tf` |
-| `private_subnet_ids` | `variables.tf` |
-| `db_name` | `variables.tf` |
-| `username` | `variables.tf` |
-| `password` | `variables.tf` |
-| `instance_class` | `variables.tf` |
-| `allocated_storage` | `variables.tf` |
-| `allowed_cidr_blocks` | `variables.tf` |
+- Amazon RDS PostgreSQL
+- DB Subnet Group
+- Security Group do banco
+- Regras de acesso ao banco
 
-## Saídas
+---
 
-| Output | Origem |
-|---|---|
-| `endpoint` | `outputs.tf` |
-| `port` | `outputs.tf` |
-| `identifier` | `outputs.tf` |
-| `db_name` | `outputs.tf` |
-| `security_group_id` | `outputs.tf` |
-
-## Recursos AWS Criados
-
-- `aws_security_group`
-- `aws_vpc_security_group_ingress_rule`
-- `aws_vpc_security_group_egress_rule`
-- `aws_db_subnet_group`
-- `aws_db_instance`
-
-## Dependências
-
-- VPC
-- Subnets privadas
-- CIDRs autorizados
-
-## Fluxo Resumido
+## Estrutura
 
 ```text
-VPC
-↓
-Subnets privadas
-↓
-Security Group
-↓
-DB Subnet Group
-↓
-RDS PostgreSQL
-↓
-Outputs
+modules/rds/
+├── main.tf
+├── variables.tf
+├── outputs.tf
+└── README.md
 ```
+
+---
+
+## Variáveis
+
+| Variável | Descrição |
+|----------|-----------|
+| `project_name` | Nome do projeto |
+| `vpc_id` | VPC onde o banco será criado |
+| `private_subnet_ids` | Subnets privadas |
+| `db_name` | Nome do banco |
+| `username` | Usuário administrador |
+| `password` | Senha do banco |
+| `instance_class` | Tipo da instância |
+| `allocated_storage` | Espaço em disco |
+| `allowed_cidr_blocks` | CIDRs autorizados |
+
+---
+
+## Outputs
+
+| Output | Descrição |
+|----------|-----------|
+| `endpoint` | Endpoint do banco |
+| `port` | Porta |
+| `identifier` | Nome da instância |
+| `db_name` | Nome do banco |
+| `security_group_id` | Security Group do banco |
+
+---
+
+## Fluxo
+
+```text
+Private Subnets
+        │
+DB Subnet Group
+        │
+Security Group
+        │
+Amazon RDS
+```
+
+---
+
+## Exemplo de Utilização
+
+```hcl
+module "rds" {
+  source = "./modules/rds"
+
+  project_name       = var.project_name
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  db_name            = var.db_name
+  username           = var.db_username
+  password           = var.db_password
+  instance_class     = var.db_instance_class
+  allocated_storage  = var.db_allocated_storage
+}
+```
+
+---
+
+## Observações
+
+- O banco é criado em subnets privadas.
+- Atualmente a instância utiliza **Single-AZ**.
+- O acesso é controlado por Security Groups.
