@@ -314,3 +314,7 @@ Em resumo, a combinacao **modelo relacional + PostgreSQL** atende tanto aos requ
 - `doc/padroes-java-25.md`: padroes de codigo Java definidos pelo grupo.
 - `doc/security/README.md`: execucao do SonarQube e evidencias de seguranca.
 - `doc/testes/README.md`: estrategia e evidencias de testes.
+
+## Desenho com o fluxo de deploy 
+
+- Aqui você verá o fluxo completo do deploy da aplicação [doc/fluxo-github-actions.md] (doc/fluxo-github-actions.md).
