@@ -94,6 +94,7 @@ required_vars=(
   BOOTSTRAP_ADMIN_USERNAME
   BOOTSTRAP_ADMIN_PASSWORD
   SPRING_PROFILES_ACTIVE
+  MAIL_HOST
 )
 
 for var in "${required_vars[@]}"; do
@@ -108,17 +109,9 @@ echo "======================================"
 echo "Aplicando Kubernetes"
 echo "======================================"
 
-kubectl apply -f .k8s/namespace.yaml
-
-envsubst < .k8s/app/configmap.yaml | kubectl apply -f -
-
-envsubst < .k8s/app/secret.yaml | kubectl apply -f -
-
-kubectl apply -f .k8s/app/service-aws.yaml
-
-envsubst < .k8s/app/deployment.yaml | kubectl apply -f -
-
-kubectl apply -f .k8s/app/hpa.yaml
+kubectl kustomize .k8s/overlays/aws/api \
+| envsubst \
+| kubectl apply -f -
 
 echo
 echo "======================================"

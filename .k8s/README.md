@@ -1,167 +1,122 @@
 # Kubernetes - NumberOne
 
-Este diretório contém os manifests Kubernetes utilizados para executar a aplicação **NumberOne** nos ambientes **Local (Minikube)** e **AWS (Amazon EKS)**.
+Este diretorio contem os manifests Kubernetes da aplicacao **NumberOne** usando **Kustomize** para separar a configuracao comum das diferencas entre ambientes.
 
-## Arquitetura
+## Ideia principal
 
-A infraestrutura Kubernetes utiliza os recursos abaixo:
+O Kustomize evita manter manifests duplicados para Local e AWS.
 
-- Namespace
-- Deployment
-- Service
-- ConfigMap
-- Secret
-- Horizontal Pod Autoscaler (HPA)
+- `base/`: recursos comuns e reutilizaveis.
+- `overlays/`: ajustes especificos de cada ambiente.
 
-O ambiente AWS utiliza o cluster Amazon EKS provisionado pelo Terraform.
-
----
+Assim, a API, banco e Mailpit ficam descritos uma vez na base, e cada ambiente altera apenas o necessario.
 
 ## Estrutura
 
 ```text
 .k8s/
-├── app/
-├── db/
-├── env/
-├── mailpit/
-├── scripts/
-├── namespace.yaml
-└── README.md
+|-- base/
+|   |-- namespace/
+|   |-- app/
+|   |-- database/
+|   `-- mailpit/
+|-- overlays/
+|   |-- local/
+|   |   |-- api/
+|   |   |-- database/
+|   |   `-- full/
+|   `-- aws/
+|       `-- api/
+|-- env/
+|-- scripts/
+`-- README.md
 ```
 
-### Diretórios
+## Bases
 
-| Diretório | Descrição |
-|-----------|-----------|
-| `app/` | Manifests da aplicação. |
-| `db/` | PostgreSQL utilizado apenas no ambiente local. |
-| `env/` | Variáveis utilizadas pelos scripts de deploy. |
-| `mailpit/` | Serviço SMTP para desenvolvimento local. |
-| `scripts/` | Scripts de deploy para Local e AWS. |
+| Base | Conteudo |
+| --- | --- |
+| `base/namespace` | Namespace `numberone`. |
+| `base/app` | ConfigMap, Secret, Service, Deployment e HPA da API. |
+| `base/database` | PostgreSQL local, PVC, Service, ConfigMap e Secret. |
+| `base/mailpit` | Mailpit local para captura de emails. |
 
----
+## Overlays
+
+| Overlay | Uso |
+| --- | --- |
+| `overlays/local/database` | Deploy local do PostgreSQL e Mailpit. Usado pelo workflow separado do banco. |
+| `overlays/local/api` | Deploy local da API no Minikube. Usado pelo workflow separado da API. |
+| `overlays/local/full` | Deploy local completo para uso manual. |
+| `overlays/aws/api` | Deploy da API no EKS, usando RDS e imagem publicada no ECR. |
 
 ## Deploy Local
 
-No ambiente local são utilizados:
-
-- Minikube
-- Docker
-- PostgreSQL em container
-- Mailpit
-
-Arquivos utilizados:
-
-```text
-app/service.yaml
-db/
-mailpit/
-env/local.env
-```
-
-Executar:
+Deploy do banco e Mailpit:
 
 ```bash
-./scripts/deploy-local.sh
+kubectl apply -k .k8s/overlays/local/database
+kubectl rollout status deployment/numberone-postgres -n numberone
+kubectl rollout status deployment/mailpit -n numberone
 ```
 
----
-
-## Deploy AWS
-
-No ambiente AWS são utilizados:
-
-- Amazon EKS
-- Amazon ECR
-- Amazon RDS PostgreSQL
-- LoadBalancer AWS
-
-Arquivos utilizados:
-
-```text
-app/service-aws.yaml
-env/aws.env
-```
-
-Executar:
+Deploy da API:
 
 ```bash
-./scripts/deploy-aws.sh
-```
-
-O script realiza automaticamente:
-
-- Terraform Apply
-- Atualização do kubeconfig
-- Build da imagem Docker
-- Push para o Amazon ECR
-- Deploy dos manifests
-- Validação do deployment
-
----
-
-## Scripts
-
-```text
-scripts/
-├── deploy-local.sh
-├── deploy-aws.sh
-└── destroy-aws.sh
-```
-
-| Script | Descrição |
-|---------|-----------|
-| `deploy-local.sh` | Deploy da aplicação no Minikube. |
-| `deploy-aws.sh` | Provisiona a infraestrutura e realiza o deploy no Amazon EKS. |
-| `destroy-aws.sh` | Remove os recursos Kubernetes e destrói a infraestrutura AWS. |
-
----
-
-## Validação
-
-Verificar os pods:
-
-```bash
-kubectl get pods -n numberone
-```
-
-Verificar os serviços:
-
-```bash
-kubectl get svc -n numberone
-```
-
-Acompanhar o deployment:
-
-```bash
+kubectl apply -k .k8s/overlays/local/api
 kubectl rollout status deployment/numberone-api -n numberone
 ```
 
-Logs da aplicação:
+Deploy local completo:
 
 ```bash
-kubectl logs -n numberone deploy/numberone-api
+kubectl apply -k .k8s/overlays/local/full
 ```
 
----
+Tambem existe o script:
 
-## Estrutura da Aplicação
+```bash
+.k8s/scripts/deploy-local.sh
+```
+
+## Deploy AWS
+
+O overlay AWS contem placeholders como `${APP_IMAGE}`, `${DB_URL}`, `${DB_HOST}` e `${JWT_SECRET}`.
+
+Esses valores sao preenchidos pelo script:
 
 ```text
-Namespace
-│
-├── ConfigMap
-├── Secret
-├── Deployment
-│     └── Pods
-├── Service
-└── HPA
+infra/scripts/deploy-aws.sh
 ```
 
----
+O script executa:
 
-## Documentação Complementar
+```bash
+kubectl kustomize .k8s/overlays/aws/api | envsubst | kubectl apply -f -
+```
+
+Na AWS, o banco de dados fica fora do Kubernetes, provisionado como RDS pelo Terraform.
+
+## Validacao
+
+Validar os overlays sem aplicar no cluster:
+
+```bash
+kubectl apply -k .k8s/overlays/local/database --dry-run=client --validate=false
+kubectl apply -k .k8s/overlays/local/api --dry-run=client --validate=false
+kubectl apply -k .k8s/overlays/local/full --dry-run=client --validate=false
+kubectl apply -k .k8s/overlays/aws/api --dry-run=client --validate=false
+```
+
+Verificar recursos:
+
+```bash
+kubectl get pods -n numberone
+kubectl get svc -n numberone
+kubectl get hpa -n numberone
+```
+
+## Documentacao Complementar
 
 - Infraestrutura: [`../infra/README.md`](../infra/README.md)
 - Amazon EKS: [`../infra/modules/eks/README.md`](../infra/modules/eks/README.md)

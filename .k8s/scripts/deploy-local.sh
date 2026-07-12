@@ -2,11 +2,10 @@
 
 set -e
 
-export $(grep -v '^#' .k8s/env/local.env | xargs)
+kubectl apply -k .k8s/overlays/local/database
+kubectl rollout status deployment/numberone-postgres -n numberone --timeout=180s
 
-envsubst < .k8s/app/configmap.yaml | kubectl apply -f -
-envsubst < .k8s/app/secret.yaml | kubectl apply -f -
-envsubst < .k8s/app/deployment.yaml | kubectl apply -f -
+kubectl rollout status deployment/mailpit -n numberone --timeout=180s
 
-kubectl apply -f .k8s/app/service.yaml
-kubectl apply -f .k8s/app/hpa.yaml
+kubectl apply -k .k8s/overlays/local/api
+kubectl rollout status deployment/numberone-api -n numberone --timeout=240s
