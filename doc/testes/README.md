@@ -1,28 +1,24 @@
-**# Estratégia de Testes
+# Estratégia de Testes
 
 ## Objetivo
 
 A estratégia de testes do projeto `numberone` foi definida para aumentar a confiabilidade da aplicação, reduzir regressões e validar regras de negócio, contratos técnicos e fluxos principais.
 
-O padrão foi aplicado inicialmente no módulo `automotiveservice`, com uma separação clara entre testes unitários, testes de integração e testes E2E/BDD com Cucumber. A estrutura foi pensada para ser replicada nos demais módulos sem misturar responsabilidades entre camadas.
+O padrão foi aplicado inicialmente no módulo `automotiveservice` e depois replicado para os principais módulos da aplicação. A separação entre testes unitários, testes de integração e testes E2E/BDD com Cucumber evita mistura de responsabilidades entre camadas.
 
 ## Escopo atual
 
-O módulo de referência é:
+Módulos com testes automatizados no projeto:
 
 ```text
 automotiveservice
-```
-
-O mesmo padrão pode ser replicado para:
-
-```text
 serviceorder
 inventory
 customer
 vehicle
-shared, quando fizer sentido
 ```
+
+O módulo `shared` possui cobertura indireta pelos fluxos de API, segurança, documentação OpenAPI e configuração global.
 
 ## Estrutura de pastas
 
@@ -80,6 +76,16 @@ AutomotiveServiceServiceTest
 AutomotiveServiceApiMapperTest
 ```
 
+Exemplos atuais no `serviceorder`:
+
+```text
+ServiceOrderServiceTest
+ServiceOrderBudgetServiceTest
+ServiceOrderItemServiceTest
+ServiceOrderItemSupplyServiceTest
+ServiceOrderTrackingServiceTest
+```
+
 ### Testes de integração
 
 Testes de integração validam a colaboração entre componentes ou camadas. Eles podem subir parte do contexto Spring, validar controller/API com MockMvc ou testar persistence/gateway/repository com banco de teste.
@@ -89,6 +95,16 @@ Exemplos atuais no `automotiveservice`:
 ```text
 AutomotiveServiceControllerIT
 AutoServiceGatewayImplIT
+```
+
+Exemplos atuais dos fluxos obrigatórios da Fase 2:
+
+```text
+ServiceOrderControllerIT
+CustomerControllerIT
+VehicleControllerIT
+InventoryItemControllerIT
+InventoryMovementControllerIT
 ```
 
 ### Testes E2E/BDD com Cucumber
@@ -364,9 +380,9 @@ Esses itens podem ser cobertos indiretamente por testes de API, aplicação ou i
 
 ## Pendências/evoluções
 
-- Replicar o padrão para outros módulos quando houver novos fluxos críticos.
+- Ampliar cenários de integração quando novos fluxos críticos forem adicionados.
 - Avaliar novos cenários Cucumber somente para fluxos principais.
 - Evoluir Cucumber/E2E para Testcontainers PostgreSQL se a fidelidade com o banco real for necessária.
 - Revisar exclusões e relatórios JaCoCo conforme novos módulos entrarem na cobertura.
-- Criar `integration/flow` apenas quando houver fluxo integrado estável que agregue valor além de API e infrastructure.**
+- Criar `integration/flow` apenas quando houver fluxo integrado estável que agregue valor além de API e infrastructure.
 - O projeto pode incorporar testes mutantes com PIT para medir a efetividade dos testes unitários, principalmente nas regras de domínio e aplicação.

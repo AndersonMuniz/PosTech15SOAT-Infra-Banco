@@ -4,7 +4,7 @@ Responsável por provisionar toda a infraestrutura de rede utilizada pelo projet
 
 ## Arquitetura
 
-![Arquitetura VPC](../../diagrams/numberone-vpc.drawio.png)
+![Arquitetura VPC](../../../doc/diagrams/terraform/numberone-vpc.drawio.png)
 
 ## Recursos Criados
 
