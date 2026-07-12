@@ -6,7 +6,7 @@ Este diretório contém toda a infraestrutura como código (IaC) do projeto **Nu
 
 ### Visão Geral
 
-![Arquitetura Geral](diagrams/numberone-geral.drawio.png)
+![Arquitetura Geral](../doc/diagrams/terraform/numberone-geral.drawio.png)
 
 ## Estrutura
 

@@ -4,7 +4,7 @@ Responsável por provisionar o cluster Kubernetes utilizado pela aplicação Num
 
 ## Arquitetura
 
-![Arquitetura EKS](../../diagrams/numberone-eks.drawio.png)
+![Arquitetura EKS](../../../doc/diagrams/terraform/numberone-eks.drawio.png)
 
 ## Recursos Criados
 

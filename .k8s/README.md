@@ -120,3 +120,4 @@ kubectl get hpa -n numberone
 
 - Infraestrutura: [`../infra/README.md`](../infra/README.md)
 - Amazon EKS: [`../infra/modules/eks/README.md`](../infra/modules/eks/README.md)
+- CI/CD local com runner self-hosted: [`../doc/cicd/execucao-local-github-actions.md`](../doc/cicd/execucao-local-github-actions.md)
