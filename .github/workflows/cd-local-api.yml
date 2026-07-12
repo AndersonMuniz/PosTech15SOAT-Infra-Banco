@@ -93,21 +93,10 @@ jobs:
         run: |
           kubectl rollout status deployment/numberone-postgres --namespace %K8S_NAMESPACE% --timeout=240s
 
-      - name: Aplicar ConfigMap e Secret da API
+      - name: Aplicar overlay Kustomize da API local
         shell: cmd
         run: |
-          kubectl apply -f .k8s/app/configmap.yaml
-          kubectl apply -f .k8s/app/secret.yaml
-
-      - name: Aplicar Service da API
-        shell: cmd
-        run: |
-          kubectl apply -f .k8s/app/service.yaml
-
-      - name: Aplicar Deployment da API
-        shell: cmd
-        run: |
-          kubectl apply -f .k8s/app/deployment.yaml
+          kubectl apply -k .k8s/overlays/local/api
 
       - name: Atualizar Deployment da API com a imagem gerada
         shell: cmd
@@ -116,11 +105,6 @@ jobs:
           kubectl set image deployment/numberone-api numberone-api=%IMAGE_URI% --namespace %K8S_NAMESPACE%
           kubectl get deployment numberone-api --namespace %K8S_NAMESPACE% -o=jsonpath="{.spec.template.spec.containers[0].image}"
           echo.
-
-      - name: Aplicar HPA da API
-        shell: cmd
-        run: |
-          kubectl apply -f .k8s/app/hpa.yaml
 
       - name: Aguardar rollout da API
         shell: cmd

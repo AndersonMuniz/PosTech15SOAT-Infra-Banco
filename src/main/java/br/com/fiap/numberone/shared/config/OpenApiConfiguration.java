@@ -22,7 +22,7 @@ public class OpenApiConfiguration {
 				.title("NumberOne - API da Oficina")
 				.version("v1")
 				.description("""
-					API REST do Tech Challenge Fase 1 para gestao de oficina mecanica.
+					API REST do Tech Challenge para gestao de oficina mecanica.
 
 					O sistema cobre autenticacao administrativa com JWT, cadastro de clientes e veiculos,
 					catalogo de servicos automotivos, estoque de pecas e insumos, ordem de servico,
@@ -32,8 +32,8 @@ public class OpenApiConfiguration {
 					1. Fazer login em /api/public/auth/login.
 					2. Copiar o accessToken retornado.
 					3. Clicar em Authorize no Swagger e informar Bearer <token>.
-					4. Criar cliente, veiculo, servico e item de estoque.
-					5. Criar a ordem de servico, adicionar servicos/insumos, gerar orcamento e acompanhar o status.
+					4. Criar a ordem de servico informando os dados do cliente, veiculo, servicos e pecas.
+					5. Consultar a listagem priorizada de OS ou o status publico da OS criada.
 					"""))
 			.servers(List.of(
 				new Server()

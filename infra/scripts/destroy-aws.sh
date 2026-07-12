@@ -12,7 +12,7 @@ echo "======================================"
 echo "Removendo aplicação"
 echo "======================================"
 
-kubectl delete -f .k8s/app --ignore-not-found=true
+kubectl delete -k .k8s/overlays/aws/api --ignore-not-found=true
 
 echo
 echo "Aguardando remoção do LoadBalancer..."

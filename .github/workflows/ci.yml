@@ -68,7 +68,10 @@ jobs:
       - name: Validar manifestos YAML sem aplicar no cluster
         shell: cmd
         run: |
-          kubectl apply -f .k8s --recursive --dry-run=client --validate=false
+          kubectl apply -k .k8s/overlays/local/database --dry-run=client --validate=false
+          kubectl apply -k .k8s/overlays/local/api --dry-run=client --validate=false
+          kubectl apply -k .k8s/overlays/local/full --dry-run=client --validate=false
+          kubectl apply -k .k8s/overlays/aws/api --dry-run=client --validate=false
 
       - name: Evidenciar manifestos Kubernetes validados
         shell: cmd

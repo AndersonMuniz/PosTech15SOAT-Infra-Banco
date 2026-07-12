@@ -23,13 +23,13 @@ spec:
             - sh
             - -c
             - |
-              until nc -z ${DB_HOST} 5432; do
+              until nc -z numberone-postgres-service 5432; do
                 echo "Waiting for Postgres..."
                 sleep 2
               done
       containers:
         - name: numberone-api
-          image: ${APP_IMAGE}
+          image: numberone-api:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

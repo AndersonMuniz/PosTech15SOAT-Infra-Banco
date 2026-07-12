@@ -4,18 +4,12 @@ metadata:
   name: numberone-api-config
   namespace: numberone
 data:
-  SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-  DB_URL: ${DB_URL}
   JWT_ISSUER: numberone-api
   JWT_ACCESS_TOKEN_EXPIRATION: 1h
-
   BOOTSTRAP_ADMIN_ROLE: ADMIN
-
-  MAIL_HOST: mailpit
   MAIL_PORT: "1025"
   MAIL_USERNAME: ""
   MAIL_SMTP_AUTH: "false"
   MAIL_SMTP_STARTTLS: "false"
   APP_MAIL_FROM: no-reply@numberone.local
-
   SERVICE_ORDER_APPROVAL_BASE_URL: http://numberone-api-service
