@@ -22,7 +22,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ServiceOrderItemMapper {
 
-    @Mapping(target = "serviceOrder", source = "serviceOrder", qualifiedByName = "toServiceOrderEntityRef")
+    @Mapping(target = "serviceOrder", ignore = true)
     @Mapping(target = "automotiveService", source = "automotiveService", qualifiedByName = "toAutomotiveServiceEntityRef")
     @Mapping(target = "supplies", source = "supplies", qualifiedByName = "toSupplyEntityRefList")
     ServiceOrderItemEntity toEntity(ServiceOrderItem domain);

@@ -30,6 +30,7 @@ public class ServiceOrderGatewayImpl implements ServiceOrderGateway {
     @Transactional
     public ServiceOrder save(ServiceOrder serviceOrder) {
         ServiceOrderEntity entity = mapper.toEntity(serviceOrder);
+        entity.linkChildren();
         ServiceOrderEntity savedEntity = repository.save(entity);
         return mapper.toDomain(savedEntity);
     }

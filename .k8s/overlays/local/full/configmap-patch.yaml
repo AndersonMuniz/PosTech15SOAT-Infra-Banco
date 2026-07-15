@@ -7,3 +7,4 @@ data:
   SPRING_PROFILES_ACTIVE: k8s
   DB_URL: jdbc:postgresql://numberone-postgres-service:5432/numberone
   MAIL_HOST: mailpit
+  SERVICE_ORDER_APPROVAL_BASE_URL: http://localhost:8080
