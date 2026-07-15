@@ -52,6 +52,10 @@ public class ServiceOrder {
         this.vehicle = vehicle;
     }
 
+    public void replaceServiceItems(List<ServiceOrderItem> serviceItems) {
+        this.serviceItems = serviceItems;
+    }
+
     public void applyFinalDiagnosis(String finalDiagnosisDescription, String notes) {
         this.finalDiagnosisDescription = finalDiagnosisDescription;
         this.notes = notes;

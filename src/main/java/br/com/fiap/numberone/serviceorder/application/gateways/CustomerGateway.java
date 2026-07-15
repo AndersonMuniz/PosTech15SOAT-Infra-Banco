@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface CustomerGateway {
     Optional<Customer> findById(UUID id);
+    Customer findOrCreateByDocument(Customer customer);
 }

@@ -6,5 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AutomotiveServiceGateway {
+    AutomotiveService save(AutomotiveService automotiveService);
     Optional<AutomotiveService> findById(UUID id);
+    Optional<AutomotiveService> findByCode(String code);
 }

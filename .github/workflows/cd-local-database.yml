@@ -1,0 +1,54 @@
+name: CD Local - Banco de Dados
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-local-database-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  K8S_NAMESPACE: numberone
+
+jobs:
+  deploy-database:
+    name: Deploy do banco local
+    runs-on: [self-hosted, runner-windows-0002]
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+
+      - name: Validar acesso ao cluster Kubernetes local
+        shell: cmd
+        run: |
+          kubectl version --client
+          kubectl cluster-info
+          kubectl config current-context
+
+      - name: Aplicar overlay Kustomize do banco local e Mailpit
+        shell: cmd
+        run: |
+          kubectl apply -k .k8s/overlays/local/database
+
+      - name: Aguardar rollout do PostgreSQL local
+        shell: cmd
+        run: |
+          kubectl rollout status deployment/numberone-postgres --namespace %K8S_NAMESPACE% --timeout=180s
+
+      - name: Aguardar rollout do Mailpit local
+        shell: cmd
+        run: |
+          kubectl rollout status deployment/mailpit --namespace %K8S_NAMESPACE% --timeout=180s
+
+      - name: Evidenciar recursos locais de banco e suporte
+        shell: cmd
+        run: |
+          kubectl get configmap,secret,pvc,deployment,service --namespace %K8S_NAMESPACE%
+          kubectl get pods --namespace %K8S_NAMESPACE% -o wide

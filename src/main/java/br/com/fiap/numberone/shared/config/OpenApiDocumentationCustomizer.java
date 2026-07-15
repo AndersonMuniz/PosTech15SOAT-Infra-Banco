@@ -188,6 +188,7 @@ public class OpenApiDocumentationCustomizer {
             case "GET /api/public/orcamentos-ordem-servico/{id}/aprovacao/aprovar" -> approveBudgetByEmail(operation);
             case "GET /api/public/orcamentos-ordem-servico/{id}/aprovacao/rejeitar" -> rejectBudgetByEmail(operation);
             case "GET /api/public/ordens-servico/{id}/acompanhamento" -> trackServiceOrder(operation);
+            case "GET /api/public/ordens-servico/{id}/status" -> getServiceOrderStatus(operation);
             default -> defaultOperation(operation, path);
         }
     }
@@ -451,27 +452,19 @@ public class OpenApiDocumentationCustomizer {
     }
 
     private static void createServiceOrder(Operation operation) {
-        describe(operation, "Ordens de Servico", "Criar ordem de servico",
-                "Abre uma OS para um cliente e veiculo, registrando entrada, problema informado e diagnostico inicial.");
-        request(operation, "Exemplo baseado na collection Insomnia_2026-04-30.yaml.",
-                "insomnia", "Criacao de ordem de servico", """
-                {
-                  "idCliente": "1ed09259-0f4f-4fd8-867c-a13d4d2fda4e",
-                  "descricaoInicial": "Teste ordem",
-                  "idVeiculo": "74a3eaac-979c-4f93-a926-2a3595047db9",
-                  "descricaoDiagnostico": "Teste",
-                  "dataHoraEntrada": "2026-04-28T10:30:00"
-                }
-                """);
-        response(operation, "201", "Ordem de servico criada.", "ordemServico", "OS criada", serviceOrderResponse("RECEBIDA"));
+        describe(operation, "Ordens de Servico", "Abrir ordem de servico",
+                "Abre uma OS recebendo os dados do cliente, veiculo, servicos e pecas. Cliente, veiculo, servico e peca podem ser referenciados por id ou pela chave forte da entidade. Quando a chave forte nao existir na base, a API cria o cadastro necessario antes de abrir a OS.");
+        request(operation, "Exemplo completo para abertura de OS. Chaves fortes: cliente por tipoDocumento/documento, veiculo por placa, servico por codigo e peca por codigo.",
+                "abertura-completa", "Abertura de OS com cliente, veiculo, servicos e pecas", serviceOrderRequest());
+        response(operation, "201", "Ordem de servico criada. O corpo retorna a identificacao unica da OS.", "ordemServicoCriada", "Identificador da OS criada", serviceOrderCreatedResponse());
         protectedErrors(operation, true, true);
     }
 
     private static void listServiceOrders(Operation operation) {
         describe(operation, "Ordens de Servico", "Listar ordens de servico",
-                "Lista as ordens de servico cadastradas.");
-        response(operation, "200", "Ordens de servico cadastradas.", "ordensServico", "Lista de OS",
-                "[" + serviceOrderResponse("RECEBIDA") + "]");
+                "Lista as ordens de servico visiveis para operacao, excluindo da listagem as OS finalizadas e entregues. A ordenacao prioriza EM_EXECUCAO, AGUARDANDO_APROVACAO, EM_DIAGNOSTICO e RECEBIDA; dentro da mesma prioridade, as mais antigas aparecem primeiro.");
+        response(operation, "200", "Ordens de servico abertas ou em andamento.", "ordensServico", "Lista priorizada de OS",
+                "[" + serviceOrderResponse("EM_EXECUCAO") + "," + serviceOrderResponse("AGUARDANDO_APROVACAO") + "]");
         protectedErrors(operation, false, false);
     }
 
@@ -480,6 +473,60 @@ public class OpenApiDocumentationCustomizer {
                 "Consulta os dados completos de uma ordem de servico pelo identificador UUID.");
         response(operation, "200", "Ordem de servico encontrada.", "ordemServico", "OS encontrada", serviceOrderResponse("EM_DIAGNOSTICO"));
         protectedErrors(operation, true, false);
+    }
+
+    private static String serviceOrderRequest() {
+        return """
+                {
+                  "descricaoInicial": "Cliente relatou barulho ao frear",
+                  "descricaoDiagnostico": "Diagnostico inicial pendente",
+                  "observacao": "Cliente aguardara contato por email",
+                  "cliente": {
+                    "nome": "Joao da Silva",
+                    "tipoDocumento": "PESSOA_FISICA",
+                    "documento": "12345678901",
+                    "email": "joao.silva@email.com",
+                    "telefone": "11999999999",
+                    "endereco": "Rua das Oficinas, 100",
+                    "ativo": true
+                  },
+                  "veiculo": {
+                    "placa": "ABC1D23",
+                    "marca": "Toyota",
+                    "modelo": "Corolla",
+                    "ano": 2022
+                  },
+                  "servicos": [
+                    {
+                      "codigo": "REV-001",
+                      "nome": "Revisao basica",
+                      "descricao": "Troca de oleo, filtros e checklist preventivo",
+                      "tipoServico": "REVISAO",
+                      "valorBase": 250.00,
+                      "tempoEstimadoMinutos": 120,
+                      "valor": 250.00,
+                      "opcional": false,
+                      "pecas": [
+                        {
+                          "codigo": "OLEO-5W30",
+                          "nome": "Oleo sintetico 5W30",
+                          "descricao": "Oleo de motor sintetico",
+                          "tipoItem": "LUBRIFICANTE",
+                          "unidadeMedida": "LITRO",
+                          "custoUnitario": 38.50,
+                          "precoVenda": 55.00,
+                          "quantidadeEstoque": 40,
+                          "estoqueMinimo": 10,
+                          "marca": "NumberOil",
+                          "veiculoAplicavel": "Motores flex",
+                          "quantidadeUsada": 4
+                        }
+                      ]
+                    }
+                  ],
+                  "dataHoraEntrada": "2026-04-28T10:30:00"
+                }
+                """;
     }
 
     private static void addFinalDiagnosis(Operation operation) {
@@ -710,6 +757,13 @@ public class OpenApiDocumentationCustomizer {
         describe(operation, "Acompanhamento Publico", "Acompanhar ordem de servico",
                 "Consulta publica para o cliente acompanhar status, orcamentos e servicos da OS. No Insomnia o caminho estava sem /acompanhamento; o contrato atual usa este sufixo.");
         response(operation, "200", "Acompanhamento da OS.", "acompanhamento", "Acompanhamento publico", trackingResponse());
+        publicErrors(operation, true, false);
+    }
+
+    private static void getServiceOrderStatus(Operation operation) {
+        describe(operation, "Acompanhamento Publico", "Consultar status da ordem de servico",
+                "Informa a situacao atual da OS. Principais status do fluxo solicitado: RECEBIDA, EM_DIAGNOSTICO, AGUARDANDO_APROVACAO, EM_EXECUCAO, FINALIZADA e ENTREGUE.");
+        response(operation, "200", "Status atual da OS.", "status", "Status da OS", serviceOrderStatusResponse());
         publicErrors(operation, true, false);
     }
 
@@ -1161,6 +1215,23 @@ public class OpenApiDocumentationCustomizer {
                   "updated_at": "2026-04-28T10:30:00"
                 }
                 """.formatted(status);
+    }
+
+    private static String serviceOrderCreatedResponse() {
+        return """
+                {
+                  "id": "54e94616-70ad-4ce7-b6f7-41c6747d802e"
+                }
+                """;
+    }
+
+    private static String serviceOrderStatusResponse() {
+        return """
+                {
+                  "id": "54e94616-70ad-4ce7-b6f7-41c6747d802e",
+                  "status": "AGUARDANDO_APROVACAO"
+                }
+                """;
     }
 
     private static String serviceOrderItemResponse(String status) {

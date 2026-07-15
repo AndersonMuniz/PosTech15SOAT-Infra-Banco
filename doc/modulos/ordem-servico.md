@@ -136,8 +136,27 @@ CANCELLED
 ### `POST /api/admin/ordens-servico`
 Cria uma nova ordem de serviço.
 
+Este endpoint atende ao requisito de abertura completa da OS: recebe dados de cliente, veículo, serviços e peças no mesmo payload.
+
+As entidades podem ser informadas por `id` ou por chave forte:
+
+| Entidade | Chave forte | Comportamento |
+|---|---|---|
+| Cliente | `tipoDocumento` + `documento` | Localiza cliente existente ou cria novo cadastro quando não existir. |
+| Veículo | `placa` | Localiza veículo existente ou cria novo cadastro quando não existir. |
+| Serviço automotivo | `codigo` | Localiza serviço existente ou cria novo cadastro quando não existir. |
+| Peça/insumo | `codigo` | Localiza item de estoque existente ou cria novo cadastro quando não existir. |
+
+O retorno da criação contém a identificação única da OS criada.
+
 ### `GET /api/admin/ordens-servico`
 Lista as ordens cadastradas.
+
+A listagem considera o fluxo solicitado para a Fase 2:
+
+- prioriza status nesta ordem: `EM_EXECUCAO`, `AGUARDANDO_APROVACAO`, `EM_DIAGNOSTICO`, `RECEBIDA`;
+- dentro do mesmo status, exibe as OS mais antigas primeiro;
+- remove logicamente da listagem as OS `FINALIZADA` e `ENTREGUE`.
 
 ### `GET /api/admin/ordens-servico/{id}`
 Detalha uma ordem específica.
@@ -224,8 +243,25 @@ Rejeita o orçamento por link público.
 ### `GET /api/public/ordens-servico/{id}/acompanhamento`
 Expõe uma visão simplificada da ordem para o cliente.
 
+### `GET /api/public/ordens-servico/{id}/status`
+Informa a situação atual da OS.
+
+Status expostos no fluxo principal:
+
+- `RECEBIDA`
+- `EM_DIAGNOSTICO`
+- `AGUARDANDO_APROVACAO`
+- `EM_EXECUCAO`
+- `FINALIZADA`
+- `ENTREGUE`
+
 ## Regras de negócio
 - ordem deve estar vinculada a cliente e veículo válidos
+- abertura de OS pode criar cliente, veículo, serviço e peça quando a chave forte informada ainda não existir
+- cliente é localizado por `tipoDocumento` + `documento`
+- veículo é localizado por `placa`
+- serviço automotivo é localizado por `codigo`
+- peça/insumo de estoque é localizado por `codigo`
 - cliente precisa estar ativo para abertura da ordem
 - serviço automotivo precisa estar ativo para inclusão em item de serviço
 - item de serviço pode consumir insumos do estoque
@@ -263,3 +299,7 @@ Ajustes realizados em relação ao escopo inicial:
 - tradução dos status expostos nas APIs
 - criação de commands específicos para updates parciais do fluxo
 - adoção de persistência parcial para mudanças de status e campos escalares
+- abertura completa da OS com dados de cliente, veículo, serviços e peças
+- suporte a criação automática de cadastros relacionados usando chaves fortes
+- consulta pública específica de status da OS
+- listagem priorizada por status e idade, omitindo OS finalizadas e entregues

@@ -2,6 +2,7 @@ package br.com.fiap.numberone.customer.infrastructure.persistence.gateways;
 
 import br.com.fiap.numberone.customer.application.gateways.CustomerGateway;
 import br.com.fiap.numberone.customer.domain.entities.Customer;
+import br.com.fiap.numberone.customer.domain.enums.TipoDocumento;
 import br.com.fiap.numberone.customer.infrastructure.persistence.entities.CustomerEntity;
 import br.com.fiap.numberone.customer.infrastructure.persistence.mappers.CustomerEntityMapper;
 import br.com.fiap.numberone.customer.infrastructure.persistence.repositories.CustomerRepository;
@@ -33,6 +34,12 @@ public class CustomerGatewayImpl implements CustomerGateway {
     @Override
     public Optional<Customer> findById(UUID id) {
         return customerRepository.findById(id)
+                .map(customerEntityMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Customer> findByDocumentAndDocumentType(String document, TipoDocumento documentType) {
+        return customerRepository.findByDocumentAndDocumentType(document, documentType)
                 .map(customerEntityMapper::toDomain);
     }
 

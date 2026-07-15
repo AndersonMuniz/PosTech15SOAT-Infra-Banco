@@ -92,7 +92,7 @@ Portanto, o projeto passou no Quality Gate, mas ainda possui pontos de melhoria 
 
 ### Evidência: Quality Gate
 
-![Quality Gate do projeto](evidencias/sonar-quality-gate.png)
+> Evidência pendente: salvar o print do Quality Gate em `doc/security/evidencias/sonar-quality-gate.png` ou atualizar esta seção para apontar para a evidência correta.
 
 ## 9. Vulnerabilidades encontradas
 
@@ -254,7 +254,7 @@ Evidências utilizadas:
 
 ### 17.2 Quality Gate
 
-![Quality Gate do SonarQube](evidencias/sonar-quality-gate.png)
+Evidência pendente: `doc/security/evidencias/sonar-quality-gate.png`.
 
 ### 17.3 Issues
 

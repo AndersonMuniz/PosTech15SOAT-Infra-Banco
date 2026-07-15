@@ -1,0 +1,118 @@
+name: CD Local - API
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Tag opcional da imagem Docker.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-local-api-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE_NAME: numberone-api
+  IMAGE_TAG: ${{ github.event.inputs.image_tag || github.sha }}
+  K8S_NAMESPACE: numberone
+
+jobs:
+  build-and-load-image:
+    name: Build e carga da imagem Docker
+    runs-on: [self-hosted, runner-windows-0002]
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+
+      - name: Validar Docker e estrategia de imagem local
+        shell: cmd
+        run: |
+          docker version
+          kubectl config current-context > k8s-context.txt
+          set /p K8S_CONTEXT=<k8s-context.txt
+          echo Contexto Kubernetes: %K8S_CONTEXT%
+          where minikube >nul 2>nul
+          if errorlevel 1 (
+            if "%K8S_CONTEXT%"=="minikube" (
+              echo O contexto atual e minikube, mas o comando minikube nao esta no PATH do runner.
+              echo Configure o Minikube no PATH do runner ou a imagem nao sera carregada no cluster.
+              exit /b 1
+            )
+            echo Minikube nao encontrado no PATH. A imagem sera criada apenas no Docker configurado no runner.
+          ) else (
+            echo Minikube encontrado. A imagem sera criada no Docker e carregada no Minikube.
+            minikube status
+          )
+
+      - name: Build da imagem Docker da API
+        shell: cmd
+        run: |
+          set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
+          docker build --tag %IMAGE_URI% --tag %IMAGE_NAME%:latest .
+
+      - name: Carregar imagem Docker no Minikube quando disponivel
+        shell: cmd
+        run: |
+          set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
+          where minikube >nul 2>nul
+          if errorlevel 1 (
+            echo Minikube nao encontrado. Pulando carga local da imagem.
+          ) else (
+            minikube image load %IMAGE_URI%
+            minikube image load %IMAGE_NAME%:latest
+            minikube image ls | findstr /C:"%IMAGE_NAME%"
+          )
+
+  deploy-api:
+    name: Deploy da API local
+    runs-on: [self-hosted, runner-windows-0002]
+    needs:
+      - build-and-load-image
+
+    steps:
+      - name: Checkout do codigo fonte
+        uses: actions/checkout@v4
+
+      - name: Validar acesso ao cluster Kubernetes local
+        shell: cmd
+        run: |
+          kubectl version --client
+          kubectl cluster-info
+          kubectl config current-context
+
+      - name: Aguardar banco local antes do deploy da API
+        shell: cmd
+        run: |
+          kubectl rollout status deployment/numberone-postgres --namespace %K8S_NAMESPACE% --timeout=240s
+
+      - name: Aplicar overlay Kustomize da API local
+        shell: cmd
+        run: |
+          kubectl apply -k .k8s/overlays/local/api
+
+      - name: Atualizar Deployment da API com a imagem gerada
+        shell: cmd
+        run: |
+          set IMAGE_URI=%IMAGE_NAME%:%IMAGE_TAG%
+          kubectl set image deployment/numberone-api numberone-api=%IMAGE_URI% --namespace %K8S_NAMESPACE%
+          kubectl get deployment numberone-api --namespace %K8S_NAMESPACE% -o=jsonpath="{.spec.template.spec.containers[0].image}"
+          echo.
+
+      - name: Aguardar rollout da API
+        shell: cmd
+        run: |
+          kubectl rollout status deployment/numberone-api --namespace %K8S_NAMESPACE% --timeout=240s
+
+      - name: Evidenciar recursos da API
+        shell: cmd
+        run: |
+          kubectl get deployment,service,hpa --namespace %K8S_NAMESPACE%
+          kubectl get pods --namespace %K8S_NAMESPACE% -o wide
