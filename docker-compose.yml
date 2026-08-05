@@ -2,56 +2,21 @@ services:
   postgres:
     image: postgres:17-alpine
     container_name: numberone-db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: numberone
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ${POSTGRES_DB:-numberone}
+      POSTGRES_USER: ${POSTGRES_USER:-numberone}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations/V1__create_initial_schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d numberone"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-numberone} -d ${POSTGRES_DB:-numberone}"]
       interval: 5s
       timeout: 5s
       retries: 10
-
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: numberone-mailpit
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: numberone-app
-    depends_on:
-      postgres:
-        condition: service_healthy
-      mailpit:
-        condition: service_started
-    environment:
-      SPRING_PROFILES_ACTIVE: local
-      DB_URL: jdbc:postgresql://postgres:5432/numberone
-      DB_USERNAME: admin
-      DB_PASSWORD: admin
-      JWT_SECRET: change-this-local-jwt-secret-with-32-chars
-      BOOTSTRAP_ADMIN_USERNAME: admin
-      BOOTSTRAP_ADMIN_PASSWORD: admin123456
-      BOOTSTRAP_ADMIN_ROLE: ADMIN
-      MAIL_HOST: mailpit
-      MAIL_PORT: 1025
-      MAIL_USERNAME: ""
-      MAIL_PASSWORD: ""
-      MAIL_SMTP_AUTH: false
-      MAIL_SMTP_STARTTLS: false
-      APP_MAIL_FROM: no-reply@numberone.local
-      SERVICE_ORDER_APPROVAL_BASE_URL: http://localhost:8080
-    ports:
-      - "8080:8080"
 
 volumes:
   postgres_data:

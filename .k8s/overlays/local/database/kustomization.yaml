@@ -1,4 +1,0 @@
-resources:
-  - ../../../base/namespace
-  - ../../../base/database
-  - ../../../base/mailpit

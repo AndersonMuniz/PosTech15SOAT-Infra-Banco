@@ -1,43 +1,19 @@
-output "vpc_id" {
-  value = module.vpc.vpc_id
+output "db_endpoint" {
+  description = "Endpoint DNS do PostgreSQL."
+  value       = module.rds.endpoint
 }
 
-output "public_subnet_ids" {
-  value = module.vpc.public_subnet_ids
+output "db_port" {
+  description = "Porta do PostgreSQL."
+  value       = module.rds.port
 }
 
-output "private_subnet_ids" {
-  value = module.vpc.private_subnet_ids
+output "db_identifier" {
+  description = "Identificador da instância RDS."
+  value       = module.rds.identifier
 }
 
-output "rds_endpoint" {
-  value = module.rds.endpoint
-}
-
-output "rds_port" {
-  value = module.rds.port
-}
-
-output "rds_identifier" {
-  value = module.rds.identifier
-}
-
-output "rds_security_group_id" {
-  value = module.rds.security_group_id
-}
-
-output "ecr_repository_url" {
-  value = module.ecr.repository_url
-}
-
-output "ecr_repository_name" {
-  value = module.ecr.repository_name
-}
-
-output "cluster_name" {
-  value = module.eks.cluster_name
-}
-
-output "aws_region" {
-  value = var.aws_region
+output "db_security_group_id" {
+  description = "Security Group associado ao RDS."
+  value       = module.rds.security_group_id
 }

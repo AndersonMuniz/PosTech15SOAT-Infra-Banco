@@ -1,6 +1,3 @@
 locals {
-  common_tags = {
-    Project   = var.project_name
-    ManagedBy = "Terraform"
-  }
+  identifier = "${var.project_name}-postgres"
 }

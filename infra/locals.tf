@@ -1,10 +1,7 @@
 locals {
-  project_name = "numberone"
-  environment  = "default"
-
-  common_tags = {
-    Project     = local.project_name
-    Environment = local.environment
+  common_tags = merge({
+    Project     = var.project_name
+    Environment = var.environment
     ManagedBy   = "Terraform"
-  }
+  }, var.tags)
 }
