@@ -1,0 +1,16 @@
+aws_region  = "us-east-1"
+project_name = "numberone"
+environment  = "prod"
+
+db_name               = "numberone"
+db_username           = "numberone_admin"
+db_instance_class     = "db.t4g.micro"
+db_allocated_storage  = 20
+db_max_allocated_storage = 100
+
+# Recomendado: informar o Security Group da aplicacao/EKS.
+# Se nulo, o modulo permite acesso PostgreSQL a partir do CIDR inteiro da VPC.
+application_security_group_id = null
+
+deletion_protection      = false
+backup_retention_period  = 7
