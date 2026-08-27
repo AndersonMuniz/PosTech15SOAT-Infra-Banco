@@ -13,25 +13,22 @@ variable "project_name" {
 variable "environment" {
   description = "Ambiente lógico da infraestrutura."
   type        = string
-  default     = "prod"
+  default     = "academy"
 }
 
-variable "network_state_bucket" {
-  description = "Bucket S3 que armazena o state da infraestrutura de rede existente."
+variable "vpc_id" {
+  description = "ID da VPC existente no AWS Academy."
   type        = string
-  default     = "backend-terraform-numberone"
 }
 
-variable "network_state_key" {
-  description = "Chave do state que expõe vpc_id e private_subnet_ids."
-  type        = string
-  default     = "infra/terraform.tfstate"
-}
+variable "subnet_ids" {
+  description = "Subnets existentes, em pelo menos duas AZs, usadas pelo DB Subnet Group do RDS."
+  type        = list(string)
 
-variable "network_state_region" {
-  description = "Região do backend remoto da infraestrutura de rede."
-  type        = string
-  default     = "us-east-1"
+  validation {
+    condition     = length(var.subnet_ids) >= 2
+    error_message = "Informe pelo menos duas subnets para o DB Subnet Group."
+  }
 }
 
 variable "db_name" {
@@ -65,7 +62,7 @@ variable "db_max_allocated_storage" {
 }
 
 variable "application_security_group_id" {
-  description = "Security Group da aplicação/EKS autorizado a acessar o PostgreSQL. Quando nulo, aplica fallback para o CIDR da VPC."
+  description = "Security Group da aplicação autorizado a acessar o PostgreSQL. Quando nulo, aplica fallback para o CIDR da VPC."
   type        = string
   default     = null
   nullable    = true
